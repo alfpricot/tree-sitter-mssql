@@ -222,14 +222,14 @@ RETURN SELECT item FROM dbo.item
           (relation
             (object_reference
               (identifier)
-              (identifier)))
-          (where
-            (keyword_where)
-            (binary_expression
-              (field
-                (identifier))
-              (field
-                (identifier))))))))
+              (identifier))))
+        (where
+          (keyword_where)
+          (binary_expression
+            (field
+              (identifier))
+            (field
+              (identifier)))))))
   (statement
     (create_function
       (keyword_create)
@@ -320,14 +320,14 @@ END
               (keyword_from)
               (relation
                 (object_reference
-                  (identifier)))
-              (where
-                (keyword_where)
-                (binary_expression
-                  (field
-                    (identifier))
-                  (field
-                    (identifier)))))))
+                  (identifier))))
+            (where
+              (keyword_where)
+              (binary_expression
+                (field
+                  (identifier))
+                (field
+                  (identifier))))))
         (statement
           (return_statement
             (keyword_return)))
@@ -418,24 +418,24 @@ END;
                       (table_hint
                         (keyword_with)
                         (table_hint_item
-                          (identifier)))
-                      (where
-                        (keyword_where)
-                        (binary_expression
-                          (field
-                            (object_reference
-                              (identifier))
+                          (identifier))))
+                    (where
+                      (keyword_where)
+                      (binary_expression
+                        (field
+                          (object_reference
                             (identifier))
-                          (invocation
-                            (object_reference
-                              (identifier)
-                              (identifier))
-                            (term
-                              (field
-                                (identifier)))
-                            (term
-                              (field
-                                (identifier)))))))))
+                          (identifier))
+                        (invocation
+                          (object_reference
+                            (identifier)
+                            (identifier))
+                          (term
+                            (field
+                              (identifier)))
+                          (term
+                            (field
+                              (identifier))))))))
                 (keyword_then)
                 (literal))
               (keyword_else)
@@ -703,16 +703,16 @@ END
                   (relation
                     (object_reference
                       (identifier))
-                    (identifier))
-                  (where
-                    (keyword_where)
-                    (binary_expression
-                      (field
-                        (object_reference
-                          (identifier))
+                    (identifier)))
+                (where
+                  (keyword_where)
+                  (binary_expression
+                    (field
+                      (object_reference
                         (identifier))
-                      (field
-                        (identifier))))))
+                      (identifier))
+                    (field
+                      (identifier)))))
               (keyword_end))
             (comment)
             (else_clause
@@ -763,16 +763,16 @@ END
                             (relation
                               (object_reference
                                 (identifier))
-                              (identifier))
-                            (where
-                              (keyword_where)
-                              (binary_expression
-                                (field
-                                  (object_reference
-                                    (identifier))
+                              (identifier)))
+                          (where
+                            (keyword_where)
+                            (binary_expression
+                              (field
+                                (object_reference
                                   (identifier))
-                                (field
-                                  (identifier))))))
+                                (identifier))
+                              (field
+                                (identifier)))))
                         (else_clause
                           (keyword_else)
                           (statement

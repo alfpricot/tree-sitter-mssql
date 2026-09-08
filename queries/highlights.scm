@@ -120,6 +120,7 @@
   (keyword_over)
   (keyword_partition)
   (keyword_range)
+  (keyword_window)
   (keyword_current)
   (keyword_xml)
   (keyword_json)

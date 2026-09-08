@@ -118,6 +118,7 @@ export default {
   // Window functions
   keyword_over: _ => make_keyword("over"),
   keyword_partition: _ => make_keyword("partition"),
+  keyword_window: _ => make_keyword("window"),
   keyword_range: _ => make_keyword("range"),
   keyword_unbounded: _ => make_keyword("unbounded"),
   keyword_preceding: _ => make_keyword("preceding"),

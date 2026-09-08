@@ -494,6 +494,7 @@ keyword_waitfor
 keyword_when
 keyword_where
 keyword_while
+keyword_window
 keyword_with
 keyword_within
 keyword_without
@@ -512,6 +513,7 @@ merge
 merge_when_clause
 method_call
 move_conversation_statement
+named_window
 nchar
 next_value_for
 not_distinct_from
@@ -603,6 +605,7 @@ waitfor_statement
 when_clause
 where
 while_statement
+window_clause
 window_frame
 window_function
 window_specification

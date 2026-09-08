@@ -125,15 +125,15 @@ DELETE t FROM dbo.target AS t JOIN src ON src.id = t.id;
             (field
               (object_reference
                 (identifier))
-              (identifier))))
-        (where
-          (keyword_where)
-          (binary_expression
-            (field
-              (object_reference
-                (identifier))
+              (identifier)))))
+      (where
+        (keyword_where)
+        (binary_expression
+          (field
+            (object_reference
               (identifier))
-            (literal))))))
+            (identifier))
+          (literal)))))
   (statement
     (delete
       (keyword_delete)
@@ -148,18 +148,18 @@ DELETE t FROM dbo.target AS t JOIN src ON src.id = t.id;
         (relation
           (object_reference
             (identifier))
-          (identifier))
-        (where
-          (keyword_where)
-          (binary_expression
-            (field
-              (object_reference
-                (identifier))
+          (identifier)))
+      (where
+        (keyword_where)
+        (binary_expression
+          (field
+            (object_reference
               (identifier))
-            (field
-              (object_reference
-                (identifier))
-              (identifier)))))))
+            (identifier))
+          (field
+            (object_reference
+              (identifier))
+            (identifier))))))
   (statement
     (delete
       (keyword_delete)
@@ -231,6 +231,33 @@ WHERE logged < @cutoff;
             (identifier))
           (field
             (identifier)))))))
+
+================================================================================
+Delete with OPTION
+================================================================================
+
+DELETE FROM dbo.t WHERE id = 1 OPTION (RECOMPILE);
+
+--------------------------------------------------------------------------------
+
+(program
+  (statement
+    (delete
+      (keyword_delete)
+      (keyword_from)
+      (object_reference
+        (identifier)
+        (identifier))
+      (where
+        (keyword_where)
+        (binary_expression
+          (field
+            (identifier))
+          (literal)))
+      (option_clause
+        (keyword_option)
+        (query_hint
+          (keyword_recompile))))))
 
 ================================================================================
 Truncate table

@@ -175,14 +175,14 @@ END
               (keyword_from)
               (relation
                 (object_reference
-                  (identifier)))
-              (where
-                (keyword_where)
-                (binary_expression
-                  (field
-                    (identifier))
-                  (field
-                    (identifier))))))
+                  (identifier))))
+            (where
+              (keyword_where)
+              (binary_expression
+                (field
+                  (identifier))
+                (field
+                  (identifier)))))
           (statement
             (return_statement
               (keyword_return)
@@ -564,43 +564,43 @@ RETURN @Severity
                   (relation
                     (object_reference
                       (identifier))
-                    (identifier))
-                  (where
-                    (keyword_where)
+                    (identifier)))
+                (where
+                  (keyword_where)
+                  (binary_expression
                     (binary_expression
-                      (binary_expression
-                        (invocation
-                          (object_reference
-                            (identifier))
-                          (term
-                            (field
-                              (object_reference
-                                (identifier))
-                              (identifier)))
-                          (term
-                            (literal)))
-                        (literal))
-                      (keyword_and)
-                      (binary_expression
-                        (invocation
-                          (object_reference
-                            (identifier))
-                          (term
-                            (invocation
-                              (object_reference
-                                (identifier))
-                              (term
-                                (binary_expression
-                                  (literal)
-                                  (field
-                                    (object_reference
-                                      (identifier))
-                                    (identifier)))))))
-                        (is_not
-                          (keyword_is)
-                          (keyword_not))
-                        (literal
-                          (keyword_null))))))))
+                      (invocation
+                        (object_reference
+                          (identifier))
+                        (term
+                          (field
+                            (object_reference
+                              (identifier))
+                            (identifier)))
+                        (term
+                          (literal)))
+                      (literal))
+                    (keyword_and)
+                    (binary_expression
+                      (invocation
+                        (object_reference
+                          (identifier))
+                        (term
+                          (invocation
+                            (object_reference
+                              (identifier))
+                            (term
+                              (binary_expression
+                                (literal)
+                                (field
+                                  (object_reference
+                                    (identifier))
+                                  (identifier)))))))
+                      (is_not
+                        (keyword_is)
+                        (keyword_not))
+                      (literal
+                        (keyword_null)))))))
             (block
               (keyword_begin)
               (statement
@@ -757,28 +757,28 @@ RETURN @Severity
               (table_hint
                 (keyword_with)
                 (table_hint_item
-                  (identifier)))
-              (where
-                (keyword_where)
-                (binary_expression
-                  (field
-                    (identifier))
-                  (subquery
-                    (select
-                      (keyword_select)
-                      (select_expression
-                        (term
-                          (field
-                            (identifier)))))
-                    (from
-                      (keyword_from)
-                      (relation
-                        (object_reference
-                          (identifier)))
-                      (table_hint
-                        (keyword_with)
-                        (table_hint_item
-                          (identifier))))))))))
+                  (identifier))))
+            (where
+              (keyword_where)
+              (binary_expression
+                (field
+                  (identifier))
+                (subquery
+                  (select
+                    (keyword_select)
+                    (select_expression
+                      (term
+                        (field
+                          (identifier)))))
+                  (from
+                    (keyword_from)
+                    (relation
+                      (object_reference
+                        (identifier)))
+                    (table_hint
+                      (keyword_with)
+                      (table_hint_item
+                        (identifier)))))))))
         (statement
           (if_statement
             (keyword_if)

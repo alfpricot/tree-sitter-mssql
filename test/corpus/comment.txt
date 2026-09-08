@@ -192,17 +192,17 @@ END
       (keyword_from)
       (relation
         (object_reference
-          (identifier)))
-      (marginalia)
-      (where
-        (keyword_where)
+          (identifier))))
+    (marginalia)
+    (where
+      (keyword_where)
+      (binary_expression
         (binary_expression
-          (binary_expression
-            (field
-              (identifier))
-            (marginalia)
-            (literal))
-          (literal)))))
+          (field
+            (identifier))
+          (marginalia)
+          (literal))
+        (literal))))
   (statement
     (create_procedure
       (keyword_create)
