@@ -1,5 +1,18 @@
 import { comma_list, paren_list, wrapped_in_parenthesis } from "./helpers.js";
 
+// The tail shared by every index-shaped constraint form: PRIMARY KEY,
+// UNIQUE, and an inline INDEX, at both column level (no explicit column
+// list — the constraint's own column is implied) and table level (an
+// explicit `ordered_columns` list).
+function index_spec($, { columns } = {}) {
+  return [
+    optional($._index_kind),
+    ...(columns ? [$.ordered_columns] : []),
+    optional($.with_options),
+    optional($.on_filegroup),
+  ];
+}
+
 // Column definitions and constraints, shared by CREATE TABLE, ALTER TABLE
 // ... ADD, DECLARE @t TABLE, CREATE TYPE ... AS TABLE, and multi-statement
 // table-valued function return tables.
@@ -56,8 +69,8 @@ export default {
       optional(seq($.keyword_constraint, field('name', $.identifier))),
       choice(
         seq($.keyword_default, $._expression),
-        seq($._primary_key, optional($._index_kind), optional($.with_options), optional($.on_filegroup)),
-        seq($.keyword_unique, optional($._index_kind), optional($.with_options), optional($.on_filegroup)),
+        seq($._primary_key, ...index_spec($)),
+        seq($.keyword_unique, ...index_spec($)),
         seq(
           optional(seq($.keyword_foreign, $.keyword_key)),
           $.keyword_references,
@@ -82,20 +95,8 @@ export default {
   constraint: $ => prec.right(seq(
     optional(seq($.keyword_constraint, field('name', $.identifier))),
     choice(
-      seq(
-        $._primary_key,
-        optional($._index_kind),
-        $.ordered_columns,
-        optional($.with_options),
-        optional($.on_filegroup),
-      ),
-      seq(
-        $.keyword_unique,
-        optional($._index_kind),
-        $.ordered_columns,
-        optional($.with_options),
-        optional($.on_filegroup),
-      ),
+      seq($._primary_key, ...index_spec($, { columns: true })),
+      seq($.keyword_unique, ...index_spec($, { columns: true })),
       seq(
         $.keyword_foreign,
         $.keyword_key,
@@ -122,10 +123,7 @@ export default {
       seq(
         $.keyword_index,
         field('name', $.identifier),
-        optional($._index_kind),
-        $.ordered_columns,
-        optional($.with_options),
-        optional($.on_filegroup),
+        ...index_spec($, { columns: true }),
       ),
     ),
   )),

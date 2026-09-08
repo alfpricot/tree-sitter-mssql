@@ -37,3 +37,14 @@ export function paren_list(field, requireFirst) {
     comma_list(field, requireFirst),
   )
 }
+
+// A table source's optional `[AS] alias [(col, ...)]` tail, shared by
+// `relation`, `_relation_with_hint`'s OPENJSON branch, and `apply_join`.
+export function aliased_with_columns($) {
+  return optional(
+    seq(
+      $._alias,
+      optional(alias($._column_list, $.list)),
+    ),
+  );
+}

@@ -1,4 +1,4 @@
-import { comma_list, optional_parenthesis, paren_list, wrapped_in_parenthesis } from "../helpers.js";
+import { aliased_with_columns, comma_list, optional_parenthesis, paren_list, wrapped_in_parenthesis } from "../helpers.js";
 
 export default {
 
@@ -285,12 +285,7 @@ export default {
         // ... SELECT ... FROM (MERGE ... OUTPUT ...) AS changes.
         wrapped_in_parenthesis($.merge),
       ),
-      optional(
-        seq(
-          $._alias,
-          optional(alias($._column_list, $.list)),
-        ),
-      ),
+      aliased_with_columns($),
       // The deprecated bare hint sits inside `relation` rather than beside
       // it in `_relation_with_hint`: after the table name the parser has
       // to shift `(` for both an invocation and the hint from the same
@@ -316,7 +311,7 @@ export default {
       $.table_hint,
       seq(
         $.openjson_schema,
-        optional(seq($._alias, optional(alias($._column_list, $.list)))),
+        aliased_with_columns($),
       ),
     )),
   ),
@@ -398,16 +393,7 @@ export default {
       $.subquery,
       seq($.invocation, optional($.openjson_schema)),
     ),
-    // The alias uses the same optional-AS form as `relation` — retried
-    // 2026-09-04 after the M2a dialect removal shrank generate from
-    // minutes to under a minute; the bare form (`OUTER APPLY fn(x) a`) no
-    // longer runs the parser-table build past the cap.
-    optional(
-      seq(
-        $._alias,
-        optional(alias($._column_list, $.list)),
-      ),
-    ),
+    aliased_with_columns($),
   )),
 
   // table_source PIVOT ( aggregate(column) FOR column IN (value [, ...]) ) [AS] alias

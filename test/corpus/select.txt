@@ -389,6 +389,42 @@ ORDER BY m.title, id ASC, 3 DESC;
             (keyword_desc)))))))
 
 ================================================================================
+Select with an omitted middle part in a multipart name
+================================================================================
+
+SELECT * FROM mydb..mytable, srv.db..t, srv..schema.t, lnksrv...t2;
+
+--------------------------------------------------------------------------------
+
+(program
+  (statement
+    (select
+      (keyword_select)
+      (select_expression
+        (term
+          value: (all_fields))))
+    (from
+      (keyword_from)
+      (relation
+        (object_reference
+          database: (identifier)
+          name: (identifier)))
+      (relation
+        (object_reference
+          server: (identifier)
+          database: (identifier)
+          name: (identifier)))
+      (relation
+        (object_reference
+          server: (identifier)
+          schema: (identifier)
+          name: (identifier)))
+      (relation
+        (object_reference
+          server: (identifier)
+          name: (identifier))))))
+
+================================================================================
 Select with three-part and four-part names
 ================================================================================
 

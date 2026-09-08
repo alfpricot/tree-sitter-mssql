@@ -192,3 +192,23 @@ ALTER SECURITY POLICY p;
     (keyword_security)
     (keyword_policy)
     (identifier)))
+
+==================
+An empty double-quoted identifier is not legal
+==================
+
+SELECT "" FROM t;
+
+---
+
+(program
+  (statement
+    (select
+      (keyword_select)
+      (ERROR
+        (UNEXPECTED ' ')
+        (keyword_from))
+      (select_expression
+        (term
+          (field
+            (identifier)))))))
