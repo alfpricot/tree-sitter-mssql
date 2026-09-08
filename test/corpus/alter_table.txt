@@ -593,3 +593,24 @@ ALTER TABLE dbo.t REBUILD WITH (DATA_COMPRESSION = PAGE);
         (option
           (identifier)
           (identifier))))))
+
+================================================================================
+ALTER TABLE ADD PERIOD FOR SYSTEM_TIME
+================================================================================
+
+ALTER TABLE t ADD PERIOD FOR SYSTEM_TIME (s, e);
+
+--------------------------------------------------------------------------------
+
+(program
+  (statement
+    (alter_table
+      (keyword_alter)
+      (keyword_table)
+      (object_reference
+        (identifier))
+      (keyword_add)
+      (period_for_system_time
+        (keyword_period_for_system_time)
+        (identifier)
+        (identifier)))))

@@ -1235,3 +1235,65 @@ SELECT AI_GENERATE_EMBEDDINGS(large_text USE MODEL MyModel), AI_GENERATE_EMBEDDI
       (relation
         (object_reference
           (identifier))))))
+
+================================================================================
+AT TIME ZONE
+================================================================================
+
+SELECT d AT TIME ZONE 'UTC' FROM t;
+
+--------------------------------------------------------------------------------
+
+(program
+  (statement
+    (select
+      (keyword_select)
+      (select_expression
+        (term
+          (binary_expression
+            (field
+              (identifier))
+            (at_time_zone
+              (keyword_at)
+              (keyword_time)
+              (keyword_zone))
+            (literal)))))
+    (from
+      (keyword_from)
+      (relation
+        (object_reference
+          (identifier))))))
+
+================================================================================
+Chained AT TIME ZONE is left-associative
+================================================================================
+
+SELECT d AT TIME ZONE 'UTC' AT TIME ZONE 'Eastern Standard Time' FROM t;
+
+--------------------------------------------------------------------------------
+
+(program
+  (statement
+    (select
+      (keyword_select)
+      (select_expression
+        (term
+          (binary_expression
+            (binary_expression
+              (field
+                (identifier))
+              (at_time_zone
+                (keyword_at)
+                (keyword_time)
+                (keyword_zone))
+              (literal))
+            (at_time_zone
+              (keyword_at)
+              (keyword_time)
+              (keyword_zone))
+            (literal)))))
+    (from
+      (keyword_from)
+      (relation
+        (object_reference
+          (identifier))))))

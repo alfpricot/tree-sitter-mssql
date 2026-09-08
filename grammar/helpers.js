@@ -37,3 +37,21 @@ export function paren_list(field, requireFirst) {
     comma_list(field, requireFirst),
   )
 }
+
+// A parenthesized two-item pair, e.g. `(start, end)` or `('provider', 'init
+// string')` — shared by any rule whose argument list is exactly two items
+// rather than an arbitrary comma list.
+export function paren_pair(first, second) {
+  return wrapped_in_parenthesis(seq(first, ',', second));
+}
+
+// A table source's optional `[AS] alias [(col, ...)]` tail, shared by
+// `relation`, `_relation_with_hint`'s OPENJSON branch, and `apply_join`.
+export function aliased_with_columns($) {
+  return optional(
+    seq(
+      $._alias,
+      optional(alias($._column_list, $.list)),
+    ),
+  );
+}

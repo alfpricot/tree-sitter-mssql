@@ -1102,3 +1102,67 @@ DECLARE @v AS VECTOR(3, float16) = '[0.1, 2, 30]';
           (literal)
           (identifier))
         (literal)))))
+
+================================================================================
+CREATE TABLE with a system-versioned temporal PERIOD FOR SYSTEM_TIME
+================================================================================
+
+CREATE TABLE t (
+  a int,
+  s datetime2 NOT NULL,
+  e datetime2 NOT NULL,
+  PERIOD FOR SYSTEM_TIME (s, e)
+);
+
+--------------------------------------------------------------------------------
+
+(program
+  (statement
+    (create_table
+      (keyword_create)
+      (keyword_table)
+      (object_reference
+        (identifier))
+      (column_definitions
+        (column_definition
+          (identifier)
+          (keyword_int))
+        (column_definition
+          (identifier)
+          (datetime2
+            (keyword_datetime2))
+          (keyword_not)
+          (keyword_null))
+        (column_definition
+          (identifier)
+          (datetime2
+            (keyword_datetime2))
+          (keyword_not)
+          (keyword_null))
+        (period_for_system_time
+          (keyword_period_for_system_time)
+          (identifier)
+          (identifier))))))
+
+================================================================================
+An ordinary column literally named 'period' still parses
+================================================================================
+
+CREATE TABLE t (period int, other int);
+
+--------------------------------------------------------------------------------
+
+(program
+  (statement
+    (create_table
+      (keyword_create)
+      (keyword_table)
+      (object_reference
+        (identifier))
+      (column_definitions
+        (column_definition
+          (identifier)
+          (keyword_int))
+        (column_definition
+          (identifier)
+          (keyword_int))))))

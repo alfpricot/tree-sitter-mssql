@@ -9,7 +9,6 @@ export default grammar({
   name: 'mssql',
 
   extras: $ => [
-    /\s\n/,
     /\s/,
     $.comment,
     $.marginalia,

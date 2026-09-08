@@ -148,6 +148,10 @@ handful of T-SQL shapes the grammar deliberately does not parse are listed in th
 | `performance_snippets.sql` | Physical join hints `INNER HASH JOIN`, `INNER LOOP JOIN`, `INNER MERGE JOIN`, and a cursor-driven `UPDATE ... WHERE CURRENT OF` |
 | `best_practice_snippets.sql` | `DELETE alias FROM ... LEFT OUTER HASH JOIN` with no `WHERE` |
 | `merge_as_from_source.sql` | `MERGE ... OUTPUT ...` used as a `FROM (...)` subquery source of an `INSERT ... SELECT` |
+| `temporal_table_query.sql` | System-versioned temporal tables: `PERIOD FOR SYSTEM_TIME` in `CREATE TABLE` and `ALTER TABLE ... ADD`, and `FOR SYSTEM_TIME` querying (`AS OF`, `FROM ... TO`, `BETWEEN ... AND`, `CONTAINED IN`, `ALL`) |
+| `at_time_zone.sql` | `AT TIME ZONE` (2016), incl. chained application and use in `WHERE` |
+| `tablesample.sql` | `TABLESAMPLE (n PERCENT \| ROWS)`, `TABLESAMPLE SYSTEM (...) REPEATABLE (seed)`, and combined with a table alias |
+| `opendatasource_changetable.sql` | `OPENDATASOURCE(...)` with a dotted object suffix, `CHANGETABLE(CHANGES ...)` joined against its source table, `CHANGETABLE(VERSION ...)` |
 
 ## Functions
 

@@ -389,6 +389,42 @@ ORDER BY m.title, id ASC, 3 DESC;
             (keyword_desc)))))))
 
 ================================================================================
+Select with an omitted middle part in a multipart name
+================================================================================
+
+SELECT * FROM mydb..mytable, srv.db..t, srv..schema.t, lnksrv...t2;
+
+--------------------------------------------------------------------------------
+
+(program
+  (statement
+    (select
+      (keyword_select)
+      (select_expression
+        (term
+          value: (all_fields))))
+    (from
+      (keyword_from)
+      (relation
+        (object_reference
+          database: (identifier)
+          name: (identifier)))
+      (relation
+        (object_reference
+          server: (identifier)
+          database: (identifier)
+          name: (identifier)))
+      (relation
+        (object_reference
+          server: (identifier)
+          schema: (identifier)
+          name: (identifier)))
+      (relation
+        (object_reference
+          server: (identifier)
+          name: (identifier))))))
+
+================================================================================
 Select with three-part and four-part names
 ================================================================================
 
@@ -2238,4 +2274,349 @@ SELECT * FROM dbo.f(1) WITH (INDEX = ix);
         (keyword_with)
         (table_hint_item
           (keyword_index)
+          (identifier))))))
+
+================================================================================
+FOR SYSTEM_TIME AS OF
+================================================================================
+
+SELECT * FROM t FOR SYSTEM_TIME AS OF '2020-01-01';
+
+--------------------------------------------------------------------------------
+
+(program
+  (statement
+    (select
+      (keyword_select)
+      (select_expression
+        (term
+          (all_fields))))
+    (from
+      (keyword_from)
+      (relation
+        (object_reference
+          (identifier))
+        (for_system_time_clause
+          (keyword_for_system_time)
+          (system_time_qualifier
+            (keyword_as)
+            (keyword_of)
+            (literal)))))))
+
+================================================================================
+FOR SYSTEM_TIME FROM ... TO, aliased
+================================================================================
+
+SELECT * FROM t FOR SYSTEM_TIME FROM '2020-01-01' TO '2021-01-01' AS t1;
+
+--------------------------------------------------------------------------------
+
+(program
+  (statement
+    (select
+      (keyword_select)
+      (select_expression
+        (term
+          (all_fields))))
+    (from
+      (keyword_from)
+      (relation
+        (object_reference
+          (identifier))
+        (for_system_time_clause
+          (keyword_for_system_time)
+          (system_time_qualifier
+            (keyword_from)
+            (literal)
+            (keyword_to)
+            (literal)))
+        (keyword_as)
+        (identifier)))))
+
+================================================================================
+FOR SYSTEM_TIME BETWEEN ... AND
+================================================================================
+
+SELECT * FROM t FOR SYSTEM_TIME BETWEEN '2020-01-01' AND '2021-01-01';
+
+--------------------------------------------------------------------------------
+
+(program
+  (statement
+    (select
+      (keyword_select)
+      (select_expression
+        (term
+          (all_fields))))
+    (from
+      (keyword_from)
+      (relation
+        (object_reference
+          (identifier))
+        (for_system_time_clause
+          (keyword_for_system_time)
+          (system_time_qualifier
+            (keyword_between)
+            (literal)
+            (keyword_and)
+            (literal)))))))
+
+================================================================================
+FOR SYSTEM_TIME CONTAINED IN
+================================================================================
+
+SELECT * FROM t FOR SYSTEM_TIME CONTAINED IN ('2020-01-01', '2021-01-01');
+
+--------------------------------------------------------------------------------
+
+(program
+  (statement
+    (select
+      (keyword_select)
+      (select_expression
+        (term
+          (all_fields))))
+    (from
+      (keyword_from)
+      (relation
+        (object_reference
+          (identifier))
+        (for_system_time_clause
+          (keyword_for_system_time)
+          (system_time_qualifier
+            (keyword_contained)
+            (keyword_in)
+            (literal)
+            (literal)))))))
+
+================================================================================
+FOR SYSTEM_TIME ALL
+================================================================================
+
+SELECT * FROM t FOR SYSTEM_TIME ALL;
+
+--------------------------------------------------------------------------------
+
+(program
+  (statement
+    (select
+      (keyword_select)
+      (select_expression
+        (term
+          (all_fields))))
+    (from
+      (keyword_from)
+      (relation
+        (object_reference
+          (identifier))
+        (for_system_time_clause
+          (keyword_for_system_time)
+          (system_time_qualifier
+            (keyword_all)))))))
+
+================================================================================
+SELECT ... FOR JSON still parses after FOR SYSTEM_TIME is added
+================================================================================
+
+SELECT a, b FROM t FOR JSON AUTO;
+
+--------------------------------------------------------------------------------
+
+(program
+  (statement
+    (select
+      (keyword_select)
+      (select_expression
+        (term
+          (field
+            (identifier)))
+        (term
+          (field
+            (identifier)))))
+    (from
+      (keyword_from)
+      (relation
+        (object_reference
+          (identifier))))
+    (for_clause
+      (keyword_for)
+      (keyword_json)
+      (for_option
+        (identifier)))))
+
+================================================================================
+TABLESAMPLE
+================================================================================
+
+SELECT * FROM t TABLESAMPLE (10 PERCENT);
+
+--------------------------------------------------------------------------------
+
+(program
+  (statement
+    (select
+      (keyword_select)
+      (select_expression
+        (term
+          (all_fields))))
+    (from
+      (keyword_from)
+      (relation
+        (object_reference
+          (identifier)))
+      (tablesample_clause
+        (keyword_tablesample)
+        (literal)
+        (keyword_percent)))))
+
+================================================================================
+TABLESAMPLE SYSTEM with REPEATABLE
+================================================================================
+
+SELECT * FROM t TABLESAMPLE SYSTEM (10 PERCENT) REPEATABLE (100);
+
+--------------------------------------------------------------------------------
+
+(program
+  (statement
+    (select
+      (keyword_select)
+      (select_expression
+        (term
+          (all_fields))))
+    (from
+      (keyword_from)
+      (relation
+        (object_reference
+          (identifier)))
+      (tablesample_clause
+        (keyword_tablesample)
+        (keyword_system)
+        (literal)
+        (keyword_percent)
+        (keyword_repeatable)
+        (literal)))))
+
+================================================================================
+OPENDATASOURCE with a dotted object suffix
+================================================================================
+
+SELECT * FROM OPENDATASOURCE('SQLNCLI', 'x').db.dbo.t;
+
+--------------------------------------------------------------------------------
+
+(program
+  (statement
+    (select
+      (keyword_select)
+      (select_expression
+        (term
+          (all_fields))))
+    (from
+      (keyword_from)
+      (relation
+        (opendatasource_reference
+          (keyword_opendatasource)
+          (literal)
+          (literal)
+          (identifier)
+          (identifier)
+          (identifier))))))
+
+================================================================================
+CHANGETABLE CHANGES
+================================================================================
+
+SELECT * FROM CHANGETABLE(CHANGES dbo.t, 0) AS c;
+
+--------------------------------------------------------------------------------
+
+(program
+  (statement
+    (select
+      (keyword_select)
+      (select_expression
+        (term
+          (all_fields))))
+    (from
+      (keyword_from)
+      (relation
+        (changetable
+          (keyword_changetable)
+          (keyword_changes)
+          (object_reference
+            (identifier)
+            (identifier))
+          (literal))
+        (keyword_as)
+        (identifier)))))
+
+================================================================================
+CHANGETABLE VERSION
+================================================================================
+
+SELECT * FROM CHANGETABLE(VERSION dbo.t, (a, b), (col.a, col.b)) AS c;
+
+--------------------------------------------------------------------------------
+
+(program
+  (statement
+    (select
+      (keyword_select)
+      (select_expression
+        (term
+          (all_fields))))
+    (from
+      (keyword_from)
+      (relation
+        (changetable
+          (keyword_changetable)
+          (keyword_version)
+          (object_reference
+            (identifier)
+            (identifier))
+          (list
+            (field
+              (identifier))
+            (field
+              (identifier)))
+          (list
+            (field
+              (object_reference
+                (identifier))
+              (identifier))
+            (field
+              (object_reference
+                (identifier))
+              (identifier))))
+        (keyword_as)
+        (identifier)))))
+
+================================================================================
+TABLESAMPLE combined with a table hint
+================================================================================
+
+SELECT * FROM t TABLESAMPLE (10 PERCENT) WITH (NOLOCK);
+
+--------------------------------------------------------------------------------
+
+(program
+  (statement
+    (select
+      (keyword_select)
+      (select_expression
+        (term
+          (all_fields))))
+    (from
+      (keyword_from)
+      (relation
+        (object_reference
+          (identifier)))
+      (tablesample_clause
+        (keyword_tablesample)
+        (literal)
+        (keyword_percent))
+      (table_hint
+        (keyword_with)
+        (table_hint_item
           (identifier))))))

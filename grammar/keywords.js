@@ -399,6 +399,53 @@ export default {
   keyword_geography: _ => make_keyword("geography"),
   keyword_max: _ => make_keyword("max"),
 
+  // Temporal tables, AT TIME ZONE, TABLESAMPLE, CHANGETABLE, OPENDATASOURCE
+  //
+  // Both of the next two are single atomic tokens for a multi-word phrase,
+  // not a `seq` of separate keyword rules, and for two different reasons:
+  //
+  // `keyword_for_system_time` (FOR SYSTEM_TIME) exists because a bare FOR
+  // is also valid a few tokens later — the select statement's own
+  // trailing FOR XML/JSON/UPDATE/READ ONLY. The LALR follow set for the
+  // empty branch of `optional(for_system_time_clause)` in `relation`
+  // legitimately includes bare FOR, so a plain `seq(keyword_for,
+  // keyword_system_time)` there is a genuine shift/reduce ambiguity on the
+  // FOR token, not the kind a `conflicts` entry or prec.right resolves —
+  // it needs two tokens of lookahead tree-sitter's LALR(1) tables don't
+  // carry. Making the whole phrase one terminal moves the decision to the
+  // lexer's own longest-match rule instead.
+  //
+  // `keyword_period_for_system_time` (PERIOD FOR SYSTEM_TIME) exists for a
+  // different reason: PERIOD is not otherwise a keyword anywhere, so a
+  // standalone `keyword_period` would be a valid symbol at the very start
+  // of every `column_definitions` list item — the same position an
+  // ordinary column named `period` occupies — and keyword extraction
+  // always prefers a valid keyword over an identifier for the same text,
+  // with no later token able to change that (unlike the join-hint or
+  // `keyword_bulk` collisions this grammar accepts elsewhere, there is no
+  // `AS <word>` position here to fall back to: a column name is never
+  // preceded by AS). Requiring the whole three-word phrase up front is
+  // what lets a bare `period int` column keep parsing normally.
+  //
+  // Both tokens tolerate only plain whitespace between their words, not a
+  // comment — a comment is lexed as an `extras`-level token that can sit
+  // between two ordinary tokens, but not inside the middle of one atomic
+  // token's own match. `FOR /* c */ SYSTEM_TIME` and
+  // `PERIOD /* c */ FOR SYSTEM_TIME` are accepted trade-offs of the same
+  // shape, not oversights.
+  keyword_for_system_time: _ => token(seq(make_keyword("for"), /\s+/, make_keyword("system_time"))),
+  keyword_period_for_system_time: _ => token(seq(
+    make_keyword("period"), /\s+/, make_keyword("for"), /\s+/, make_keyword("system_time"),
+  )),
+  keyword_contained: _ => make_keyword("contained"),
+  keyword_zone: _ => make_keyword("zone"),
+  keyword_tablesample: _ => make_keyword("tablesample"),
+  keyword_system: _ => make_keyword("system"),
+  keyword_changetable: _ => make_keyword("changetable"),
+  keyword_changes: _ => make_keyword("changes"),
+  keyword_version: _ => make_keyword("version"),
+  keyword_opendatasource: _ => make_keyword("opendatasource"),
+
   // Operators
   is_not: $ => prec.left(seq($.keyword_is, $.keyword_not)),
   not_like: $ => seq($.keyword_not, $.keyword_like),
