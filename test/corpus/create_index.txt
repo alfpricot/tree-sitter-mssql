@@ -302,6 +302,74 @@ ALTER INDEX ix_t ON dbo.t SET (ALLOW_PAGE_LOCKS = OFF);
         (keyword_off)))))
 
 ================================================================================
+Alter index resumable rebuild control
+================================================================================
+
+ALTER INDEX ix_t ON dbo.t RESUME;
+ALTER INDEX ix_t ON dbo.t RESUME WITH (MAX_DURATION = 60 MINUTES, WAIT_AT_LOW_PRIORITY (MAX_DURATION = 1 MINUTES, ABORT_AFTER_WAIT = BLOCKERS));
+ALTER INDEX ix_t ON dbo.t PAUSE;
+ALTER INDEX ix_t ON dbo.t ABORT;
+
+--------------------------------------------------------------------------------
+
+(program
+  (statement
+    (alter_index
+      (keyword_alter)
+      (keyword_index)
+      (identifier)
+      (keyword_on)
+      (object_reference
+        (identifier)
+        (identifier))
+      (keyword_resume)))
+  (statement
+    (alter_index
+      (keyword_alter)
+      (keyword_index)
+      (identifier)
+      (keyword_on)
+      (object_reference
+        (identifier)
+        (identifier))
+      (keyword_resume)
+      (with_options
+        (keyword_with)
+        (option
+          (identifier)
+          (literal)
+          (identifier))
+        (option
+          (identifier)
+          (option
+            (identifier)
+            (literal)
+            (identifier))
+          (option
+            (identifier)
+            (identifier))))))
+  (statement
+    (alter_index
+      (keyword_alter)
+      (keyword_index)
+      (identifier)
+      (keyword_on)
+      (object_reference
+        (identifier)
+        (identifier))
+      (keyword_pause)))
+  (statement
+    (alter_index
+      (keyword_alter)
+      (keyword_index)
+      (identifier)
+      (keyword_on)
+      (object_reference
+        (identifier)
+        (identifier))
+      (keyword_abort))))
+
+================================================================================
 Drop index
 ================================================================================
 

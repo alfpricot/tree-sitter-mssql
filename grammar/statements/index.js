@@ -427,11 +427,15 @@ export default {
     ),
   ),
 
-  // { GRANT | REVOKE | DENY } permission [, ...] [ON [class::] securable [(columns)]]
+  // { GRANT | REVOKE | DENY } permission [(columns)] [, ...] [ON [class::] securable [(columns)]]
   //   { TO | FROM } principal [, ...] [WITH GRANT OPTION] [CASCADE] [AS principal]
   // A permission is one or more words (SELECT, ALTER ANY DATABASE, VIEW
   // DEFINITION); most of them are keywords elsewhere in the grammar, the rest
-  // are identifiers.
+  // are identifiers. A per-permission column list is the form Microsoft's own
+  // GRANT/DENY/REVOKE syntax diagram documents (`permission [(column, ...)]`);
+  // the column list after the securable, below, is the form column-level
+  // scripts more commonly emit in practice — both are accepted since neither
+  // rules the other out grammatically.
   grant_statement: $ => prec.right(seq(
     choice($.keyword_grant, $.keyword_revoke, $.keyword_deny),
     optional(seq($.keyword_grant, $.keyword_option, $.keyword_for)),
@@ -449,7 +453,21 @@ export default {
     optional(seq($.keyword_as, $.identifier)),
   )),
 
-  permission: $ => prec.right(repeat1(choice(
+  // The column list is aliased to a named `list` node (the same pattern
+  // `_column_list`/`aliased_with_columns` uses — alias a rule reference,
+  // not an inline paren_list() call directly, or tree-sitter aliases each
+  // token inside it individually instead of the group as a whole) rather
+  // than left as bare identifiers — `_permission_name` is a hidden repeat
+  // of identifier/keyword alternatives, so an un-aliased column list would
+  // flatten into indistinguishable siblings of a multi-word permission name.
+  permission: $ => prec.right(seq(
+    $._permission_name,
+    optional(alias($._permission_columns, $.list)),
+  )),
+
+  _permission_columns: $ => paren_list($.identifier, true),
+
+  _permission_name: $ => prec.right(repeat1(choice(
     $.identifier,
     $.keyword_select,
     $.keyword_insert,

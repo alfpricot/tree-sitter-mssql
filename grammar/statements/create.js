@@ -62,6 +62,8 @@ export default {
     $.create_certificate,
     $.create_symmetric_key,
     $.create_asymmetric_key,
+    $.create_column_encryption_key,
+    $.create_column_master_key,
     $.create_security_policy,
     $.create_xml_schema_collection,
   ),

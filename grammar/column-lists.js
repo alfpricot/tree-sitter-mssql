@@ -106,9 +106,31 @@ export default {
         ),
       ),
     ),
+    // MASKED WITH (FUNCTION = 'default()') — Dynamic Data Masking (2016).
+    // `repeat($._column_constraint)` lets a column carry both this and
+    // ENCRYPTED WITH below, which SQL Server itself rejects (a column can't
+    // be both masked and Always Encrypted) — deliberate over-acceptance,
+    // the same call this file already makes for `option`/`_column_constraint`'s
+    // bare-identifier catch-all: a downstream linter judges the semantic
+    // conflict, not the grammar.
+    $.masked_with,
+    // ENCRYPTED WITH (COLUMN_ENCRYPTION_KEY = k, ENCRYPTION_TYPE = ...,
+    // ALGORITHM = 'x') — Always Encrypted (2016); the referenced key comes
+    // from CREATE COLUMN ENCRYPTION KEY below.
+    $.encrypted_with,
     // ROWGUIDCOL, SPARSE, FILESTREAM, and the other bare column flags.
     $.identifier,
   )),
+
+  masked_with: $ => seq(
+    $.keyword_masked,
+    $.with_options,
+  ),
+
+  encrypted_with: $ => seq(
+    $.keyword_encrypted,
+    $.with_options,
+  ),
 
   _index_kind: $ => choice($.keyword_clustered, $.keyword_nonclustered),
 

@@ -23,6 +23,7 @@ export default {
     $.alter_certificate,
     $.alter_symmetric_key,
     $.alter_asymmetric_key,
+    $.alter_column_encryption_key,
     $.alter_security_policy,
     $.alter_xml_schema_collection,
   ),
@@ -74,6 +75,13 @@ export default {
             optional(seq($.keyword_collate, $.identifier)),
             optional(choice($.keyword_null, $._not_null)),
           ),
+          // ADD MASKED WITH (...) / DROP MASKED applies or removes Dynamic
+          // Data Masking on an existing column — the form maintenance
+          // scripts emit, since a mask is normally added after the table
+          // already exists. Checked ahead of the bare-identifier flag
+          // alternative below, which still covers ADD/DROP ROWGUIDCOL etc.
+          seq($.keyword_add, $.masked_with),
+          seq($.keyword_drop, $.keyword_masked),
           seq(choice($.keyword_add, $.keyword_drop), $.identifier),
         ),
       ),
@@ -100,7 +108,11 @@ export default {
     ),
   )),
 
-  // ALTER INDEX { name | ALL } ON table { REBUILD [WITH (options)] | REORGANIZE [WITH (options)] | DISABLE | SET (options) }
+  // ALTER INDEX { name | ALL } ON table { REBUILD [WITH (options)] | REORGANIZE [WITH (options)]
+  //   | DISABLE | SET (options) | RESUME [WITH (options)] | PAUSE | ABORT }
+  // RESUME/PAUSE/ABORT (2017) control a resumable online rebuild already in
+  // progress; RESUME's own WITH (MAX_DURATION = n MINUTES, ...) reuses the
+  // same option-list machinery REBUILD's does.
   alter_index: $ => prec.right(seq(
     $.keyword_alter,
     $.keyword_index,
@@ -112,6 +124,9 @@ export default {
       seq($.keyword_reorganize, optional($.with_options)),
       $.keyword_disable,
       seq($.keyword_set, paren_list($.option, true)),
+      seq($.keyword_resume, optional($.with_options)),
+      $.keyword_pause,
+      $.keyword_abort,
     ),
   )),
 

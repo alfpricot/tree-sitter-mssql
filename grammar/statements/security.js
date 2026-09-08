@@ -216,6 +216,72 @@ export default {
     optional(seq($.keyword_remove, $.keyword_provider, $.keyword_key)),
   ),
 
+  // CREATE COLUMN ENCRYPTION KEY name WITH VALUES
+  //   (COLUMN_MASTER_KEY = cmk, ALGORITHM = 'x', ENCRYPTED_VALUE = 0x...)
+  //   [, (...)]                                            — Always Encrypted.
+  // Each parenthesized group is one encrypted value of the key, one per
+  // column master key it's encrypted under — usually one, two when
+  // rotating to a new column master key. Each group is its own named
+  // encryption_key_value node (not a bare paren_list of options flattened
+  // into the parent) so a consumer pairing COLUMN_MASTER_KEY with its own
+  // ENCRYPTED_VALUE during rotation has a group boundary to read the pair
+  // from — otherwise two groups' options are indistinguishable siblings.
+  create_column_encryption_key: $ => seq(
+    $.keyword_create,
+    $.keyword_column,
+    $.keyword_encryption,
+    $.keyword_key,
+    field('name', $.identifier),
+    $.keyword_with,
+    $.keyword_values,
+    comma_list($.encryption_key_value, true),
+  ),
+
+  encryption_key_value: $ => paren_list($.option, true),
+
+  // ALTER COLUMN ENCRYPTION KEY name { ADD | DROP } VALUE (COLUMN_MASTER_KEY = cmk [, ...])
+  alter_column_encryption_key: $ => seq(
+    $.keyword_alter,
+    $.keyword_column,
+    $.keyword_encryption,
+    $.keyword_key,
+    field('name', $.identifier),
+    choice($.keyword_add, $.keyword_drop),
+    $.keyword_value,
+    $.encryption_key_value,
+  ),
+
+  // DROP COLUMN ENCRYPTION KEY name
+  drop_column_encryption_key: $ => seq(
+    $.keyword_drop,
+    $.keyword_column,
+    $.keyword_encryption,
+    $.keyword_key,
+    field('name', $.identifier),
+  ),
+
+  // CREATE COLUMN MASTER KEY name
+  //   WITH (KEY_STORE_PROVIDER_NAME = 'x', KEY_PATH = 'x' [, ENCLAVE_COMPUTATIONS (...)])
+  // No ALTER COLUMN MASTER KEY exists — SQL Server only lets one be created
+  // or dropped, never modified in place.
+  create_column_master_key: $ => seq(
+    $.keyword_create,
+    $.keyword_column,
+    $.keyword_master,
+    $.keyword_key,
+    field('name', $.identifier),
+    $.with_options,
+  ),
+
+  // DROP COLUMN MASTER KEY name
+  drop_column_master_key: $ => seq(
+    $.keyword_drop,
+    $.keyword_column,
+    $.keyword_master,
+    $.keyword_key,
+    field('name', $.identifier),
+  ),
+
   // CREATE SECURITY POLICY name ADD predicate [, ...] [WITH (STATE = ON | OFF [, SCHEMABINDING = ON | OFF])] [NOT FOR REPLICATION]
   // Only ADD is valid here; ALTER and DROP predicates belong to ALTER
   // SECURITY POLICY. Both statements expose their predicates as

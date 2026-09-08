@@ -399,6 +399,60 @@
     }
   },
   {
+    "type": "alter_column_encryption_key",
+    "named": true,
+    "fields": {
+      "name": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "identifier",
+            "named": true
+          }
+        ]
+      }
+    },
+    "children": {
+      "multiple": true,
+      "required": true,
+      "types": [
+        {
+          "type": "encryption_key_value",
+          "named": true
+        },
+        {
+          "type": "keyword_add",
+          "named": true
+        },
+        {
+          "type": "keyword_alter",
+          "named": true
+        },
+        {
+          "type": "keyword_column",
+          "named": true
+        },
+        {
+          "type": "keyword_drop",
+          "named": true
+        },
+        {
+          "type": "keyword_encryption",
+          "named": true
+        },
+        {
+          "type": "keyword_key",
+          "named": true
+        },
+        {
+          "type": "keyword_value",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
     "type": "alter_database",
     "named": true,
     "fields": {},
@@ -730,6 +784,10 @@
       "required": true,
       "types": [
         {
+          "type": "keyword_abort",
+          "named": true
+        },
+        {
           "type": "keyword_all",
           "named": true
         },
@@ -750,11 +808,19 @@
           "named": true
         },
         {
+          "type": "keyword_pause",
+          "named": true
+        },
+        {
           "type": "keyword_rebuild",
           "named": true
         },
         {
           "type": "keyword_reorganize",
+          "named": true
+        },
+        {
+          "type": "keyword_resume",
           "named": true
         },
         {
@@ -1592,6 +1658,10 @@
           "named": true
         },
         {
+          "type": "keyword_masked",
+          "named": true
+        },
+        {
           "type": "keyword_nocheck",
           "named": true
         },
@@ -1633,6 +1703,10 @@
         },
         {
           "type": "keyword_with",
+          "named": true
+        },
+        {
+          "type": "masked_with",
           "named": true
         },
         {
@@ -4311,6 +4385,10 @@
           "named": true
         },
         {
+          "type": "encrypted_with",
+          "named": true
+        },
+        {
           "type": "exists",
           "named": true
         },
@@ -4416,6 +4494,10 @@
         },
         {
           "type": "literal",
+          "named": true
+        },
+        {
+          "type": "masked_with",
           "named": true
         },
         {
@@ -4969,6 +5051,98 @@
         },
         {
           "type": "with_clause",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "create_column_encryption_key",
+    "named": true,
+    "fields": {
+      "name": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "identifier",
+            "named": true
+          }
+        ]
+      }
+    },
+    "children": {
+      "multiple": true,
+      "required": true,
+      "types": [
+        {
+          "type": "encryption_key_value",
+          "named": true
+        },
+        {
+          "type": "keyword_column",
+          "named": true
+        },
+        {
+          "type": "keyword_create",
+          "named": true
+        },
+        {
+          "type": "keyword_encryption",
+          "named": true
+        },
+        {
+          "type": "keyword_key",
+          "named": true
+        },
+        {
+          "type": "keyword_values",
+          "named": true
+        },
+        {
+          "type": "keyword_with",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "create_column_master_key",
+    "named": true,
+    "fields": {
+      "name": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "identifier",
+            "named": true
+          }
+        ]
+      }
+    },
+    "children": {
+      "multiple": true,
+      "required": true,
+      "types": [
+        {
+          "type": "keyword_column",
+          "named": true
+        },
+        {
+          "type": "keyword_create",
+          "named": true
+        },
+        {
+          "type": "keyword_key",
+          "named": true
+        },
+        {
+          "type": "keyword_master",
+          "named": true
+        },
+        {
+          "type": "with_options",
           "named": true
         }
       ]
@@ -7696,6 +7870,82 @@
     }
   },
   {
+    "type": "drop_column_encryption_key",
+    "named": true,
+    "fields": {
+      "name": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "identifier",
+            "named": true
+          }
+        ]
+      }
+    },
+    "children": {
+      "multiple": true,
+      "required": true,
+      "types": [
+        {
+          "type": "keyword_column",
+          "named": true
+        },
+        {
+          "type": "keyword_drop",
+          "named": true
+        },
+        {
+          "type": "keyword_encryption",
+          "named": true
+        },
+        {
+          "type": "keyword_key",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "drop_column_master_key",
+    "named": true,
+    "fields": {
+      "name": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "identifier",
+            "named": true
+          }
+        ]
+      }
+    },
+    "children": {
+      "multiple": true,
+      "required": true,
+      "types": [
+        {
+          "type": "keyword_column",
+          "named": true
+        },
+        {
+          "type": "keyword_drop",
+          "named": true
+        },
+        {
+          "type": "keyword_key",
+          "named": true
+        },
+        {
+          "type": "keyword_master",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
     "type": "drop_database",
     "named": true,
     "fields": {},
@@ -8439,6 +8689,40 @@
         },
         {
           "type": "object_reference",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "encrypted_with",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": true,
+      "types": [
+        {
+          "type": "keyword_encrypted",
+          "named": true
+        },
+        {
+          "type": "with_options",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "encryption_key_value",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": true,
+      "types": [
+        {
+          "type": "option",
           "named": true
         }
       ]
@@ -11481,6 +11765,10 @@
           "named": true
         },
         {
+          "type": "identifier",
+          "named": true
+        },
+        {
           "type": "invocation",
           "named": true
         },
@@ -11545,6 +11833,25 @@
       "types": [
         {
           "type": "keyword_null",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "masked_with",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": true,
+      "types": [
+        {
+          "type": "keyword_masked",
+          "named": true
+        },
+        {
+          "type": "with_options",
           "named": true
         }
       ]
@@ -13329,7 +13636,7 @@
     "fields": {},
     "children": {
       "multiple": true,
-      "required": true,
+      "required": false,
       "types": [
         {
           "type": "identifier",
@@ -13473,6 +13780,10 @@
         },
         {
           "type": "keyword_view",
+          "named": true
+        },
+        {
+          "type": "list",
           "named": true
         }
       ]
@@ -15442,6 +15753,10 @@
           "named": true
         },
         {
+          "type": "alter_column_encryption_key",
+          "named": true
+        },
+        {
           "type": "alter_database",
           "named": true
         },
@@ -15559,6 +15874,14 @@
         },
         {
           "type": "create_certificate",
+          "named": true
+        },
+        {
+          "type": "create_column_encryption_key",
+          "named": true
+        },
+        {
+          "type": "create_column_master_key",
           "named": true
         },
         {
@@ -15715,6 +16038,14 @@
         },
         {
           "type": "drop_certificate",
+          "named": true
+        },
+        {
+          "type": "drop_column_encryption_key",
+          "named": true
+        },
+        {
+          "type": "drop_column_master_key",
           "named": true
         },
         {
@@ -18768,6 +19099,10 @@
     "extra": true
   },
   {
+    "type": "keyword_abort",
+    "named": true
+  },
+  {
     "type": "keyword_absent",
     "named": true
   },
@@ -19108,6 +19443,10 @@
     "named": true
   },
   {
+    "type": "keyword_encrypted",
+    "named": true
+  },
+  {
     "type": "keyword_encryption",
     "named": true
   },
@@ -19384,6 +19723,10 @@
     "named": true
   },
   {
+    "type": "keyword_masked",
+    "named": true
+  },
+  {
     "type": "keyword_master",
     "named": true
   },
@@ -19552,6 +19895,10 @@
     "named": true
   },
   {
+    "type": "keyword_pause",
+    "named": true
+  },
+  {
     "type": "keyword_percent",
     "named": true
   },
@@ -19689,6 +20036,10 @@
   },
   {
     "type": "keyword_restart",
+    "named": true
+  },
+  {
+    "type": "keyword_resume",
     "named": true
   },
   {

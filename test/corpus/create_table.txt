@@ -1166,3 +1166,53 @@ CREATE TABLE t (period int, other int);
         (column_definition
           (identifier)
           (keyword_int))))))
+
+================================================================================
+Column-level security: MASKED WITH and ENCRYPTED WITH
+================================================================================
+
+CREATE TABLE t (
+  a varchar(10) MASKED WITH (FUNCTION = 'default()'),
+  b int ENCRYPTED WITH (COLUMN_ENCRYPTION_KEY = cek, ENCRYPTION_TYPE = DETERMINISTIC, ALGORITHM = 'AEAD_AES_256_CBC_HMAC_SHA_256') NOT NULL
+);
+
+--------------------------------------------------------------------------------
+
+(program
+  (statement
+    (create_table
+      (keyword_create)
+      (keyword_table)
+      (object_reference
+        (identifier))
+      (column_definitions
+        (column_definition
+          (identifier)
+          (varchar
+            (keyword_varchar)
+            (literal))
+          (masked_with
+            (keyword_masked)
+            (with_options
+              (keyword_with)
+              (option
+                (identifier)
+                (literal)))))
+        (column_definition
+          (identifier)
+          (keyword_int)
+          (encrypted_with
+            (keyword_encrypted)
+            (with_options
+              (keyword_with)
+              (option
+                (identifier)
+                (identifier))
+              (option
+                (identifier)
+                (identifier))
+              (option
+                (identifier)
+                (literal))))
+          (keyword_not)
+          (keyword_null))))))
