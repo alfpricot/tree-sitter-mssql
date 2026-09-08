@@ -46,6 +46,7 @@ export default {
   //   | { ENABLE | DISABLE } TRIGGER { ALL | name [, ...] }
   //   | SET ( option [, ...] )
   //   | REBUILD [WITH (options)]
+  //   | SWITCH [PARTITION expr] TO table [PARTITION expr]
   alter_table: $ => prec.right(seq(
     $.keyword_alter,
     $.keyword_table,
@@ -89,6 +90,13 @@ export default {
       ),
       seq($.keyword_set, paren_list($.option, true)),
       seq($.keyword_rebuild, optional($.with_options)),
+      seq(
+        $.keyword_switch,
+        optional(seq($.keyword_partition, field('from_partition', $._expression))),
+        $.keyword_to,
+        field('target', $.object_reference),
+        optional(seq($.keyword_partition, field('to_partition', $._expression))),
+      ),
     ),
   )),
 

@@ -1629,6 +1629,18 @@
       "type": "PATTERN",
       "value": "[oO][pP][eE][nN][dD][aA][tT][aA][sS][oO][uU][rR][cC][eE]"
     },
+    "keyword_switch": {
+      "type": "PATTERN",
+      "value": "[sS][wW][iI][tT][cC][hH]"
+    },
+    "keyword_match": {
+      "type": "PATTERN",
+      "value": "[mM][aA][tT][cC][hH]"
+    },
+    "keyword_shortest_path": {
+      "type": "PATTERN",
+      "value": "[sS][hH][oO][rR][tT][eE][sS][tT][__][pP][aA][tT][hH]"
+    },
     "is_not": {
       "type": "PREC_LEFT",
       "value": 0,
@@ -4398,6 +4410,10 @@
           },
           {
             "type": "SYMBOL",
+            "name": "graph_match_predicate"
+          },
+          {
+            "type": "SYMBOL",
             "name": "invocation"
           },
           {
@@ -5496,6 +5512,241 @@
         {
           "type": "SYMBOL",
           "name": "subquery"
+        }
+      ]
+    },
+    "graph_match_predicate": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "SYMBOL",
+          "name": "keyword_match"
+        },
+        {
+          "type": "SEQ",
+          "members": [
+            {
+              "type": "STRING",
+              "value": "("
+            },
+            {
+              "type": "SYMBOL",
+              "name": "graph_match_expr"
+            },
+            {
+              "type": "STRING",
+              "value": ")"
+            }
+          ]
+        }
+      ]
+    },
+    "graph_match_expr": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "CHOICE",
+          "members": [
+            {
+              "type": "SYMBOL",
+              "name": "graph_shortest_path"
+            },
+            {
+              "type": "SYMBOL",
+              "name": "graph_path"
+            }
+          ]
+        },
+        {
+          "type": "REPEAT",
+          "content": {
+            "type": "SEQ",
+            "members": [
+              {
+                "type": "STRING",
+                "value": ","
+              },
+              {
+                "type": "CHOICE",
+                "members": [
+                  {
+                    "type": "SYMBOL",
+                    "name": "graph_shortest_path"
+                  },
+                  {
+                    "type": "SYMBOL",
+                    "name": "graph_path"
+                  }
+                ]
+              }
+            ]
+          }
+        }
+      ]
+    },
+    "graph_shortest_path": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "SYMBOL",
+          "name": "keyword_shortest_path"
+        },
+        {
+          "type": "SEQ",
+          "members": [
+            {
+              "type": "STRING",
+              "value": "("
+            },
+            {
+              "type": "SEQ",
+              "members": [
+                {
+                  "type": "SYMBOL",
+                  "name": "graph_path"
+                },
+                {
+                  "type": "STRING",
+                  "value": "+"
+                }
+              ]
+            },
+            {
+              "type": "STRING",
+              "value": ")"
+            }
+          ]
+        }
+      ]
+    },
+    "graph_path": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "FIELD",
+          "name": "node",
+          "content": {
+            "type": "SYMBOL",
+            "name": "identifier"
+          }
+        },
+        {
+          "type": "REPEAT1",
+          "content": {
+            "type": "SYMBOL",
+            "name": "graph_hop"
+          }
+        }
+      ]
+    },
+    "graph_hop": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "CHOICE",
+          "members": [
+            {
+              "type": "SEQ",
+              "members": [
+                {
+                  "type": "STRING",
+                  "value": "-"
+                },
+                {
+                  "type": "SEQ",
+                  "members": [
+                    {
+                      "type": "STRING",
+                      "value": "("
+                    },
+                    {
+                      "type": "SYMBOL",
+                      "name": "_graph_edge_names"
+                    },
+                    {
+                      "type": "STRING",
+                      "value": ")"
+                    }
+                  ]
+                },
+                {
+                  "type": "STRING",
+                  "value": "->"
+                }
+              ]
+            },
+            {
+              "type": "SEQ",
+              "members": [
+                {
+                  "type": "STRING",
+                  "value": "<-"
+                },
+                {
+                  "type": "SEQ",
+                  "members": [
+                    {
+                      "type": "STRING",
+                      "value": "("
+                    },
+                    {
+                      "type": "SYMBOL",
+                      "name": "_graph_edge_names"
+                    },
+                    {
+                      "type": "STRING",
+                      "value": ")"
+                    }
+                  ]
+                },
+                {
+                  "type": "STRING",
+                  "value": "-"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "FIELD",
+          "name": "node",
+          "content": {
+            "type": "SYMBOL",
+            "name": "identifier"
+          }
+        }
+      ]
+    },
+    "_graph_edge_names": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "FIELD",
+          "name": "edge",
+          "content": {
+            "type": "SYMBOL",
+            "name": "identifier"
+          }
+        },
+        {
+          "type": "REPEAT",
+          "content": {
+            "type": "SEQ",
+            "members": [
+              {
+                "type": "STRING",
+                "value": "|"
+              },
+              {
+                "type": "FIELD",
+                "name": "edge",
+                "content": {
+                  "type": "SYMBOL",
+                  "name": "identifier"
+                }
+              }
+            ]
+          }
         }
       ]
     },
@@ -7115,6 +7366,10 @@
         },
         {
           "type": "SYMBOL",
+          "name": "_dollar_partition"
+        },
+        {
+          "type": "SYMBOL",
           "name": "_sqlcmd_variable"
         }
       ]
@@ -7146,6 +7401,10 @@
     "_dollar_action": {
       "type": "PATTERN",
       "value": "\\$[aA][cC][tT][iI][oO][nN]"
+    },
+    "_dollar_partition": {
+      "type": "PATTERN",
+      "value": "\\$[pP][aA][rR][tT][iI][tT][iI][oO][nN]"
     },
     "_sqlcmd_variable": {
       "type": "PATTERN",
@@ -15214,6 +15473,77 @@
                       {
                         "type": "SYMBOL",
                         "name": "with_options"
+                      },
+                      {
+                        "type": "BLANK"
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "type": "SEQ",
+                "members": [
+                  {
+                    "type": "SYMBOL",
+                    "name": "keyword_switch"
+                  },
+                  {
+                    "type": "CHOICE",
+                    "members": [
+                      {
+                        "type": "SEQ",
+                        "members": [
+                          {
+                            "type": "SYMBOL",
+                            "name": "keyword_partition"
+                          },
+                          {
+                            "type": "FIELD",
+                            "name": "from_partition",
+                            "content": {
+                              "type": "SYMBOL",
+                              "name": "_expression"
+                            }
+                          }
+                        ]
+                      },
+                      {
+                        "type": "BLANK"
+                      }
+                    ]
+                  },
+                  {
+                    "type": "SYMBOL",
+                    "name": "keyword_to"
+                  },
+                  {
+                    "type": "FIELD",
+                    "name": "target",
+                    "content": {
+                      "type": "SYMBOL",
+                      "name": "object_reference"
+                    }
+                  },
+                  {
+                    "type": "CHOICE",
+                    "members": [
+                      {
+                        "type": "SEQ",
+                        "members": [
+                          {
+                            "type": "SYMBOL",
+                            "name": "keyword_partition"
+                          },
+                          {
+                            "type": "FIELD",
+                            "name": "to_partition",
+                            "content": {
+                              "type": "SYMBOL",
+                              "name": "_expression"
+                            }
+                          }
+                        ]
                       },
                       {
                         "type": "BLANK"

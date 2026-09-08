@@ -445,6 +445,9 @@ export default {
   keyword_changes: _ => make_keyword("changes"),
   keyword_version: _ => make_keyword("version"),
   keyword_opendatasource: _ => make_keyword("opendatasource"),
+  keyword_switch: _ => make_keyword("switch"),
+  keyword_match: _ => make_keyword("match"),
+  keyword_shortest_path: _ => make_keyword("shortest_path"),
 
   // Operators
   is_not: $ => prec.left(seq($.keyword_is, $.keyword_not)),

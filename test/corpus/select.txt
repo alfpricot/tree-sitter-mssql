@@ -2620,3 +2620,131 @@ SELECT * FROM t TABLESAMPLE (10 PERCENT) WITH (NOLOCK);
         (keyword_with)
         (table_hint_item
           (identifier))))))
+
+================================================================================
+Graph table MATCH predicate
+================================================================================
+
+SELECT * FROM Person p, likes l, Person p2 WHERE MATCH(p-(l)->p2);
+SELECT * FROM Person p, likes l, Person p2 WHERE MATCH(p2<-(l)-p);
+SELECT * FROM Person p WHERE MATCH(SHORTEST_PATH(p-(likes)->p2+));
+SELECT * FROM Person p, likes l, Person p2 WHERE MATCH(p-(led_by|reports_to)->p2);
+
+--------------------------------------------------------------------------------
+
+(program
+  (statement
+    (select
+      (keyword_select)
+      (select_expression
+        (term
+          (all_fields))))
+    (from
+      (keyword_from)
+      (relation
+        (object_reference
+          (identifier))
+        (identifier))
+      (relation
+        (object_reference
+          (identifier))
+        (identifier))
+      (relation
+        (object_reference
+          (identifier))
+        (identifier))
+      (where
+        (keyword_where)
+        (graph_match_predicate
+          (keyword_match)
+          (graph_match_expr
+            (graph_path
+              (identifier)
+              (graph_hop
+                (identifier)
+                (identifier))))))))
+  (statement
+    (select
+      (keyword_select)
+      (select_expression
+        (term
+          (all_fields))))
+    (from
+      (keyword_from)
+      (relation
+        (object_reference
+          (identifier))
+        (identifier))
+      (relation
+        (object_reference
+          (identifier))
+        (identifier))
+      (relation
+        (object_reference
+          (identifier))
+        (identifier))
+      (where
+        (keyword_where)
+        (graph_match_predicate
+          (keyword_match)
+          (graph_match_expr
+            (graph_path
+              (identifier)
+              (graph_hop
+                (identifier)
+                (identifier))))))))
+  (statement
+    (select
+      (keyword_select)
+      (select_expression
+        (term
+          (all_fields))))
+    (from
+      (keyword_from)
+      (relation
+        (object_reference
+          (identifier))
+        (identifier))
+      (where
+        (keyword_where)
+        (graph_match_predicate
+          (keyword_match)
+          (graph_match_expr
+            (graph_shortest_path
+              (keyword_shortest_path)
+              (graph_path
+                (identifier)
+                (graph_hop
+                  (identifier)
+                  (identifier)))))))))
+  (statement
+    (select
+      (keyword_select)
+      (select_expression
+        (term
+          (all_fields))))
+    (from
+      (keyword_from)
+      (relation
+        (object_reference
+          (identifier))
+        (identifier))
+      (relation
+        (object_reference
+          (identifier))
+        (identifier))
+      (relation
+        (object_reference
+          (identifier))
+        (identifier))
+      (where
+        (keyword_where)
+        (graph_match_predicate
+          (keyword_match)
+          (graph_match_expr
+            (graph_path
+              (identifier)
+              (graph_hop
+                (identifier)
+                (identifier)
+                (identifier)))))))))

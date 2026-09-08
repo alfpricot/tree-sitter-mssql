@@ -12,6 +12,7 @@ export default {
       $.subquery,
       $.cast,
       $.exists,
+      $.graph_match_predicate,
       $.invocation,
       $.binary_expression,
       $.unary_expression,
@@ -228,6 +229,51 @@ export default {
     $.subquery,
   ),
 
+  // MATCH(...) — a graph-table predicate (SQL Server 2017). The arrow
+  // pattern (-()->, <-()-) is modeled explicitly rather than left to the
+  // ordinary expression grammar: `-`, `(`, `)` and `>` all already lex as
+  // operators, so falling through to _expression would produce a plausible
+  // but meaningless binary_expression tree instead of a clean parse.
+  graph_match_predicate: $ => seq(
+    $.keyword_match,
+    wrapped_in_parenthesis($.graph_match_expr),
+  ),
+
+  graph_match_expr: $ => comma_list(choice($.graph_shortest_path, $.graph_path), true),
+
+  // SHORTEST_PATH(path+) — the arbitrary-length form of a path. SQL Server
+  // supports only the `+` (one-or-more) quantifier here, not `*` — a
+  // shortest-path search needs at least one edge to traverse.
+  graph_shortest_path: $ => seq(
+    $.keyword_shortest_path,
+    wrapped_in_parenthesis(seq(
+      $.graph_path,
+      '+',
+    )),
+  ),
+
+  // node -(edge)-> node [ -(edge)-> node ... ], or the reverse <-(edge)-
+  // form. Each hop is one edge traversal; a path chains one or more.
+  graph_path: $ => seq(
+    field('node', $.identifier),
+    repeat1($.graph_hop),
+  ),
+
+  graph_hop: $ => seq(
+    choice(
+      seq('-', wrapped_in_parenthesis($._graph_edge_names), '->'),
+      seq('<-', wrapped_in_parenthesis($._graph_edge_names), '-'),
+    ),
+    field('node', $.identifier),
+  ),
+
+  // One or more `|`-separated edge-table names — a polymorphic edge
+  // pattern spanning heterogeneous edge tables, e.g. `-(led_by|reports_to)->`.
+  _graph_edge_names: $ => seq(
+    field('edge', $.identifier),
+    repeat(seq('|', field('edge', $.identifier))),
+  ),
+
   // name(args). `DEFAULT` is a legal argument to a procedure or function
   // call, and STRING_AGG takes a WITHIN GROUP (ORDER BY ...) suffix. The
   // argument list may end in `RETURNING type` (JSON_VALUE, 2025) or in
@@ -400,6 +446,11 @@ export default {
     // OUTPUT clause (INSERT/UPDATE/DELETE). Not a valid _identifier on its
     // own, since identifiers can't start with `$`.
     $._dollar_action,
+    // $PARTITION: the pseudo-function prefix for querying which partition
+    // a value belongs to ($PARTITION.fn(col)). Follows the same pattern as
+    // $action — not a valid _identifier on its own, modeled as one more
+    // identifier spelling so it can stand in object_reference's leading part.
+    $._dollar_partition,
     // $(var): a SQLCMD scripting variable, substituted by the sqlcmd/SSMS
     // client before the batch reaches the server. Textual substitution, so
     // it can appear anywhere an identifier or literal can — modeled as one
@@ -419,6 +470,7 @@ export default {
   // escape it, the same convention `_bracketed_identifier` follows for `]]`.
   _double_quote_string: _ => /"([^"]|"")+"/,
   _dollar_action: _ => /\$[aA][cC][tT][iI][oO][nN]/,
+  _dollar_partition: _ => /\$[pP][aA][rR][tT][iI][tT][iI][oO][nN]/,
   _sqlcmd_variable: _ => /\$\([A-Za-z_][0-9A-Za-z_]*\)/,
 
 };
