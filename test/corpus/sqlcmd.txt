@@ -69,14 +69,14 @@ GO
         (object_reference
           database: (identifier)
           schema: (identifier)
-          name: (identifier)))
-      (where
-        (keyword_where)
-        predicate: (binary_expression
-          left: (field
-            name: (identifier))
-          right: (field
-            name: (identifier))))))
+          name: (identifier))))
+    (where
+      (keyword_where)
+      predicate: (binary_expression
+        left: (field
+          name: (identifier))
+        right: (field
+          name: (identifier)))))
   (go_statement
     (keyword_go)))
 

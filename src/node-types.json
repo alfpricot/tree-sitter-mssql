@@ -1792,6 +1792,14 @@
           "named": true
         },
         {
+          "type": "group_by",
+          "named": true
+        },
+        {
+          "type": "having",
+          "named": true
+        },
+        {
           "type": "identifier",
           "named": true
         },
@@ -1828,6 +1836,18 @@
           "named": true
         },
         {
+          "type": "offset_fetch",
+          "named": true
+        },
+        {
+          "type": "option_clause",
+          "named": true
+        },
+        {
+          "type": "order_by",
+          "named": true
+        },
+        {
           "type": "select",
           "named": true
         },
@@ -1837,6 +1857,14 @@
         },
         {
           "type": "view_option",
+          "named": true
+        },
+        {
+          "type": "where",
+          "named": true
+        },
+        {
+          "type": "window_clause",
           "named": true
         },
         {
@@ -6727,6 +6755,14 @@
           "named": true
         },
         {
+          "type": "group_by",
+          "named": true
+        },
+        {
+          "type": "having",
+          "named": true
+        },
+        {
           "type": "identifier",
           "named": true
         },
@@ -6771,6 +6807,18 @@
           "named": true
         },
         {
+          "type": "offset_fetch",
+          "named": true
+        },
+        {
+          "type": "option_clause",
+          "named": true
+        },
+        {
+          "type": "order_by",
+          "named": true
+        },
+        {
           "type": "select",
           "named": true
         },
@@ -6780,6 +6828,14 @@
         },
         {
           "type": "view_option",
+          "named": true
+        },
+        {
+          "type": "where",
+          "named": true
+        },
+        {
+          "type": "window_clause",
           "named": true
         },
         {
@@ -7346,6 +7402,14 @@
           "named": true
         },
         {
+          "type": "group_by",
+          "named": true
+        },
+        {
+          "type": "having",
+          "named": true
+        },
+        {
           "type": "identifier",
           "named": true
         },
@@ -7374,11 +7438,31 @@
           "named": true
         },
         {
+          "type": "offset_fetch",
+          "named": true
+        },
+        {
+          "type": "option_clause",
+          "named": true
+        },
+        {
+          "type": "order_by",
+          "named": true
+        },
+        {
           "type": "select",
           "named": true
         },
         {
           "type": "set_operation",
+          "named": true
+        },
+        {
+          "type": "where",
+          "named": true
+        },
+        {
+          "type": "window_clause",
           "named": true
         },
         {
@@ -7410,6 +7494,10 @@
         },
         {
           "type": "object_reference",
+          "named": true
+        },
+        {
+          "type": "option_clause",
           "named": true
         },
         {
@@ -9306,14 +9394,6 @@
           "named": true
         },
         {
-          "type": "group_by",
-          "named": true
-        },
-        {
-          "type": "having",
-          "named": true
-        },
-        {
           "type": "join",
           "named": true
         },
@@ -9330,19 +9410,7 @@
           "named": true
         },
         {
-          "type": "offset_fetch",
-          "named": true
-        },
-        {
           "type": "openjson_schema",
-          "named": true
-        },
-        {
-          "type": "option_clause",
-          "named": true
-        },
-        {
-          "type": "order_by",
           "named": true
         },
         {
@@ -9363,10 +9431,6 @@
         },
         {
           "type": "unpivot_clause",
-          "named": true
-        },
-        {
-          "type": "where",
           "named": true
         }
       ]
@@ -9701,6 +9765,14 @@
           "named": true
         },
         {
+          "type": "group_by",
+          "named": true
+        },
+        {
+          "type": "having",
+          "named": true
+        },
+        {
           "type": "keyword_as",
           "named": true
         },
@@ -9729,6 +9801,18 @@
           "named": true
         },
         {
+          "type": "offset_fetch",
+          "named": true
+        },
+        {
+          "type": "option_clause",
+          "named": true
+        },
+        {
+          "type": "order_by",
+          "named": true
+        },
+        {
           "type": "select",
           "named": true
         },
@@ -9738,6 +9822,14 @@
         },
         {
           "type": "statement",
+          "named": true
+        },
+        {
+          "type": "where",
+          "named": true
+        },
+        {
+          "type": "window_clause",
           "named": true
         },
         {
@@ -10548,6 +10640,14 @@
           "named": true
         },
         {
+          "type": "group_by",
+          "named": true
+        },
+        {
+          "type": "having",
+          "named": true
+        },
+        {
           "type": "keyword_default",
           "named": true
         },
@@ -10576,6 +10676,18 @@
           "named": true
         },
         {
+          "type": "offset_fetch",
+          "named": true
+        },
+        {
+          "type": "option_clause",
+          "named": true
+        },
+        {
+          "type": "order_by",
+          "named": true
+        },
+        {
           "type": "output_clause",
           "named": true
         },
@@ -10593,6 +10705,14 @@
         },
         {
           "type": "top_clause",
+          "named": true
+        },
+        {
+          "type": "where",
+          "named": true
+        },
+        {
+          "type": "window_clause",
           "named": true
         },
         {
@@ -11859,6 +11979,36 @@
         },
         {
           "type": "keyword_to",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "named_window",
+    "named": true,
+    "fields": {
+      "name": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "identifier",
+            "named": true
+          }
+        ]
+      }
+    },
+    "children": {
+      "multiple": true,
+      "required": true,
+      "types": [
+        {
+          "type": "keyword_as",
+          "named": true
+        },
+        {
+          "type": "window_specification",
           "named": true
         }
       ]
@@ -15006,6 +15156,14 @@
           "named": true
         },
         {
+          "type": "group_by",
+          "named": true
+        },
+        {
+          "type": "having",
+          "named": true
+        },
+        {
           "type": "keyword_into",
           "named": true
         },
@@ -15014,7 +15172,27 @@
           "named": true
         },
         {
+          "type": "offset_fetch",
+          "named": true
+        },
+        {
+          "type": "option_clause",
+          "named": true
+        },
+        {
+          "type": "order_by",
+          "named": true
+        },
+        {
           "type": "select",
+          "named": true
+        },
+        {
+          "type": "where",
+          "named": true
+        },
+        {
+          "type": "window_clause",
           "named": true
         }
       ]
@@ -15660,6 +15838,14 @@
           "named": true
         },
         {
+          "type": "group_by",
+          "named": true
+        },
+        {
+          "type": "having",
+          "named": true
+        },
+        {
           "type": "if_statement",
           "named": true
         },
@@ -15696,11 +15882,23 @@
           "named": true
         },
         {
+          "type": "offset_fetch",
+          "named": true
+        },
+        {
           "type": "open_cursor_statement",
           "named": true
         },
         {
           "type": "open_key_statement",
+          "named": true
+        },
+        {
+          "type": "option_clause",
+          "named": true
+        },
+        {
+          "type": "order_by",
           "named": true
         },
         {
@@ -15796,7 +15994,15 @@
           "named": true
         },
         {
+          "type": "where",
+          "named": true
+        },
+        {
           "type": "while_statement",
+          "named": true
+        },
+        {
+          "type": "window_clause",
           "named": true
         },
         {
@@ -15831,6 +16037,14 @@
           "named": true
         },
         {
+          "type": "group_by",
+          "named": true
+        },
+        {
+          "type": "having",
+          "named": true
+        },
+        {
           "type": "keyword_into",
           "named": true
         },
@@ -15843,11 +16057,31 @@
           "named": true
         },
         {
+          "type": "offset_fetch",
+          "named": true
+        },
+        {
+          "type": "option_clause",
+          "named": true
+        },
+        {
+          "type": "order_by",
+          "named": true
+        },
+        {
           "type": "select",
           "named": true
         },
         {
           "type": "set_operation",
+          "named": true
+        },
+        {
+          "type": "where",
+          "named": true
+        },
+        {
+          "type": "window_clause",
           "named": true
         },
         {
@@ -17110,6 +17344,10 @@
           "named": true
         },
         {
+          "type": "option_clause",
+          "named": true
+        },
+        {
           "type": "output_clause",
           "named": true
         },
@@ -18143,6 +18381,25 @@
     }
   },
   {
+    "type": "window_clause",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": true,
+      "types": [
+        {
+          "type": "keyword_window",
+          "named": true
+        },
+        {
+          "type": "named_window",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
     "type": "window_frame",
     "named": true,
     "fields": {},
@@ -18176,7 +18433,18 @@
   {
     "type": "window_function",
     "named": true,
-    "fields": {},
+    "fields": {
+      "window": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "identifier",
+            "named": true
+          }
+        ]
+      }
+    },
     "children": {
       "multiple": true,
       "required": true,
@@ -18199,7 +18467,18 @@
   {
     "type": "window_specification",
     "named": true,
-    "fields": {},
+    "fields": {
+      "base_window": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "identifier",
+            "named": true
+          }
+        ]
+      }
+    },
     "children": {
       "multiple": true,
       "required": false,
@@ -19762,6 +20041,10 @@
   },
   {
     "type": "keyword_while",
+    "named": true
+  },
+  {
+    "type": "keyword_window",
     "named": true
   },
   {

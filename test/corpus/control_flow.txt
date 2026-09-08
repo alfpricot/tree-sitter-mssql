@@ -292,25 +292,25 @@ END
               (relation
                 (object_reference
                   (identifier)
-                  (identifier)))
-              (where
-                (keyword_where)
+                  (identifier))))
+            (where
+              (keyword_where)
+              (binary_expression
                 (binary_expression
-                  (binary_expression
-                    (field
+                  (field
+                    (identifier))
+                  (invocation
+                    (object_reference
                       (identifier))
-                    (invocation
-                      (object_reference
-                        (identifier))
-                      (term
-                        (literal))))
-                  (keyword_and)
-                  (binary_expression
-                    (field
-                      (identifier))
-                    (keyword_in)
-                    (list
-                      (literal)))))))))
+                    (term
+                      (literal))))
+                (keyword_and)
+                (binary_expression
+                  (field
+                    (identifier))
+                  (keyword_in)
+                  (list
+                    (literal))))))))
       (block
         (keyword_begin)
         (statement

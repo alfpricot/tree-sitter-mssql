@@ -1,5 +1,20 @@
 import { aliased_with_columns, comma_list, optional_parenthesis, paren_list, paren_pair, wrapped_in_parenthesis } from "../helpers.js";
 
+// ORDER BY/OFFSET FETCH/OPTION/FOR — the clauses that trail a single query
+// specification and, duplicated verbatim, also trail a whole set_operation
+// (see the comments on each below). A plain function rather than a shared
+// named rule, matching event_session_body() in create.js: every segment
+// here is optional, and a named rule that can match the empty string is
+// rejected by tree-sitter unless it is the grammar's start rule.
+function trailing_sort_and_hint_clauses($) {
+  return seq(
+    optional($.order_by),
+    optional($.offset_fetch),
+    optional($.option_clause),
+    optional($.for_clause),
+  );
+}
+
 export default {
 
   // WITH [XMLNAMESPACES (...) ,] cte [, ...] — the namespace declaration
@@ -33,7 +48,12 @@ export default {
     ),
   ),
 
-  set_operation: $ => seq(
+  // A union's own ORDER BY/OFFSET FETCH/OPTION sort and hint the combined
+  // result, not the last branch — attaching them here (rather than letting
+  // them fall inside the last branch's own _select_statement) is what makes
+  // `SELECT a FROM t UNION SELECT b FROM u ORDER BY 1` describe a query with
+  // one sort over the whole union instead of a sort scoped to branch two.
+  set_operation: $ => prec.right(seq(
     $._select_statement,
     repeat1(
       seq(
@@ -48,9 +68,21 @@ export default {
         $._select_statement,
       ),
     ),
-  ),
+    trailing_sort_and_hint_clauses($),
+  )),
 
-  // SELECT ... [INTO new_table] [FROM ...] [FOR XML ... | FOR JSON ... | FOR UPDATE]
+  // SELECT ... [INTO new_table] [FROM ... [WHERE ...] [GROUP BY ...]
+  // [HAVING ...]] [WINDOW ...] [ORDER BY ...] [OFFSET ... FETCH ...]
+  // [OPTION (...)] [FOR XML ... | FOR JSON ... | FOR UPDATE]
+  //
+  // WHERE/GROUP BY/HAVING are nested under FROM (real T-SQL rejects all
+  // three on a FROM-less SELECT), not independently optional the way the
+  // sort/hint clauses are — a bare `SELECT 1 WHERE 1=1` must still error.
+  // WHERE/GROUP BY/HAVING sit here rather than on `set_operation` — they
+  // scope to one query_specification, never to a union as a whole. The
+  // sort/hint clauses are duplicated on `set_operation` for the same reason
+  // in reverse: as a lone statement's own trailing clauses here, and again
+  // on `set_operation` for when this is the last branch of a union.
   _select_statement: $ => optional_parenthesis(
     seq(
       $.select,
@@ -60,8 +92,16 @@ export default {
           $.object_reference,
         ),
       ),
-      optional($.from),
-      optional($.for_clause),
+      optional(
+        seq(
+          $.from,
+          optional($.where),
+          optional($.group_by),
+          optional($.having),
+        ),
+      ),
+      optional($.window_clause),
+      trailing_sort_and_hint_clauses($),
     ),
   ),
 
@@ -183,18 +223,44 @@ export default {
       ),
   ),
 
+  // The optional leading identifier is `existing_window_name` — a
+  // previously-declared named window (see window_clause below) this
+  // specification refines, e.g. `WINDOW w AS (w2 ORDER BY a)` or
+  // `SUM(x) OVER (w2 ORDER BY a)`.
   window_specification: $ => wrapped_in_parenthesis(
     seq(
+      optional(field('base_window', $.identifier)),
       optional($.partition_by),
       optional($.order_by),
       optional($.window_frame),
     ),
   ),
 
+  // OVER may reference a named window declared in the query's own WINDOW
+  // clause (SQL Server 2022) instead of repeating a window_specification.
   window_function: $ => seq(
       $.invocation,
       $.keyword_over,
-      $.window_specification,
+      choice($.window_specification, field('window', $.identifier)),
+  ),
+
+  // WINDOW w AS (spec) [, ...] — SQL Server 2022. Declares one or more
+  // named windows an OVER clause elsewhere in the same query can reference
+  // by name instead of repeating its specification.
+  //
+  // WINDOW becoming a keyword takes the AS-less alias slot right after a
+  // relation reduces, the same collision class as `bulk`/`tablesample`
+  // (see AGENTS.md): `FROM t window` errors; `FROM t AS window` still
+  // works, and `SELECT window FROM t` (the column slot) is unaffected.
+  window_clause: $ => seq(
+    $.keyword_window,
+    comma_list($.named_window, true),
+  ),
+
+  named_window: $ => seq(
+    field('name', $.identifier),
+    $.keyword_as,
+    $.window_specification,
   ),
 
   _alias: $ => seq(
@@ -216,12 +282,6 @@ export default {
         $.unpivot_clause,
       ),
     ),
-    optional($.where),
-    optional($.group_by),
-    optional($.having),
-    optional($.order_by),
-    optional($.offset_fetch),
-    optional($.option_clause),
   ),
 
   // OFFSET n { ROW | ROWS } [FETCH { FIRST | NEXT } n { ROW | ROWS } ONLY]
