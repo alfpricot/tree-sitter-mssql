@@ -1,0 +1,194 @@
+==================
+^select
+==================
+
+selections
+
+---
+
+(program
+  (ERROR
+    (identifier)))
+
+==================
+^selections for your perusal
+==================
+
+selections for your perusal
+
+---
+
+(program
+  (ERROR
+    (identifier)
+    (keyword_for)))
+
+==================
+^inserted_at
+==================
+
+inserted_at
+
+---
+
+(program
+  (statement
+    (label_statement
+      (identifier)
+      (MISSING ":"))))
+
+==================
+^updated_at
+==================
+
+updated_at
+
+---
+
+(program
+  (ERROR
+    (identifier)))
+
+==================
+^deleted_at
+==================
+
+deleted_at
+
+---
+
+(program
+  (ERROR
+    (identifier)))
+
+==================
+^created_at
+==================
+
+created_at
+
+---
+
+(program
+  (ERROR
+    (identifier)))
+
+================================================================================
+A positional argument after a named one is an error, as SQL Server's Msg 119 says
+================================================================================
+
+EXEC dbo.p @a = 1, 2;
+
+--------------------------------------------------------------------------------
+
+(program
+  (statement
+    (execute_statement
+      (keyword_exec)
+      (object_reference
+        (identifier)
+        (identifier))
+      (exec_argument
+        (identifier)
+        (literal))))
+  (ERROR
+    (literal)))
+
+================================================================================
+An expression is not a procedure argument
+================================================================================
+
+EXEC dbo.p 1 + 2;
+
+--------------------------------------------------------------------------------
+
+(program
+  (statement
+    (execute_statement
+      (keyword_exec)
+      (object_reference
+        (identifier)
+        (identifier))
+      (ERROR
+        (literal))
+      (exec_argument
+        (unary_expression
+          (literal))))))
+
+================================================================================
+A run of words after WITH inside a function call is not a clause
+================================================================================
+
+SELECT dbo.f(1 WITH nonsense words);
+
+--------------------------------------------------------------------------------
+
+(program
+  (statement
+    (select
+      (keyword_select)
+      (select_expression
+        (term
+          (invocation
+            (object_reference
+              (identifier)
+              (identifier))
+            (term
+              (literal))
+            (ERROR
+              (keyword_with))))))))
+
+==================
+CREATE CERTIFICATE cannot both load a source and generate a subject
+==================
+
+CREATE CERTIFICATE c FROM FILE = 'x' WITH SUBJECT = 's';
+
+---
+
+(program
+  (statement
+    (create_certificate
+      (keyword_create)
+      (keyword_certificate)
+      name: (identifier)
+      (keyword_from)
+      (option
+        name: (identifier)
+        value: (literal))))
+  (ERROR
+    (keyword_with)))
+
+==================
+CREATE SECURITY POLICY takes only ADD predicates
+==================
+
+CREATE SECURITY POLICY p DROP FILTER PREDICATE ON t;
+
+---
+
+(program
+  (ERROR
+    (keyword_create)
+    (keyword_security)
+    (keyword_policy)
+    (identifier)
+    (keyword_drop)
+    (keyword_filter)
+    (keyword_predicate)
+    (keyword_on)))
+
+==================
+ALTER SECURITY POLICY needs a clause
+==================
+
+ALTER SECURITY POLICY p;
+
+---
+
+(program
+  (ERROR
+    (keyword_alter)
+    (keyword_security)
+    (keyword_policy)
+    (identifier)))

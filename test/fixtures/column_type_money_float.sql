@@ -1,0 +1,5 @@
+CREATE TABLE dbo.T (Amount MONEY);
+GO
+
+CREATE TABLE dbo.T (Value FLOAT);
+GO

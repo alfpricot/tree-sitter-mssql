@@ -1,0 +1,5 @@
+BEGIN TRANSACTION AnythingGoes;
+GO
+
+BEGIN TRANSACTION [tmp_scratch];
+GO

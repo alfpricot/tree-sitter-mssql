@@ -1,0 +1,5 @@
+SELECT *
+  FROM LINKED01.AppDB.dbo.Customer;
+
+SELECT *
+  FROM OPENQUERY(LINKED01, 'SELECT Id, Name FROM dbo.Customer');

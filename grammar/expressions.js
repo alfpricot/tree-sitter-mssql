@@ -1,0 +1,380 @@
+import { optional_parenthesis, paren_list, comma_list, wrapped_in_parenthesis } from "./helpers.js";
+
+export default {
+
+  _expression: $ => prec(1,
+    choice(
+      $.literal,
+      alias($._qualified_field, $.field),
+      $.list,
+      $.case,
+      $.window_function,
+      $.subquery,
+      $.cast,
+      $.exists,
+      $.invocation,
+      $.binary_expression,
+      $.unary_expression,
+      $.between_expression,
+      $.parenthesized_expression,
+      $.next_value_for,
+      $.odbc_function_escape,
+      $.method_call,
+      $.trim,
+      $.json_object,
+      $.json_array,
+      $.ai_generate_embeddings,
+    )
+  ),
+
+  // TRIM([LEADING | TRAILING | BOTH] [characters FROM] string) — the
+  // 2022 form puts a FROM keyword inside the argument list, so TRIM is its
+  // own node rather than an invocation. A plain TRIM(x) is this node too:
+  // TRIM lexes as a keyword wherever an expression can start.
+  trim: $ => seq(
+    $.keyword_trim,
+    wrapped_in_parenthesis(seq(
+      optional(choice($.keyword_leading, $.keyword_trailing, $.keyword_both)),
+      optional(seq(field('characters', $._expression), $.keyword_from)),
+      field('parameter', $._expression),
+    )),
+  ),
+
+  // JSON_OBJECT('key' : value [, ...] [NULL ON NULL | ABSENT ON NULL] [RETURNING json])
+  // JSON_ARRAY(value [, ...] [NULL ON NULL | ABSENT ON NULL] [RETURNING json])
+  // The 2022 JSON constructors: a `key : value` pair list and two trailing
+  // keyword clauses that no ordinary function call has.
+  json_object: $ => seq(
+    $.keyword_json_object,
+    wrapped_in_parenthesis(seq(
+      comma_list($.json_key_value),
+      optional($.json_null_clause),
+      optional($.returning_clause),
+    )),
+  ),
+
+  json_key_value: $ => seq(
+    field('key', $._expression),
+    ':',
+    field('value', $._expression),
+  ),
+
+  json_array: $ => seq(
+    $.keyword_json_array,
+    wrapped_in_parenthesis(seq(
+      comma_list($._expression),
+      optional($.json_null_clause),
+      optional($.returning_clause),
+    )),
+  ),
+
+  json_null_clause: $ => seq(
+    choice($.keyword_null, $.keyword_absent),
+    $.keyword_on,
+    $.keyword_null,
+  ),
+
+  // RETURNING type — the result type of JSON_OBJECT/JSON_ARRAY (2022) and
+  // of JSON_VALUE (2025), where it is the last thing in the argument list.
+  returning_clause: $ => seq($.keyword_returning, $._type),
+
+  // WITH ARRAY WRAPPER — JSON_QUERY's (2025) request to wrap a scalar or
+  // object result in an array, the last thing in its argument list.
+  json_wrapper_clause: $ => seq($.keyword_with, $.keyword_array, $.keyword_wrapper),
+
+  // AI_GENERATE_EMBEDDINGS(expression USE MODEL model [PARAMETERS json]) (2025)
+  ai_generate_embeddings: $ => seq(
+    $.keyword_ai_generate_embeddings,
+    wrapped_in_parenthesis(seq(
+      field('parameter', $._expression),
+      $.keyword_use,
+      $.keyword_model,
+      field('model', $.object_reference),
+      optional(seq($.keyword_parameters, field('parameters', $._expression))),
+    )),
+  ),
+
+  // A method call on a parenthesized expression or subquery, which is how
+  // the XML and CLR methods are applied to a query result:
+  //   (SELECT ... FOR XML PATH(''), TYPE).value('.', 'nvarchar(max)')
+  // A method on a variable or column (`@x.value(...)`) is an ordinary
+  // invocation whose object reference happens to be two-part.
+  method_call: $ => prec(1, seq(
+    choice($.subquery, $.parenthesized_expression),
+    '.',
+    field('method', $.identifier),
+    paren_list(field('parameter', $.term)),
+  )),
+
+  // ODBC scalar-function escape sequence, e.g. {fn OCTET_LENGTH(@x)}.
+  // A compatibility form for drivers that don't speak T-SQL's own function
+  // syntax directly; SQL Server unwraps it and evaluates the call inside.
+  odbc_function_escape: $ => seq('{', $.keyword_fn, $.invocation, '}'),
+
+  // NEXT VALUE FOR sequence
+  next_value_for: $ => seq($.keyword_next, $.keyword_value, $.keyword_for, $.object_reference),
+
+  // Up to four parts: server.database.schema.name. A linked-server
+  // reference is the only place the fourth part appears.
+  object_reference: $ => choice(
+    seq(
+      field('server', $.identifier),
+      '.',
+      field('database', $.identifier),
+      '.',
+      field('schema', $.identifier),
+      '.',
+      field('name', $.identifier),
+    ),
+    seq(
+      field('database', $.identifier),
+      '.',
+      field('schema', $.identifier),
+      '.',
+      field('name', $.identifier),
+    ),
+    seq(
+      field('schema', $.identifier),
+      '.',
+      field('name', $.identifier),
+    ),
+    field('name', $.identifier),
+  ),
+
+  field: $ => field('name', $.identifier),
+
+  _qualified_field: $ => seq(
+    optional(
+      seq(
+        optional_parenthesis($.object_reference),
+        '.',
+      ),
+    ),
+    field('name', $.identifier),
+  ),
+
+  // CASE input WHEN value THEN result ... [ELSE result] END
+  // CASE WHEN predicate THEN result ... [ELSE result] END
+  // Each WHEN branch is a named node so a consumer can count it as a
+  // decision point.
+  case: $ => seq(
+    $.keyword_case,
+    optional(field('input', $._expression)),
+    repeat1($.when_clause),
+    optional(seq($.keyword_else, field('else', $._expression))),
+    $.keyword_end,
+  ),
+
+  when_clause: $ => seq(
+    $.keyword_when,
+    field('condition', $._expression),
+    $.keyword_then,
+    field('result', $._expression),
+  ),
+
+  // CAST(x AS type) and TRY_CAST(x AS type). CONVERT, TRY_CONVERT and PARSE
+  // are ordinary invocations — their type argument reads as an identifier.
+  cast: $ => seq(
+    field('name', choice($.keyword_cast, $.keyword_try_cast)),
+    wrapped_in_parenthesis(
+      seq(
+        field('parameter', $._expression),
+        $.keyword_as,
+        $._type,
+      ),
+    ),
+  ),
+
+  exists: $ => seq(
+    $.keyword_exists,
+    $.subquery,
+  ),
+
+  // name(args). `DEFAULT` is a legal argument to a procedure or function
+  // call, and STRING_AGG takes a WITHIN GROUP (ORDER BY ...) suffix. The
+  // argument list may end in `RETURNING type` (JSON_VALUE, 2025) or in
+  // JSON_QUERY's `WITH ARRAY WRAPPER` (2025).
+  invocation: $ => prec(1,
+    seq(
+      $.object_reference,
+      wrapped_in_parenthesis(seq(
+        comma_list(
+          seq(
+            optional($.keyword_distinct),
+            field('parameter', choice($.term, $.keyword_default)),
+          ),
+        ),
+        optional($.returning_clause),
+        optional($.json_wrapper_clause),
+      )),
+      optional(seq(
+        $.keyword_within,
+        $.keyword_group,
+        wrapped_in_parenthesis($.order_by),
+      )),
+    ),
+  ),
+
+  parenthesized_expression: $ => prec(2,
+    wrapped_in_parenthesis($._expression)
+  ),
+
+  // Bitwise operators. `^` (exclusive or) is on the binary_exp level.
+  op_other: $ => token(
+    choice(
+      '|',
+      '&',
+    ),
+  ),
+
+  binary_expression: $ => choice(
+    ...[
+      ['+', 'binary_plus'],
+      ['-', 'binary_plus'],
+      ['*', 'binary_times'],
+      ['/', 'binary_times'],
+      ['%', 'binary_times'],
+      ['^', 'binary_exp'],
+      ['=', 'binary_relation'],
+      ['<', 'binary_relation'],
+      ['<=', 'binary_relation'],
+      ['!=', 'binary_relation'],
+      ['>=', 'binary_relation'],
+      ['>', 'binary_relation'],
+      ['<>', 'binary_relation'],
+      ['!<', 'binary_relation'],
+      ['!>', 'binary_relation'],
+      [$.op_other, 'binary_other'],
+      [$.keyword_is, 'binary_is'],
+      [$.is_not, 'binary_is'],
+      [$.keyword_collate, 'binary_is'],
+      [$.keyword_like, 'pattern_matching'],
+      [$.not_like, 'pattern_matching'],
+      // binary_is precedence disambiguates `(is not distinct from)` from an
+      // `is (not distinct from)` with a unary `not`
+      [$.distinct_from, 'binary_is'],
+      [$.not_distinct_from, 'binary_is'],
+    ].map(([operator, precedence]) =>
+      prec.left(precedence, seq(
+        field('left', $._expression),
+        field('operator', operator),
+        field('right', $._expression)
+      ))
+    ),
+    ...[
+      [$.keyword_and, 'clause_connective'],
+      [$.keyword_or, 'clause_disjunctive'],
+    ].map(([operator, precedence]) =>
+      prec.left(precedence, seq(
+        field('left', $._expression),
+        field('operator', operator),
+        field('right', $._expression)
+      ))
+    ),
+    ...[
+      [$.keyword_in, 'binary_in'],
+      [$.not_in, 'binary_in'],
+    ].map(([operator, precedence]) =>
+      prec.left(precedence, seq(
+        field('left', $._expression),
+        field('operator', operator),
+        field('right', choice($.list, $.subquery))
+      ))
+    ),
+  ),
+
+  unary_expression: $ => choice(
+    ...[
+      [$.keyword_not, 'unary_not'],
+      [$.keyword_any, 'unary_not'],
+      [$.keyword_some, 'unary_not'],
+      [$.keyword_all, 'unary_not'],
+      ['-', 'unary_sign'],
+      ['+', 'unary_sign'],
+      ['~', 'unary_sign'],
+    ].map(([operator, precedence]) =>
+      prec.left(precedence, seq(
+        field('operator', operator),
+        field('operand', $._expression)
+      ))
+    ),
+  ),
+
+  between_expression: $ => choice(
+    ...[
+      [$.keyword_between, 'between'],
+      [seq($.keyword_not, $.keyword_between), 'between'],
+    ].map(([operator, precedence]) =>
+      prec.left(precedence, seq(
+        field('left', $._expression),
+        field('operator', operator),
+        field('low', $._expression),
+        $.keyword_and,
+        field('high', $._expression)
+      ))
+    ),
+  ),
+
+  not_in: $ => seq(
+    $.keyword_not,
+    $.keyword_in,
+  ),
+
+  subquery: $ => wrapped_in_parenthesis(
+    $._dml_read
+  ),
+
+  list: $ => paren_list($._expression),
+
+  literal: $ => prec(2,
+    choice(
+      $._integer,
+      $._decimal_number,
+      $._literal_string,
+      $._money,
+      $.keyword_null,
+    ),
+  ),
+  // Money literal: $5, $1,234.56. `$action` is an identifier, not money.
+  _money: _ => /\$\d+(,\d{3})*(\.\d+)?/,
+  // Character string, optionally with the N prefix for nvarchar. A quote
+  // inside the string is doubled; there is no backslash escaping.
+  _single_quote_string: _ => /[nN]?'([^']|'')*'/,
+  _literal_string: $ => $._single_quote_string,
+  _natural_number: _ => /\d+/,
+  // Decimal integers and hexadecimal binary literals (`0x4D5A`, `0x`).
+  _integer: _ => /(0[xX][0-9A-Fa-f]*)|(\d+)/,
+  _decimal_number: _ => /((\d+\.\d*|\.\d+)([eE][+-]?\d+)?)|(\d+[eE][+-]?\d+)/,
+
+  identifier: $ => choice(
+    $._identifier,
+    $._bracketed_identifier,
+    $._double_quote_string,
+    $._tsql_parameter,
+    $._tsql_system_variable,
+    $._temporary_table,
+    // $action: T-SQL's pseudo-column for the action taken by a MERGE's
+    // OUTPUT clause (INSERT/UPDATE/DELETE). Not a valid _identifier on its
+    // own, since identifiers can't start with `$`.
+    $._dollar_action,
+    // $(var): a SQLCMD scripting variable, substituted by the sqlcmd/SSMS
+    // client before the batch reaches the server. Textual substitution, so
+    // it can appear anywhere an identifier or literal can — modeled as one
+    // more identifier spelling rather than a distinct node, the same
+    // treatment as every other identifier variant here.
+    $._sqlcmd_variable,
+  ),
+  // A regular identifier: letters, digits, `_`, `#` and `$` after the first
+  // character, per SQL Server's identifier rules (`addr##1` is legal).
+  _identifier: _ => /[A-Za-z_À-ſ][0-9A-Za-z_#$À-ſ]*/,
+  _tsql_parameter: _ => /@[A-Za-z_À-ſ][0-9A-Za-z_#$À-ſ]*/,
+  _tsql_system_variable: _ => /@@[A-Za-z_][0-9A-Za-z_]*/,
+  _temporary_table: _ => /#{1,2}[A-Za-z_À-ſ][0-9A-Za-z_#$À-ſ]*/,
+  _bracketed_identifier: _ => /\[([^\]]|\]\])+\]/,
+  // "quoted identifier" — a string only when QUOTED_IDENTIFIER is OFF,
+  // which the grammar does not track.
+  _double_quote_string: _ => /"[^"]*"/,
+  _dollar_action: _ => /\$[aA][cC][tT][iI][oO][nN]/,
+  _sqlcmd_variable: _ => /\$\([A-Za-z_][0-9A-Za-z_]*\)/,
+
+};

@@ -1,0 +1,479 @@
+================================================================================
+Service Broker queue
+================================================================================
+
+CREATE QUEUE dbo.OrderQueue WITH STATUS = ON, RETENTION = OFF ON [PRIMARY];
+
+--------------------------------------------------------------------------------
+
+(program
+  (statement
+    (create_queue
+      (keyword_create)
+      (keyword_queue)
+      (object_reference
+        schema: (identifier)
+        name: (identifier))
+      (with_clause
+        (keyword_with)
+        (option
+          name: (identifier)
+          value: (keyword_on))
+        (option
+          name: (identifier)
+          value: (keyword_off)))
+      (on_filegroup
+        (keyword_on)
+        (identifier)))))
+
+================================================================================
+Service Broker contract
+================================================================================
+
+CREATE CONTRACT [//Contoso/OrderContract]
+(
+    [//Contoso/OrderMessage] SENT BY INITIATOR,
+    DEFAULT SENT BY ANY
+);
+
+--------------------------------------------------------------------------------
+
+(program
+  (statement
+    (create_contract
+      (keyword_create)
+      (keyword_contract)
+      (identifier)
+      (contract_message
+        (identifier)
+        (keyword_sent)
+        (keyword_by)
+        (keyword_initiator))
+      (contract_message
+        (keyword_default)
+        (keyword_sent)
+        (keyword_by)
+        (keyword_any)))))
+
+================================================================================
+Service Broker message type with validation
+================================================================================
+
+CREATE MESSAGE TYPE [//Contoso/OrderMessage]
+    AUTHORIZATION dbo
+    VALIDATION = WELL_FORMED_XML;
+
+--------------------------------------------------------------------------------
+
+(program
+  (statement
+    (create_message_type
+      (keyword_create)
+      (keyword_message)
+      (keyword_type)
+      (identifier)
+      (keyword_authorization)
+      (identifier)
+      (identifier)
+      (identifier))))
+
+================================================================================
+Service Broker message type validated against an XML schema collection
+================================================================================
+
+CREATE MESSAGE TYPE mt VALIDATION = VALID_XML WITH SCHEMA COLLECTION dbo.sc;
+
+--------------------------------------------------------------------------------
+
+(program
+  (statement
+    (create_message_type
+      (keyword_create)
+      (keyword_message)
+      (keyword_type)
+      (identifier)
+      (identifier)
+      (identifier)
+      (keyword_with)
+      (keyword_schema)
+      (keyword_collection)
+      name: (object_reference
+        schema: (identifier)
+        name: (identifier)))))
+
+================================================================================
+Full-text index with column options
+================================================================================
+
+CREATE FULLTEXT INDEX ON dbo.Documents
+(
+    Body TYPE COLUMN FileExtension LANGUAGE 1033 STATISTICAL_SEMANTICS,
+    Title LANGUAGE 1033
+)
+KEY INDEX PK_Documents ON DocumentCatalog
+WITH CHANGE_TRACKING AUTO;
+
+--------------------------------------------------------------------------------
+
+(program
+  (statement
+    (create_fulltext_index
+      (keyword_create)
+      (keyword_fulltext)
+      (keyword_index)
+      (keyword_on)
+      (object_reference
+        schema: (identifier)
+        name: (identifier))
+      (fulltext_index_column
+        name: (identifier)
+        (identifier)
+        (identifier)
+        (identifier)
+        (identifier)
+        (literal)
+        (identifier))
+      (fulltext_index_column
+        name: (identifier)
+        (identifier)
+        (literal))
+      (keyword_key)
+      (keyword_index)
+      (identifier)
+      (keyword_on)
+      (identifier)
+      (with_clause
+        (keyword_with)
+        (option
+          name: (identifier)
+          value: (identifier))))))
+
+================================================================================
+Partition function and scheme
+================================================================================
+
+CREATE PARTITION FUNCTION PF_Range (int)
+AS RANGE LEFT FOR VALUES (10, 100, 1000);
+
+CREATE PARTITION SCHEME PS_Range
+AS PARTITION PF_Range
+ALL TO ([PRIMARY]);
+
+--------------------------------------------------------------------------------
+
+(program
+  (statement
+    (create_partition_function
+      (keyword_create)
+      (keyword_partition)
+      (keyword_function)
+      (identifier)
+      (keyword_int)
+      (keyword_as)
+      (keyword_range)
+      (keyword_left)
+      (keyword_for)
+      (keyword_values)
+      (literal)
+      (literal)
+      (literal)))
+  (statement
+    (create_partition_scheme
+      (keyword_create)
+      (keyword_partition)
+      (keyword_scheme)
+      (identifier)
+      (keyword_as)
+      (keyword_partition)
+      (identifier)
+      (keyword_all)
+      (keyword_to)
+      (identifier))))
+
+================================================================================
+Service Broker dialog: BEGIN DIALOG, SEND, END CONVERSATION, MOVE CONVERSATION
+================================================================================
+
+BEGIN DIALOG CONVERSATION @h
+    FROM SERVICE [//Contoso/InitiatorService]
+    TO SERVICE '//Contoso/TargetService', 'CURRENT DATABASE'
+    ON CONTRACT [//Contoso/OrderContract]
+    WITH RELATED_CONVERSATION = @parent, LIFETIME = 600, ENCRYPTION = OFF;
+BEGIN DIALOG @h FROM SERVICE svc TO SERVICE 'svc';
+SEND ON CONVERSATION @h MESSAGE TYPE [//Contoso/OrderMessage] (N'<order/>');
+SEND ON CONVERSATION (@h1, @h2) MESSAGE TYPE [//Contoso/EndOfStream];
+SEND ON CONVERSATION @h;
+MOVE CONVERSATION @h TO @g;
+END CONVERSATION @h;
+END CONVERSATION @h WITH ERROR = 123 DESCRIPTION = N'failed';
+END CONVERSATION @h WITH CLEANUP;
+
+--------------------------------------------------------------------------------
+
+(program
+  (statement
+    (begin_dialog_statement
+      (keyword_begin)
+      (keyword_dialog)
+      (keyword_conversation)
+      (identifier)
+      (keyword_from)
+      (keyword_service)
+      (identifier)
+      (keyword_to)
+      (keyword_service)
+      (literal)
+      (literal)
+      (keyword_on)
+      (keyword_contract)
+      (identifier)
+      (with_clause
+        (keyword_with)
+        (option
+          (identifier)
+          (identifier))
+        (option
+          (identifier)
+          (literal))
+        (option
+          (identifier)
+          (keyword_off)))))
+  (statement
+    (begin_dialog_statement
+      (keyword_begin)
+      (keyword_dialog)
+      (identifier)
+      (keyword_from)
+      (keyword_service)
+      (identifier)
+      (keyword_to)
+      (keyword_service)
+      (literal)))
+  (statement
+    (send_statement
+      (keyword_send)
+      (keyword_on)
+      (keyword_conversation)
+      (identifier)
+      (keyword_message)
+      (keyword_type)
+      (identifier)
+      (literal)))
+  (statement
+    (send_statement
+      (keyword_send)
+      (keyword_on)
+      (keyword_conversation)
+      (identifier)
+      (identifier)
+      (keyword_message)
+      (keyword_type)
+      (identifier)))
+  (statement
+    (send_statement
+      (keyword_send)
+      (keyword_on)
+      (keyword_conversation)
+      (identifier)))
+  (statement
+    (move_conversation_statement
+      (keyword_move)
+      (keyword_conversation)
+      (identifier)
+      (keyword_to)
+      (identifier)))
+  (statement
+    (end_conversation_statement
+      (keyword_end)
+      (keyword_conversation)
+      (identifier)))
+  (statement
+    (end_conversation_statement
+      (keyword_end)
+      (keyword_conversation)
+      (identifier)
+      (keyword_with)
+      (option
+        (identifier)
+        (literal))
+      (option
+        (identifier)
+        (literal))))
+  (statement
+    (end_conversation_statement
+      (keyword_end)
+      (keyword_conversation)
+      (identifier)
+      (keyword_with)
+      (identifier))))
+
+================================================================================
+Service Broker RECEIVE, GET CONVERSATION GROUP and WAITFOR
+================================================================================
+
+RECEIVE TOP (1) @h = conversation_handle, @mt = message_type_name, @body = message_body FROM dbo.OrderQueue;
+RECEIVE * FROM dbo.OrderQueue INTO @msgs WHERE conversation_handle = @h;
+RECEIVE conversation_handle AS handle, message_body FROM OrderQueue;
+GET CONVERSATION GROUP @g FROM dbo.OrderQueue;
+WAITFOR (RECEIVE TOP (1) @h = conversation_handle FROM dbo.OrderQueue), TIMEOUT 5000;
+WAITFOR (GET CONVERSATION GROUP @g FROM dbo.OrderQueue), TIMEOUT @timeout;
+WAITFOR DELAY '00:00:01';
+
+--------------------------------------------------------------------------------
+
+(program
+  (statement
+    (receive_statement
+      (keyword_receive)
+      (top_clause
+        (keyword_top)
+        (literal))
+      (select_expression
+        (term
+          (binary_expression
+            (field
+              (identifier))
+            (field
+              (identifier))))
+        (term
+          (binary_expression
+            (field
+              (identifier))
+            (field
+              (identifier))))
+        (term
+          (binary_expression
+            (field
+              (identifier))
+            (field
+              (identifier)))))
+      (keyword_from)
+      (object_reference
+        (identifier)
+        (identifier))))
+  (statement
+    (receive_statement
+      (keyword_receive)
+      (select_expression
+        (term
+          (all_fields)))
+      (keyword_from)
+      (object_reference
+        (identifier)
+        (identifier))
+      (keyword_into)
+      (identifier)
+      (where
+        (keyword_where)
+        (binary_expression
+          (field
+            (identifier))
+          (field
+            (identifier))))))
+  (statement
+    (receive_statement
+      (keyword_receive)
+      (select_expression
+        (term
+          (field
+            (identifier))
+          (keyword_as)
+          (identifier))
+        (term
+          (field
+            (identifier))))
+      (keyword_from)
+      (object_reference
+        (identifier))))
+  (statement
+    (get_conversation_group_statement
+      (keyword_get)
+      (keyword_conversation)
+      (keyword_group)
+      (identifier)
+      (keyword_from)
+      (object_reference
+        (identifier)
+        (identifier))))
+  (statement
+    (waitfor_statement
+      (keyword_waitfor)
+      (receive_statement
+        (keyword_receive)
+        (top_clause
+          (keyword_top)
+          (literal))
+        (select_expression
+          (term
+            (binary_expression
+              (field
+                (identifier))
+              (field
+                (identifier)))))
+        (keyword_from)
+        (object_reference
+          (identifier)
+          (identifier)))
+      (keyword_timeout)
+      (literal)))
+  (statement
+    (waitfor_statement
+      (keyword_waitfor)
+      (get_conversation_group_statement
+        (keyword_get)
+        (keyword_conversation)
+        (keyword_group)
+        (identifier)
+        (keyword_from)
+        (object_reference
+          (identifier)
+          (identifier)))
+      (keyword_timeout)
+      (field
+        (identifier))))
+  (statement
+    (waitfor_statement
+      (keyword_waitfor)
+      (keyword_delay)
+      (literal))))
+
+================================================================================
+Service Broker: variable target service, literal conversation handles
+================================================================================
+
+BEGIN DIALOG @h FROM SERVICE svc TO SERVICE @target, @broker ON CONTRACT c;
+END CONVERSATION '9F0E0000-0000-0000-0000-000000000000' WITH CLEANUP;
+MOVE CONVERSATION '9F0E0000-0000-0000-0000-000000000000' TO @g;
+
+--------------------------------------------------------------------------------
+
+(program
+  (statement
+    (begin_dialog_statement
+      (keyword_begin)
+      (keyword_dialog)
+      (identifier)
+      (keyword_from)
+      (keyword_service)
+      (identifier)
+      (keyword_to)
+      (keyword_service)
+      (identifier)
+      (identifier)
+      (keyword_on)
+      (keyword_contract)
+      (identifier)))
+  (statement
+    (end_conversation_statement
+      (keyword_end)
+      (keyword_conversation)
+      (literal)
+      (keyword_with)
+      (identifier)))
+  (statement
+    (move_conversation_statement
+      (keyword_move)
+      (keyword_conversation)
+      (literal)
+      (keyword_to)
+      (identifier))))

@@ -1,0 +1,192 @@
+================================================================================
+Transaction keywords
+================================================================================
+
+BEGIN TRANSACTION;
+ALTER TABLE my_table ADD val3 VARCHAR(100) NOT NULL;
+ROLLBACK TRANSACTION;
+
+--------------------------------------------------------------------------------
+
+(program
+  (statement
+    (begin_transaction_statement
+      (keyword_begin)
+      (keyword_transaction)))
+  (statement
+    (alter_table
+      (keyword_alter)
+      (keyword_table)
+      (object_reference
+        (identifier))
+      (keyword_add)
+      (column_definition
+        (identifier)
+        (varchar
+          (keyword_varchar)
+          (literal))
+        (keyword_not)
+        (keyword_null))))
+  (statement
+    (rollback_statement
+      (keyword_rollback)
+      (keyword_transaction))))
+
+================================================================================
+Named transaction with savepoint
+================================================================================
+
+BEGIN TRAN outer_tx;
+SAVE TRANSACTION sp1;
+UPDATE t SET a = 1;
+ROLLBACK TRAN sp1;
+COMMIT TRAN outer_tx;
+
+--------------------------------------------------------------------------------
+
+(program
+  (statement
+    (begin_transaction_statement
+      (keyword_begin)
+      (keyword_tran)
+      (identifier)))
+  (statement
+    (save_transaction_statement
+      (keyword_save)
+      (keyword_transaction)
+      (identifier)))
+  (statement
+    (update
+      (keyword_update)
+      (relation
+        (object_reference
+          (identifier)))
+      (keyword_set)
+      (assignment
+        (field
+          (identifier))
+        (assignment_operator)
+        (literal))))
+  (statement
+    (rollback_statement
+      (keyword_rollback)
+      (keyword_tran)
+      (identifier)))
+  (statement
+    (commit_statement
+      (keyword_commit)
+      (keyword_tran)
+      (identifier))))
+
+================================================================================
+Transaction control inside TRY CATCH
+================================================================================
+
+BEGIN TRANSACTION;
+BEGIN TRY
+    UPDATE t SET a = 1
+    COMMIT
+END TRY
+BEGIN CATCH
+    IF @@TRANCOUNT > 0 ROLLBACK TRANSACTION
+    COMMIT WORK
+END CATCH
+
+--------------------------------------------------------------------------------
+
+(program
+  (statement
+    (begin_transaction_statement
+      (keyword_begin)
+      (keyword_transaction)))
+  (statement
+    (try_catch_statement
+      (try_block
+        (keyword_begin)
+        (keyword_try)
+        (statement
+          (update
+            (keyword_update)
+            (relation
+              (object_reference
+                (identifier)))
+            (keyword_set)
+            (assignment
+              (field
+                (identifier))
+              (assignment_operator)
+              (literal))))
+        (statement
+          (commit_statement
+            (keyword_commit)))
+        (keyword_end)
+        (keyword_try))
+      (catch_block
+        (keyword_begin)
+        (keyword_catch)
+        (statement
+          (if_statement
+            (keyword_if)
+            (binary_expression
+              (field
+                (identifier))
+              (literal))
+            (statement
+              (rollback_statement
+                (keyword_rollback)
+                (keyword_transaction)))))
+        (statement
+          (commit_statement
+            (keyword_commit)
+            (keyword_work)))
+        (keyword_end)
+        (keyword_catch)))))
+
+================================================================================
+Transactions without separators
+================================================================================
+
+BEGIN TRANSACTION --- Procedure
+SET XACT_ABORT ON
+BEGIN DISTRIBUTED TRANSACTION
+BEGIN TRAN marked WITH MARK 'nightly'
+COMMIT TRANSACTION--- Procedure
+RETURN @Severity
+
+--------------------------------------------------------------------------------
+
+(program
+  (statement
+    (begin_transaction_statement
+      (keyword_begin)
+      (keyword_transaction)))
+  (comment)
+  (statement
+    (set_statement
+      (keyword_set)
+      (object_reference
+        (identifier))
+      (keyword_on)))
+  (statement
+    (begin_transaction_statement
+      (keyword_begin)
+      (keyword_distributed)
+      (keyword_transaction)))
+  (statement
+    (begin_transaction_statement
+      (keyword_begin)
+      (keyword_tran)
+      (identifier)
+      (keyword_with)
+      (keyword_mark)
+      (literal)))
+  (statement
+    (commit_statement
+      (keyword_commit)
+      (keyword_transaction)))
+  (comment)
+  (statement
+    (return_statement
+      (keyword_return)
+      (field
+        (identifier)))))

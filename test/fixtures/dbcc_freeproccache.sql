@@ -1,0 +1,22 @@
+USE AdventureWorks2022;
+GO
+SELECT * FROM Person.Address;
+GO
+SELECT plan_handle, st.text
+FROM sys.dm_exec_cached_plans
+CROSS APPLY sys.dm_exec_sql_text(plan_handle) AS st
+WHERE text LIKE N'SELECT * FROM Person.Address%';
+GO
+DBCC FREEPROCCACHE (0x060006001ECA270EC0215D05000000000000000000000000);
+GO
+DBCC FREEPROCCACHE WITH NO_INFOMSGS;
+SELECT * FROM sys.dm_resource_governor_resource_pools;
+GO
+DBCC FREEPROCCACHE ('default');
+GO
+USE UserDbSales;
+DBCC FREEPROCCACHE (COMPUTE) WITH NO_INFOMSGS;
+USE UserDbSales;
+DBCC FREEPROCCACHE (COMPUTE);
+GRANT ALTER SERVER STATE TO David;
+GO

@@ -1,0 +1,897 @@
+================================================================================
+Procedure with a block body
+================================================================================
+
+CREATE PROCEDURE dbo.GetUsers(@status int)
+AS
+BEGIN
+  SELECT * FROM users
+END
+
+--------------------------------------------------------------------------------
+
+(program
+  (statement
+    (create_procedure
+      (keyword_create)
+      (keyword_procedure)
+      (object_reference
+        (identifier)
+        (identifier))
+      (function_arguments
+        (function_argument
+          (identifier)
+          (keyword_int)))
+      (procedure_body
+        (keyword_as)
+        (block
+          (keyword_begin)
+          (statement
+            (select
+              (keyword_select)
+              (select_expression
+                (term
+                  (all_fields))))
+            (from
+              (keyword_from)
+              (relation
+                (object_reference
+                  (identifier)))))
+          (keyword_end))))))
+
+================================================================================
+Procedure with DECLARE and nested blocks
+================================================================================
+
+CREATE PROCEDURE dbo.ProcessData(@id int)
+AS
+BEGIN
+  DECLARE @cnt int
+  BEGIN
+    SELECT @cnt = COUNT(*) FROM tbl_a
+  END
+  BEGIN
+    SELECT * FROM tbl_b
+  END
+END
+
+--------------------------------------------------------------------------------
+
+(program
+  (statement
+    (create_procedure
+      (keyword_create)
+      (keyword_procedure)
+      (object_reference
+        (identifier)
+        (identifier))
+      (function_arguments
+        (function_argument
+          (identifier)
+          (keyword_int)))
+      (procedure_body
+        (keyword_as)
+        (block
+          (keyword_begin)
+          (statement
+            (var_declarations
+              (keyword_declare)
+              (var_declaration
+                (identifier)
+                (keyword_int))))
+          (block
+            (keyword_begin)
+            (statement
+              (select
+                (keyword_select)
+                (select_expression
+                  (term
+                    (binary_expression
+                      (field
+                        (identifier))
+                      (invocation
+                        (object_reference
+                          (identifier))
+                        (term
+                          (all_fields)))))))
+              (from
+                (keyword_from)
+                (relation
+                  (object_reference
+                    (identifier)))))
+            (keyword_end))
+          (block
+            (keyword_begin)
+            (statement
+              (select
+                (keyword_select)
+                (select_expression
+                  (term
+                    (all_fields))))
+              (from
+                (keyword_from)
+                (relation
+                  (object_reference
+                    (identifier)))))
+            (keyword_end))
+          (keyword_end))))))
+
+================================================================================
+Procedure with OUTPUT parameter and default
+================================================================================
+
+CREATE PROCEDURE dbo.GetCount @site nvarchar(50) = NULL, @count int OUTPUT, @neg int = -1
+AS
+BEGIN
+  SELECT @count = COUNT(*) FROM tbl WHERE site = @site;
+  RETURN 0;
+END
+
+--------------------------------------------------------------------------------
+
+(program
+  (statement
+    (create_procedure
+      (keyword_create)
+      (keyword_procedure)
+      (object_reference
+        (identifier)
+        (identifier))
+      (function_arguments
+        (function_argument
+          (identifier)
+          (nvarchar
+            (keyword_nvarchar)
+            (literal))
+          (literal
+            (keyword_null)))
+        (function_argument
+          (identifier)
+          (keyword_int)
+          (keyword_output))
+        (function_argument
+          (identifier)
+          (keyword_int)
+          (unary_expression
+            (literal))))
+      (procedure_body
+        (keyword_as)
+        (block
+          (keyword_begin)
+          (statement
+            (select
+              (keyword_select)
+              (select_expression
+                (term
+                  (binary_expression
+                    (field
+                      (identifier))
+                    (invocation
+                      (object_reference
+                        (identifier))
+                      (term
+                        (all_fields)))))))
+            (from
+              (keyword_from)
+              (relation
+                (object_reference
+                  (identifier)))
+              (where
+                (keyword_where)
+                (binary_expression
+                  (field
+                    (identifier))
+                  (field
+                    (identifier))))))
+          (statement
+            (return_statement
+              (keyword_return)
+              (literal)))
+          (keyword_end))))))
+
+================================================================================
+CREATE OR ALTER PROC with options and bare body
+================================================================================
+
+CREATE OR ALTER PROC dbo.Touch (@id int)
+WITH RECOMPILE, EXECUTE AS OWNER
+AS
+SET NOCOUNT ON;
+UPDATE tbl SET touched = 1 WHERE id = @id;
+RETURN;
+
+--------------------------------------------------------------------------------
+
+(program
+  (statement
+    (create_procedure
+      (keyword_create)
+      (keyword_or)
+      (keyword_alter)
+      (keyword_proc)
+      (object_reference
+        (identifier)
+        (identifier))
+      (function_arguments
+        (function_argument
+          (identifier)
+          (keyword_int)))
+      (procedure_options
+        (keyword_with)
+        (procedure_option
+          (keyword_recompile))
+        (procedure_option
+          (execute_as_clause
+            (keyword_execute)
+            (keyword_as)
+            (keyword_owner))))
+      (procedure_body
+        (keyword_as)
+        (statement
+          (set_statement
+            (keyword_set)
+            (object_reference
+              (identifier))
+            (keyword_on)))
+        (statement
+          (update
+            (keyword_update)
+            (relation
+              (object_reference
+                (identifier)))
+            (keyword_set)
+            (assignment
+              (field
+                (identifier))
+              (assignment_operator)
+              (literal))
+            (where
+              (keyword_where)
+              (binary_expression
+                (field
+                  (identifier))
+                (field
+                  (identifier))))))
+        (statement
+          (return_statement
+            (keyword_return)))))))
+
+================================================================================
+Procedure body with semicolons and nested block
+================================================================================
+
+CREATE PROCEDURE dbo.P
+AS
+BEGIN
+  DECLARE @x int;
+  SET @x = 1;
+  BEGIN
+    SET @x += 1;
+  END;
+  IF @x > 1 RETURN 1;
+END
+
+--------------------------------------------------------------------------------
+
+(program
+  (statement
+    (create_procedure
+      (keyword_create)
+      (keyword_procedure)
+      (object_reference
+        (identifier)
+        (identifier))
+      (procedure_body
+        (keyword_as)
+        (block
+          (keyword_begin)
+          (statement
+            (var_declarations
+              (keyword_declare)
+              (var_declaration
+                (identifier)
+                (keyword_int))))
+          (statement
+            (set_statement
+              (keyword_set)
+              (object_reference
+                (identifier))
+              (assignment_operator)
+              (literal)))
+          (block
+            (keyword_begin)
+            (statement
+              (set_statement
+                (keyword_set)
+                (object_reference
+                  (identifier))
+                (assignment_operator)
+                (literal)))
+            (keyword_end))
+          (statement
+            (if_statement
+              (keyword_if)
+              (binary_expression
+                (field
+                  (identifier))
+                (literal))
+              (statement
+                (return_statement
+                  (keyword_return)
+                  (literal)))))
+          (keyword_end))))))
+
+================================================================================
+ALTER PROCEDURE with max types and PRINT
+================================================================================
+
+ALTER PROCEDURE [dbo].[walk_sp] (
+    @i_name AS nvarchar(max),
+    @o_path AS nvarchar(500) OUTPUT
+)
+AS BEGIN
+    DECLARE @today DateType = dbo.GetSiteDate(getdate()), @sql nvarchar(max);
+    PRINT 'IN THE LOOP';
+    PRINT @i_name + ':' + @o_path;
+END;
+
+--------------------------------------------------------------------------------
+
+(program
+  (statement
+    (alter_procedure
+      (keyword_alter)
+      (keyword_procedure)
+      (object_reference
+        (identifier)
+        (identifier))
+      (function_arguments
+        (function_argument
+          (identifier)
+          (keyword_as)
+          (nvarchar
+            (keyword_nvarchar)
+            (keyword_max)))
+        (function_argument
+          (identifier)
+          (keyword_as)
+          (nvarchar
+            (keyword_nvarchar)
+            (literal))
+          (keyword_output)))
+      (procedure_body
+        (keyword_as)
+        (block
+          (keyword_begin)
+          (statement
+            (var_declarations
+              (keyword_declare)
+              (var_declaration
+                (identifier)
+                (custom_type
+                  (object_reference
+                    (identifier)))
+                (invocation
+                  (object_reference
+                    (identifier)
+                    (identifier))
+                  (term
+                    (invocation
+                      (object_reference
+                        (identifier))))))
+              (var_declaration
+                (identifier)
+                (nvarchar
+                  (keyword_nvarchar)
+                  (keyword_max)))))
+          (statement
+            (print_statement
+              (keyword_print)
+              (literal)))
+          (statement
+            (print_statement
+              (keyword_print)
+              (binary_expression
+                (binary_expression
+                  (field
+                    (identifier))
+                  (literal))
+                (field
+                  (identifier)))))
+          (keyword_end))))))
+
+================================================================================
+Procedure with a table-valued parameter and FOR REPLICATION
+================================================================================
+
+CREATE PROCEDURE dbo.Import @rows dbo.IdList READONLY, @flag bit = 0
+WITH ENCRYPTION
+FOR REPLICATION
+AS
+INSERT INTO dbo.t (id) SELECT id FROM @rows
+
+--------------------------------------------------------------------------------
+
+(program
+  (statement
+    (create_procedure
+      (keyword_create)
+      (keyword_procedure)
+      (object_reference
+        (identifier)
+        (identifier))
+      (function_arguments
+        (function_argument
+          (identifier)
+          (custom_type
+            (object_reference
+              (identifier)
+              (identifier)))
+          (keyword_readonly))
+        (function_argument
+          (identifier)
+          (keyword_bit)
+          (literal)))
+      (procedure_options
+        (keyword_with)
+        (procedure_option
+          (keyword_encryption)))
+      (keyword_for)
+      (keyword_replication)
+      (procedure_body
+        (keyword_as)
+        (statement
+          (insert
+            (keyword_insert)
+            (keyword_into)
+            (object_reference
+              (identifier)
+              (identifier))
+            (list
+              (column
+                (identifier)))
+            (select
+              (keyword_select)
+              (select_expression
+                (term
+                  (field
+                    (identifier)))))
+            (from
+              (keyword_from)
+              (relation
+                (object_reference
+                  (identifier))))))))))
+
+================================================================================
+Vendor-style procedure: bare body, touch points, separator-free statements
+================================================================================
+
+ALTER PROCEDURE [dbo].[VerifySp] (
+  @PVendNum         VendNumType
+, @PInvNum          VendInvNumType
+, @Infobar          InfobarType OUTPUT
+) AS
+
+IF EXISTS (SELECT 1 FROM [optional_module] [om] WHERE ISNULL([om].[is_enabled],0) = 1
+AND OBJECT_ID(QUOTENAME(N'VerifySp_' + [om].[ModuleName])) IS NOT NULL)
+BEGIN
+   DECLARE @ALTGEN TABLE ([SpName] sysname)
+   DECLARE @ALTGEN_SpName sysname
+   DECLARE @ALTGEN_Severity int
+
+   WHILE EXISTS (SELECT 1 FROM @ALTGEN)
+   BEGIN
+      SELECT TOP 1 @ALTGEN_SpName = [SpName]
+      FROM @ALTGEN
+
+      EXEC @ALTGEN_Severity = @ALTGEN_SpName
+           @PVendNum
+         , @PInvNum
+         , @Infobar   OUTPUT
+
+      IF @ALTGEN_Severity <> 1
+         RETURN @ALTGEN_Severity
+
+      DELETE @ALTGEN WHERE [SpName] = @ALTGEN_SpName
+   END
+END
+
+DECLARE @Severity   INT
+, @SiteRef SiteType
+
+declare @Sites table (
+   site SiteType
+)
+
+SET @Severity = 0
+
+insert into @Sites
+select site from site_group with (readuncommitted)
+where site_group = (select site_group from apparms with (readuncommitted))
+
+IF @@rowcount > 0
+BEGIN
+	EXEC @Severity = dbo.MsgAppSp @Infobar OUTPUT, 'I=Exist4'
+	, '@aptrxp'
+	, '@site.site', @SiteRef
+	RETURN @Severity
+END
+
+RETURN @Severity
+
+--------------------------------------------------------------------------------
+
+(program
+  (statement
+    (alter_procedure
+      (keyword_alter)
+      (keyword_procedure)
+      (object_reference
+        (identifier)
+        (identifier))
+      (function_arguments
+        (function_argument
+          (identifier)
+          (custom_type
+            (object_reference
+              (identifier))))
+        (function_argument
+          (identifier)
+          (custom_type
+            (object_reference
+              (identifier))))
+        (function_argument
+          (identifier)
+          (custom_type
+            (object_reference
+              (identifier)))
+          (keyword_output)))
+      (procedure_body
+        (keyword_as)
+        (statement
+          (if_statement
+            (keyword_if)
+            (exists
+              (keyword_exists)
+              (subquery
+                (select
+                  (keyword_select)
+                  (select_expression
+                    (term
+                      (literal))))
+                (from
+                  (keyword_from)
+                  (relation
+                    (object_reference
+                      (identifier))
+                    (identifier))
+                  (where
+                    (keyword_where)
+                    (binary_expression
+                      (binary_expression
+                        (invocation
+                          (object_reference
+                            (identifier))
+                          (term
+                            (field
+                              (object_reference
+                                (identifier))
+                              (identifier)))
+                          (term
+                            (literal)))
+                        (literal))
+                      (keyword_and)
+                      (binary_expression
+                        (invocation
+                          (object_reference
+                            (identifier))
+                          (term
+                            (invocation
+                              (object_reference
+                                (identifier))
+                              (term
+                                (binary_expression
+                                  (literal)
+                                  (field
+                                    (object_reference
+                                      (identifier))
+                                    (identifier)))))))
+                        (is_not
+                          (keyword_is)
+                          (keyword_not))
+                        (literal
+                          (keyword_null))))))))
+            (block
+              (keyword_begin)
+              (statement
+                (var_declarations
+                  (keyword_declare)
+                  (table_var_declaration
+                    (identifier)
+                    (keyword_table)
+                    (column_definitions
+                      (column_definition
+                        (identifier)
+                        (custom_type
+                          (object_reference
+                            (identifier))))))))
+              (statement
+                (var_declarations
+                  (keyword_declare)
+                  (var_declaration
+                    (identifier)
+                    (custom_type
+                      (object_reference
+                        (identifier))))))
+              (statement
+                (var_declarations
+                  (keyword_declare)
+                  (var_declaration
+                    (identifier)
+                    (keyword_int))))
+              (statement
+                (while_statement
+                  (keyword_while)
+                  (exists
+                    (keyword_exists)
+                    (subquery
+                      (select
+                        (keyword_select)
+                        (select_expression
+                          (term
+                            (literal))))
+                      (from
+                        (keyword_from)
+                        (relation
+                          (object_reference
+                            (identifier))))))
+                  (block
+                    (keyword_begin)
+                    (statement
+                      (select
+                        (keyword_select)
+                        (top_clause
+                          (keyword_top)
+                          (literal))
+                        (select_expression
+                          (term
+                            (binary_expression
+                              (field
+                                (identifier))
+                              (field
+                                (identifier))))))
+                      (from
+                        (keyword_from)
+                        (relation
+                          (object_reference
+                            (identifier)))))
+                    (statement
+                      (execute_statement
+                        (keyword_exec)
+                        (identifier)
+                        (object_reference
+                          (identifier))
+                        (exec_argument
+                          (field
+                            (identifier)))
+                        (exec_argument
+                          (field
+                            (identifier)))
+                        (exec_argument
+                          (field
+                            (identifier))
+                          (keyword_output))))
+                    (statement
+                      (if_statement
+                        (keyword_if)
+                        (binary_expression
+                          (field
+                            (identifier))
+                          (literal))
+                        (statement
+                          (return_statement
+                            (keyword_return)
+                            (field
+                              (identifier))))))
+                    (statement
+                      (delete
+                        (keyword_delete)
+                        (object_reference
+                          (identifier))
+                        (where
+                          (keyword_where)
+                          (binary_expression
+                            (field
+                              (identifier))
+                            (field
+                              (identifier))))))
+                    (keyword_end))))
+              (keyword_end))))
+        (statement
+          (var_declarations
+            (keyword_declare)
+            (var_declaration
+              (identifier)
+              (keyword_int))
+            (var_declaration
+              (identifier)
+              (custom_type
+                (object_reference
+                  (identifier))))))
+        (statement
+          (var_declarations
+            (keyword_declare)
+            (table_var_declaration
+              (identifier)
+              (keyword_table)
+              (column_definitions
+                (column_definition
+                  (identifier)
+                  (custom_type
+                    (object_reference
+                      (identifier))))))))
+        (statement
+          (set_statement
+            (keyword_set)
+            (object_reference
+              (identifier))
+            (assignment_operator)
+            (literal)))
+        (statement
+          (insert
+            (keyword_insert)
+            (keyword_into)
+            (object_reference
+              (identifier))
+            (select
+              (keyword_select)
+              (select_expression
+                (term
+                  (field
+                    (identifier)))))
+            (from
+              (keyword_from)
+              (relation
+                (object_reference
+                  (identifier)))
+              (table_hint
+                (keyword_with)
+                (table_hint_item
+                  (identifier)))
+              (where
+                (keyword_where)
+                (binary_expression
+                  (field
+                    (identifier))
+                  (subquery
+                    (select
+                      (keyword_select)
+                      (select_expression
+                        (term
+                          (field
+                            (identifier)))))
+                    (from
+                      (keyword_from)
+                      (relation
+                        (object_reference
+                          (identifier)))
+                      (table_hint
+                        (keyword_with)
+                        (table_hint_item
+                          (identifier))))))))))
+        (statement
+          (if_statement
+            (keyword_if)
+            (binary_expression
+              (field
+                (identifier))
+              (literal))
+            (block
+              (keyword_begin)
+              (statement
+                (execute_statement
+                  (keyword_exec)
+                  (identifier)
+                  (object_reference
+                    (identifier)
+                    (identifier))
+                  (exec_argument
+                    (field
+                      (identifier))
+                    (keyword_output))
+                  (exec_argument
+                    (literal))
+                  (exec_argument
+                    (literal))
+                  (exec_argument
+                    (literal))
+                  (exec_argument
+                    (field
+                      (identifier)))))
+              (statement
+                (return_statement
+                  (keyword_return)
+                  (field
+                    (identifier))))
+              (keyword_end))))
+        (statement
+          (return_statement
+            (keyword_return)
+            (field
+              (identifier))))))))
+
+================================================================================
+Drop procedure
+================================================================================
+
+DROP PROCEDURE my_procedure;
+DROP PROC IF EXISTS dbo.my_procedure, dbo.other;
+
+--------------------------------------------------------------------------------
+
+(program
+  (statement
+    (drop_procedure
+      (keyword_drop)
+      (keyword_procedure)
+      (object_reference
+        (identifier))))
+  (statement
+    (drop_procedure
+      (keyword_drop)
+      (keyword_proc)
+      (keyword_if)
+      (keyword_exists)
+      (object_reference
+        (identifier)
+        (identifier))
+      (object_reference
+        (identifier)
+        (identifier)))))
+
+================================================================================
+An empty procedure body and a numbered procedure
+================================================================================
+
+CREATE PROCEDURE dbo.stub AS
+GO
+CREATE PROC dbo.grouped;2 @a INT AS SELECT @a;
+GO
+
+--------------------------------------------------------------------------------
+
+(program
+  (statement
+    (create_procedure
+      (keyword_create)
+      (keyword_procedure)
+      (object_reference
+        (identifier)
+        (identifier))
+      (procedure_body
+        (keyword_as))))
+  (go_statement
+    (keyword_go))
+  (statement
+    (create_procedure
+      (keyword_create)
+      (keyword_proc)
+      (object_reference
+        (identifier)
+        (identifier))
+      (literal)
+      (function_arguments
+        (function_argument
+          (identifier)
+          (keyword_int)))
+      (procedure_body
+        (keyword_as)
+        (statement
+          (select
+            (keyword_select)
+            (select_expression
+              (term
+                (field
+                  (identifier)))))))))
+  (go_statement
+    (keyword_go)))

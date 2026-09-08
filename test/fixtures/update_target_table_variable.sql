@@ -1,0 +1,5 @@
+UPDATE @T SET a = 1;
+GO
+
+UPDATE #T SET a = 1;
+GO

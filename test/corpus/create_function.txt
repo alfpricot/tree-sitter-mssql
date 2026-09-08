@@ -1,0 +1,854 @@
+================================================================================
+Scalar function
+================================================================================
+
+CREATE FUNCTION dbo.fn(@par int, @parr nvarchar(4000))
+RETURNS int
+  AS
+  BEGIN
+    DECLARE @s int, @t int, @i int, @j int
+    SELECT * FROM ATABLE
+    SELECT * FROM ANOTHER_TABLE
+    RETURN @par
+  END
+
+--------------------------------------------------------------------------------
+
+(program
+  (statement
+    (create_function
+      (keyword_create)
+      (keyword_function)
+      (object_reference
+        (identifier)
+        (identifier))
+      (function_arguments
+        (function_argument
+          (identifier)
+          (keyword_int))
+        (function_argument
+          (identifier)
+          (nvarchar
+            (keyword_nvarchar)
+            (literal))))
+      (keyword_returns)
+      (keyword_int)
+      (function_body
+        (keyword_as)
+        (keyword_begin)
+        (statement
+          (var_declarations
+            (keyword_declare)
+            (var_declaration
+              (identifier)
+              (keyword_int))
+            (var_declaration
+              (identifier)
+              (keyword_int))
+            (var_declaration
+              (identifier)
+              (keyword_int))
+            (var_declaration
+              (identifier)
+              (keyword_int))))
+        (statement
+          (select
+            (keyword_select)
+            (select_expression
+              (term
+                (all_fields))))
+          (from
+            (keyword_from)
+            (relation
+              (object_reference
+                (identifier)))))
+        (statement
+          (select
+            (keyword_select)
+            (select_expression
+              (term
+                (all_fields))))
+          (from
+            (keyword_from)
+            (relation
+              (object_reference
+                (identifier)))))
+        (statement
+          (return_statement
+            (keyword_return)
+            (field
+              (identifier))))
+        (keyword_end)))))
+
+================================================================================
+Scalar function with nested BEGIN-END
+================================================================================
+
+CREATE FUNCTION dbo.fn(@par int, @parr nvarchar(4000))
+RETURNS int
+  AS
+  BEGIN
+    DECLARE @s int, @t int, @i int, @j int
+    BEGIN
+      SELECT * FROM ATABLE
+    END
+    BEGIN
+      SELECT * FROM ANOTHER_TABLE
+    END
+    RETURN @par
+  END
+
+--------------------------------------------------------------------------------
+
+(program
+  (statement
+    (create_function
+      (keyword_create)
+      (keyword_function)
+      (object_reference
+        (identifier)
+        (identifier))
+      (function_arguments
+        (function_argument
+          (identifier)
+          (keyword_int))
+        (function_argument
+          (identifier)
+          (nvarchar
+            (keyword_nvarchar)
+            (literal))))
+      (keyword_returns)
+      (keyword_int)
+      (function_body
+        (keyword_as)
+        (keyword_begin)
+        (statement
+          (var_declarations
+            (keyword_declare)
+            (var_declaration
+              (identifier)
+              (keyword_int))
+            (var_declaration
+              (identifier)
+              (keyword_int))
+            (var_declaration
+              (identifier)
+              (keyword_int))
+            (var_declaration
+              (identifier)
+              (keyword_int))))
+        (block
+          (keyword_begin)
+          (statement
+            (select
+              (keyword_select)
+              (select_expression
+                (term
+                  (all_fields))))
+            (from
+              (keyword_from)
+              (relation
+                (object_reference
+                  (identifier)))))
+          (keyword_end))
+        (block
+          (keyword_begin)
+          (statement
+            (select
+              (keyword_select)
+              (select_expression
+                (term
+                  (all_fields))))
+            (from
+              (keyword_from)
+              (relation
+                (object_reference
+                  (identifier)))))
+          (keyword_end))
+        (statement
+          (return_statement
+            (keyword_return)
+            (field
+              (identifier))))
+        (keyword_end)))))
+
+================================================================================
+Inline table-valued function
+================================================================================
+
+CREATE FUNCTION dbo.ActiveItems (@site nvarchar(50))
+RETURNS TABLE
+WITH SCHEMABINDING
+AS
+RETURN (SELECT item FROM dbo.item WHERE site = @site)
+
+CREATE FUNCTION dbo.AllItems ()
+RETURNS TABLE
+RETURN SELECT item FROM dbo.item
+
+--------------------------------------------------------------------------------
+
+(program
+  (statement
+    (create_function
+      (keyword_create)
+      (keyword_function)
+      (object_reference
+        (identifier)
+        (identifier))
+      (function_arguments
+        (function_argument
+          (identifier)
+          (nvarchar
+            (keyword_nvarchar)
+            (literal))))
+      (keyword_returns)
+      (keyword_table)
+      (function_options
+        (keyword_with)
+        (function_option
+          (keyword_schemabinding)))
+      (function_body
+        (keyword_as)
+        (keyword_return)
+        (select
+          (keyword_select)
+          (select_expression
+            (term
+              (field
+                (identifier)))))
+        (from
+          (keyword_from)
+          (relation
+            (object_reference
+              (identifier)
+              (identifier)))
+          (where
+            (keyword_where)
+            (binary_expression
+              (field
+                (identifier))
+              (field
+                (identifier))))))))
+  (statement
+    (create_function
+      (keyword_create)
+      (keyword_function)
+      (object_reference
+        (identifier)
+        (identifier))
+      (function_arguments)
+      (keyword_returns)
+      (keyword_table)
+      (function_body
+        (keyword_return)
+        (select
+          (keyword_select)
+          (select_expression
+            (term
+              (field
+                (identifier)))))
+        (from
+          (keyword_from)
+          (relation
+            (object_reference
+              (identifier)
+              (identifier))))))))
+
+================================================================================
+Multi-statement table-valued function
+================================================================================
+
+CREATE OR ALTER FUNCTION dbo.Exceptions (@name nvarchar(50))
+RETURNS @r TABLE (id int, name nvarchar(50))
+AS
+BEGIN
+  INSERT INTO @r SELECT id, name FROM tbl WHERE name = @name;
+  RETURN;
+END
+
+--------------------------------------------------------------------------------
+
+(program
+  (statement
+    (create_function
+      (keyword_create)
+      (keyword_or)
+      (keyword_alter)
+      (keyword_function)
+      (object_reference
+        (identifier)
+        (identifier))
+      (function_arguments
+        (function_argument
+          (identifier)
+          (nvarchar
+            (keyword_nvarchar)
+            (literal))))
+      (keyword_returns)
+      (table_var_declaration
+        (identifier)
+        (keyword_table)
+        (column_definitions
+          (column_definition
+            (identifier)
+            (keyword_int))
+          (column_definition
+            (identifier)
+            (nvarchar
+              (keyword_nvarchar)
+              (literal)))))
+      (function_body
+        (keyword_as)
+        (keyword_begin)
+        (statement
+          (insert
+            (keyword_insert)
+            (keyword_into)
+            (object_reference
+              (identifier))
+            (select
+              (keyword_select)
+              (select_expression
+                (term
+                  (field
+                    (identifier)))
+                (term
+                  (field
+                    (identifier)))))
+            (from
+              (keyword_from)
+              (relation
+                (object_reference
+                  (identifier)))
+              (where
+                (keyword_where)
+                (binary_expression
+                  (field
+                    (identifier))
+                  (field
+                    (identifier)))))))
+        (statement
+          (return_statement
+            (keyword_return)))
+        (keyword_end)))))
+
+================================================================================
+Scalar function with user-defined types, semicolons and a CASE
+================================================================================
+
+CREATE FUNCTION dbo.IsScheduled (
+   @pJob JobType
+  ,@pSuffix SuffixType
+)
+RETURNS Flag
+AS
+BEGIN
+   declare @Flag ListYesNoType
+
+   set @Flag = case
+      when exists(select 1 from ORDIND000 WITH (NOLOCK)
+         where ORDIND000.ORDERID = dbo.ApsJobOrderId(@pJob, @pSuffix))
+         then 1
+         else 0
+      end
+
+   return @Flag
+END;
+
+--------------------------------------------------------------------------------
+
+(program
+  (statement
+    (create_function
+      (keyword_create)
+      (keyword_function)
+      (object_reference
+        (identifier)
+        (identifier))
+      (function_arguments
+        (function_argument
+          (identifier)
+          (custom_type
+            (object_reference
+              (identifier))))
+        (function_argument
+          (identifier)
+          (custom_type
+            (object_reference
+              (identifier)))))
+      (keyword_returns)
+      (custom_type
+        (object_reference
+          (identifier)))
+      (function_body
+        (keyword_as)
+        (keyword_begin)
+        (statement
+          (var_declarations
+            (keyword_declare)
+            (var_declaration
+              (identifier)
+              (custom_type
+                (object_reference
+                  (identifier))))))
+        (statement
+          (set_statement
+            (keyword_set)
+            (object_reference
+              (identifier))
+            (assignment_operator)
+            (case
+              (keyword_case)
+              (when_clause
+                (keyword_when)
+                (exists
+                  (keyword_exists)
+                  (subquery
+                    (select
+                      (keyword_select)
+                      (select_expression
+                        (term
+                          (literal))))
+                    (from
+                      (keyword_from)
+                      (relation
+                        (object_reference
+                          (identifier)))
+                      (table_hint
+                        (keyword_with)
+                        (table_hint_item
+                          (identifier)))
+                      (where
+                        (keyword_where)
+                        (binary_expression
+                          (field
+                            (object_reference
+                              (identifier))
+                            (identifier))
+                          (invocation
+                            (object_reference
+                              (identifier)
+                              (identifier))
+                            (term
+                              (field
+                                (identifier)))
+                            (term
+                              (field
+                                (identifier)))))))))
+                (keyword_then)
+                (literal))
+              (keyword_else)
+              (literal)
+              (keyword_end))))
+        (statement
+          (return_statement
+            (keyword_return)
+            (field
+              (identifier))))
+        (keyword_end)))))
+
+================================================================================
+Function options
+================================================================================
+
+CREATE FUNCTION dbo.fn (@a int)
+RETURNS int
+WITH SCHEMABINDING, RETURNS NULL ON NULL INPUT, EXECUTE AS CALLER, INLINE = ON
+AS BEGIN RETURN @a END
+
+CREATE FUNCTION dbo.fn2 (@a int)
+RETURNS int
+WITH CALLED ON NULL INPUT, ENCRYPTION
+AS BEGIN RETURN @a END
+
+--------------------------------------------------------------------------------
+
+(program
+  (statement
+    (create_function
+      (keyword_create)
+      (keyword_function)
+      (object_reference
+        (identifier)
+        (identifier))
+      (function_arguments
+        (function_argument
+          (identifier)
+          (keyword_int)))
+      (keyword_returns)
+      (keyword_int)
+      (function_options
+        (keyword_with)
+        (function_option
+          (keyword_schemabinding))
+        (function_option
+          (keyword_returns)
+          (keyword_null)
+          (keyword_on)
+          (keyword_null)
+          (keyword_input))
+        (function_option
+          (execute_as_clause
+            (keyword_execute)
+            (keyword_as)
+            (keyword_caller)))
+        (function_option
+          (identifier)
+          (keyword_on)))
+      (function_body
+        (keyword_as)
+        (keyword_begin)
+        (statement
+          (return_statement
+            (keyword_return)
+            (field
+              (identifier))))
+        (keyword_end))))
+  (statement
+    (create_function
+      (keyword_create)
+      (keyword_function)
+      (object_reference
+        (identifier)
+        (identifier))
+      (function_arguments
+        (function_argument
+          (identifier)
+          (keyword_int)))
+      (keyword_returns)
+      (keyword_int)
+      (function_options
+        (keyword_with)
+        (function_option
+          (keyword_called)
+          (keyword_on)
+          (keyword_null)
+          (keyword_input))
+        (function_option
+          (keyword_encryption)))
+      (function_body
+        (keyword_as)
+        (keyword_begin)
+        (statement
+          (return_statement
+            (keyword_return)
+            (field
+              (identifier))))
+        (keyword_end)))))
+
+================================================================================
+ALTER FUNCTION
+================================================================================
+
+ALTER FUNCTION dbo.fn (@a int)
+RETURNS varbinary(max)
+AS
+BEGIN
+  RETURN CAST(@a AS varbinary(max));
+END
+
+--------------------------------------------------------------------------------
+
+(program
+  (statement
+    (alter_function
+      (keyword_alter)
+      (keyword_function)
+      (object_reference
+        (identifier)
+        (identifier))
+      (function_arguments
+        (function_argument
+          (identifier)
+          (keyword_int)))
+      (keyword_returns)
+      (varbinary
+        (keyword_varbinary)
+        (keyword_max))
+      (function_body
+        (keyword_as)
+        (keyword_begin)
+        (statement
+          (return_statement
+            (keyword_return)
+            (cast
+              (keyword_cast)
+              (field
+                (identifier))
+              (keyword_as)
+              (varbinary
+                (keyword_varbinary)
+                (keyword_max)))))
+        (keyword_end)))))
+
+================================================================================
+Function with ELSE IF chains and blocks
+================================================================================
+
+CREATE FUNCTION dbo.CalcTotals (@CalcType GenericCodeType, @Type ProjCostTypeType)
+RETURNS AmountType
+AS
+BEGIN
+   DECLARE @ReturnValue AmountType, @TempAct AmountType
+
+   SET @ReturnValue = 0.0
+
+   IF @CalcType = N'OV_ACT' AND @Type = 'P'
+   BEGIN
+      SELECT @ReturnValue = SUM( pcst.ovh_a_cost )
+      FROM projcost pcst
+      WHERE pcst.type = @Type
+   END
+
+   -- Overhead Forecast Cost
+   ELSE IF @CalcType = N'OV_FCT'
+   BEGIN
+      IF @Type = 'P'
+         SELECT @ReturnValue = SUM( pcst.a_cost ) + SUM( pcst.ovh_a_cost )
+         FROM projcost pcst
+         WHERE pcst.type = @Type
+      ELSE
+         SELECT @ReturnValue = SUM( pcst.a_cost )
+         FROM projcost pcst
+   END
+
+   IF @ReturnValue IS NULL
+      SET @ReturnValue = 0.0
+
+   RETURN ROUND(@ReturnValue, 2)
+END
+
+--------------------------------------------------------------------------------
+
+(program
+  (statement
+    (create_function
+      (keyword_create)
+      (keyword_function)
+      (object_reference
+        (identifier)
+        (identifier))
+      (function_arguments
+        (function_argument
+          (identifier)
+          (custom_type
+            (object_reference
+              (identifier))))
+        (function_argument
+          (identifier)
+          (custom_type
+            (object_reference
+              (identifier)))))
+      (keyword_returns)
+      (custom_type
+        (object_reference
+          (identifier)))
+      (function_body
+        (keyword_as)
+        (keyword_begin)
+        (statement
+          (var_declarations
+            (keyword_declare)
+            (var_declaration
+              (identifier)
+              (custom_type
+                (object_reference
+                  (identifier))))
+            (var_declaration
+              (identifier)
+              (custom_type
+                (object_reference
+                  (identifier))))))
+        (statement
+          (set_statement
+            (keyword_set)
+            (object_reference
+              (identifier))
+            (assignment_operator)
+            (literal)))
+        (statement
+          (if_statement
+            (keyword_if)
+            (binary_expression
+              (binary_expression
+                (field
+                  (identifier))
+                (literal))
+              (keyword_and)
+              (binary_expression
+                (field
+                  (identifier))
+                (literal)))
+            (block
+              (keyword_begin)
+              (statement
+                (select
+                  (keyword_select)
+                  (select_expression
+                    (term
+                      (binary_expression
+                        (field
+                          (identifier))
+                        (invocation
+                          (object_reference
+                            (identifier))
+                          (term
+                            (field
+                              (object_reference
+                                (identifier))
+                              (identifier))))))))
+                (from
+                  (keyword_from)
+                  (relation
+                    (object_reference
+                      (identifier))
+                    (identifier))
+                  (where
+                    (keyword_where)
+                    (binary_expression
+                      (field
+                        (object_reference
+                          (identifier))
+                        (identifier))
+                      (field
+                        (identifier))))))
+              (keyword_end))
+            (comment)
+            (else_clause
+              (keyword_else)
+              (statement
+                (if_statement
+                  (keyword_if)
+                  (binary_expression
+                    (field
+                      (identifier))
+                    (literal))
+                  (block
+                    (keyword_begin)
+                    (statement
+                      (if_statement
+                        (keyword_if)
+                        (binary_expression
+                          (field
+                            (identifier))
+                          (literal))
+                        (statement
+                          (select
+                            (keyword_select)
+                            (select_expression
+                              (term
+                                (binary_expression
+                                  (field
+                                    (identifier))
+                                  (binary_expression
+                                    (invocation
+                                      (object_reference
+                                        (identifier))
+                                      (term
+                                        (field
+                                          (object_reference
+                                            (identifier))
+                                          (identifier))))
+                                    (invocation
+                                      (object_reference
+                                        (identifier))
+                                      (term
+                                        (field
+                                          (object_reference
+                                            (identifier))
+                                          (identifier)))))))))
+                          (from
+                            (keyword_from)
+                            (relation
+                              (object_reference
+                                (identifier))
+                              (identifier))
+                            (where
+                              (keyword_where)
+                              (binary_expression
+                                (field
+                                  (object_reference
+                                    (identifier))
+                                  (identifier))
+                                (field
+                                  (identifier))))))
+                        (else_clause
+                          (keyword_else)
+                          (statement
+                            (select
+                              (keyword_select)
+                              (select_expression
+                                (term
+                                  (binary_expression
+                                    (field
+                                      (identifier))
+                                    (invocation
+                                      (object_reference
+                                        (identifier))
+                                      (term
+                                        (field
+                                          (object_reference
+                                            (identifier))
+                                          (identifier))))))))
+                            (from
+                              (keyword_from)
+                              (relation
+                                (object_reference
+                                  (identifier))
+                                (identifier)))))))
+                    (keyword_end)))))))
+        (statement
+          (if_statement
+            (keyword_if)
+            (binary_expression
+              (field
+                (identifier))
+              (keyword_is)
+              (literal
+                (keyword_null)))
+            (statement
+              (set_statement
+                (keyword_set)
+                (object_reference
+                  (identifier))
+                (assignment_operator)
+                (literal)))))
+        (statement
+          (return_statement
+            (keyword_return)
+            (invocation
+              (object_reference
+                (identifier))
+              (term
+                (field
+                  (identifier)))
+              (term
+                (literal)))))
+        (keyword_end)))))
+
+================================================================================
+Drop function
+================================================================================
+
+DROP FUNCTION my_function;
+DROP FUNCTION IF EXISTS dbo.my_function;
+
+--------------------------------------------------------------------------------
+
+(program
+  (statement
+    (drop_function
+      (keyword_drop)
+      (keyword_function)
+      (object_reference
+        (identifier))))
+  (statement
+    (drop_function
+      (keyword_drop)
+      (keyword_function)
+      (keyword_if)
+      (keyword_exists)
+      (object_reference
+        (identifier)
+        (identifier)))))

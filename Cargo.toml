@@ -1,0 +1,27 @@
+[package]
+name = "tree-sitter-mssql"
+description = "Tree-sitter grammar for Microsoft SQL Server T-SQL"
+version = "0.1.4"
+authors = ["Derek Stride", "M. Reifschneider"]
+license = "MIT"
+readme = "README.md"
+keywords = ["incremental", "parsing", "tree-sitter", "sql", "tsql"]
+categories = ["parsing", "text-editors"]
+repository = "https://github.com/meloncholic/tree-sitter-mssql.git"
+edition = "2021"
+autoexamples = false
+
+build = "bindings/rust/build.rs"
+include = ["/LICENSE", "/NOTICE", "bindings/rust/*", "grammar*", "queries/*", "src/*"]
+
+[lib]
+path = "bindings/rust/lib.rs"
+
+[dependencies]
+tree-sitter-language = "0.1"
+
+[build-dependencies]
+cc = "~1.4.4"
+
+[dev-dependencies]
+tree-sitter = "~0.27.0"

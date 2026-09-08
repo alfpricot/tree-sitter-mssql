@@ -1,0 +1,67 @@
+{
+  "name": "tree-sitter-mssql",
+  "version": "0.1.0",
+  "description": "Tree-sitter grammar for Microsoft SQL Server T-SQL",
+  "main": "bindings/node",
+  "types": "bindings/node",
+  "scripts": {
+    "install": "node-gyp-build",
+    "prestart": "npx --yes --package=tree-sitter-cli@v0.26.3 -- tree-sitter build --wasm",
+    "start": "npx --yes --package=tree-sitter-cli@v0.26.3 -- tree-sitter playground",
+    "test": "node --test bindings/node/*_test.js"
+  },
+  "author": "M. Reifschneider",
+  "contributors": [
+    "Derek Stride"
+  ],
+  "license": "MIT",
+  "dependencies": {
+    "node-addon-api": "^8.9.2",
+    "node-gyp-build": "^4.8.0"
+  },
+  "devDependencies": {
+    "node-gyp": "^13.0.2"
+  },
+  "peerDependencies": {
+    "tree-sitter": "^0.25.0"
+  },
+  "peerDependenciesMeta": {
+    "tree_sitter": {
+      "optional": true
+    }
+  },
+  "gypfile": true,
+  "directories": {
+    "test": "test"
+  },
+  "type": "module",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/meloncholic/tree-sitter-mssql.git"
+  },
+  "bugs": {
+    "url": "https://github.com/meloncholic/tree-sitter-mssql/issues"
+  },
+  "homepage": "https://github.com/meloncholic/tree-sitter-mssql#readme",
+  "keywords": [
+    "parser",
+    "sql",
+    "tsql",
+    "mssql",
+    "sql-server"
+  ],
+  "files": [
+    "grammar.js",
+    "grammar/**",
+    "binding.gyp",
+    "bindings/node/*",
+    "queries/*",
+    "src/**",
+    "tree-sitter.json",
+    "NOTICE"
+  ],
+  "allowScripts": {
+    "tree-sitter-cli@0.26.3": true,
+    "tree-sitter@0.25.1": true
+  }
+}

@@ -1,0 +1,12 @@
+DECLARE @jsonInfo AS NVARCHAR(MAX);
+SET @jsonInfo = N'{"info":{"address":[{"town":"Paris"},{"town":"London"}]}}';
+SELECT JSON_PATH_EXISTS(@jsonInfo, '$.info.address');
+SET @jsonInfo = N'{"info":{"address":[{"town":"Paris"},{"town":"London"}]}}';
+SELECT JSON_PATH_EXISTS(@jsonInfo, '$.info.addresses');
+DECLARE @jsonInfo AS NVARCHAR(MAX);
+SET @jsonInfo = N'{"info":{"address":[{"town":"Paris"},{"town":"London"}]}}';
+SELECT JSON_PATH_EXISTS(@jsonInfo, '$.info.address[*].town');
+SET @jsonInfo = N'{"info":{"address":[{"town":"Paris"},{"city":"London"}]}}';
+SELECT JSON_PATH_EXISTS(@jsonInfo, '$.info.address[*].town');
+SET @jsonInfo = N'{"info":{"address":[{"city":"Paris"},{"city":"London"}]}}';
+SELECT JSON_PATH_EXISTS(@jsonInfo, '$.info.address[*].town');

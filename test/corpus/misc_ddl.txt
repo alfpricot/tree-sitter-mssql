@@ -1,0 +1,1046 @@
+================================================================================
+Create synonym
+================================================================================
+
+CREATE SYNONYM [frm].[Filters] FOR [FormsDB].[dbo].[Filters]
+CREATE SYNONYM dbo.remote_t FOR linked.db.dbo.t;
+DROP SYNONYM IF EXISTS dbo.remote_t;
+
+--------------------------------------------------------------------------------
+
+(program
+  (statement
+    (create_synonym
+      (keyword_create)
+      (keyword_synonym)
+      (object_reference
+        (identifier)
+        (identifier))
+      (keyword_for)
+      (object_reference
+        (identifier)
+        (identifier)
+        (identifier))))
+  (statement
+    (create_synonym
+      (keyword_create)
+      (keyword_synonym)
+      (object_reference
+        (identifier)
+        (identifier))
+      (keyword_for)
+      (object_reference
+        (identifier)
+        (identifier)
+        (identifier)
+        (identifier))))
+  (statement
+    (drop_synonym
+      (keyword_drop)
+      (keyword_synonym)
+      (keyword_if)
+      (keyword_exists)
+      (object_reference
+        (identifier)
+        (identifier)))))
+
+================================================================================
+Create, alter and drop sequence
+================================================================================
+
+CREATE SEQUENCE dbo.order_seq AS bigint START WITH 1 INCREMENT BY 1 MINVALUE 1 NO MAXVALUE NO CYCLE CACHE 100;
+CREATE SEQUENCE dbo.seq2;
+ALTER SEQUENCE dbo.order_seq RESTART WITH 1000 INCREMENT BY -1 NO CACHE CYCLE;
+ALTER SEQUENCE dbo.order_seq RESTART;
+DROP SEQUENCE IF EXISTS dbo.order_seq, dbo.seq2;
+
+--------------------------------------------------------------------------------
+
+(program
+  (statement
+    (create_sequence
+      (keyword_create)
+      (keyword_sequence)
+      (object_reference
+        (identifier)
+        (identifier))
+      (sequence_option
+        (keyword_as)
+        (keyword_bigint))
+      (sequence_option
+        (keyword_start)
+        (keyword_with)
+        (literal))
+      (sequence_option
+        (keyword_increment)
+        (keyword_by)
+        (literal))
+      (sequence_option
+        (keyword_minvalue)
+        (literal))
+      (sequence_option
+        (keyword_no)
+        (keyword_maxvalue))
+      (sequence_option
+        (keyword_no)
+        (keyword_cycle))
+      (sequence_option
+        (keyword_cache)
+        (literal))))
+  (statement
+    (create_sequence
+      (keyword_create)
+      (keyword_sequence)
+      (object_reference
+        (identifier)
+        (identifier))))
+  (statement
+    (alter_sequence
+      (keyword_alter)
+      (keyword_sequence)
+      (object_reference
+        (identifier)
+        (identifier))
+      (sequence_option
+        (keyword_restart)
+        (keyword_with)
+        (literal))
+      (sequence_option
+        (keyword_increment)
+        (keyword_by)
+        (unary_expression
+          (literal)))
+      (sequence_option
+        (keyword_no)
+        (keyword_cache))
+      (sequence_option
+        (keyword_cycle))))
+  (statement
+    (alter_sequence
+      (keyword_alter)
+      (keyword_sequence)
+      (object_reference
+        (identifier)
+        (identifier))
+      (sequence_option
+        (keyword_restart))))
+  (statement
+    (drop_sequence
+      (keyword_drop)
+      (keyword_sequence)
+      (keyword_if)
+      (keyword_exists)
+      (object_reference
+        (identifier)
+        (identifier))
+      (object_reference
+        (identifier)
+        (identifier)))))
+
+================================================================================
+Create and alter database
+================================================================================
+
+CREATE DATABASE hollywood
+CREATE DATABASE sales COLLATE Latin1_General_CI_AS;
+ALTER DATABASE sales SET RECOVERY SIMPLE;
+ALTER DATABASE sales SET READ_ONLY WITH ROLLBACK IMMEDIATE;
+ALTER DATABASE sales SET SINGLE_USER WITH NO_WAIT;
+ALTER DATABASE sales SET COMPATIBILITY_LEVEL = 150, AUTO_UPDATE_STATISTICS ON;
+ALTER DATABASE sales SET QUERY_STORE = ON (OPERATION_MODE = READ_WRITE);
+ALTER DATABASE sales MODIFY NAME = sales_archive;
+ALTER DATABASE sales COLLATE Latin1_General_BIN;
+ALTER DATABASE SCOPED CONFIGURATION SET MAXDOP = 4;
+DROP DATABASE IF EXISTS hollywood;
+
+--------------------------------------------------------------------------------
+
+(program
+  (statement
+    (create_database
+      (keyword_create)
+      (keyword_database)
+      (identifier)))
+  (statement
+    (create_database
+      (keyword_create)
+      (keyword_database)
+      (identifier)
+      (keyword_collate)
+      (identifier)))
+  (statement
+    (alter_database
+      (keyword_alter)
+      (keyword_database)
+      (identifier)
+      (keyword_set)
+      (option
+        (identifier)
+        (identifier))))
+  (statement
+    (alter_database
+      (keyword_alter)
+      (keyword_database)
+      (identifier)
+      (keyword_set)
+      (option
+        (identifier))
+      (keyword_with)
+      (keyword_rollback)
+      (identifier)))
+  (statement
+    (alter_database
+      (keyword_alter)
+      (keyword_database)
+      (identifier)
+      (keyword_set)
+      (option
+        (identifier))
+      (keyword_with)
+      (identifier)))
+  (statement
+    (alter_database
+      (keyword_alter)
+      (keyword_database)
+      (identifier)
+      (keyword_set)
+      (option
+        (identifier)
+        (literal))
+      (option
+        (identifier)
+        (keyword_on))))
+  (statement
+    (alter_database
+      (keyword_alter)
+      (keyword_database)
+      (identifier)
+      (keyword_set)
+      (option
+        (identifier)
+        (keyword_on)
+        (option
+          (identifier)
+          (identifier)))))
+  (statement
+    (alter_database
+      (keyword_alter)
+      (keyword_database)
+      (identifier)
+      (keyword_modify)
+      (option
+        (identifier)
+        (identifier))))
+  (statement
+    (alter_database
+      (keyword_alter)
+      (keyword_database)
+      (identifier)
+      (keyword_collate)
+      (identifier)))
+  (statement
+    (alter_database
+      (keyword_alter)
+      (keyword_database)
+      (identifier)
+      (identifier)
+      (keyword_set)
+      (option
+        (identifier)
+        (literal))))
+  (statement
+    (drop_database
+      (keyword_drop)
+      (keyword_database)
+      (keyword_if)
+      (keyword_exists)
+      (identifier))))
+
+================================================================================
+Full-text catalog, route, audit and assembly
+================================================================================
+
+CREATE FULLTEXT CATALOG [DocumentsCatalog] WITH ACCENT_SENSITIVITY = ON
+CREATE FULLTEXT CATALOG cat2 ON FILEGROUP fg AS DEFAULT AUTHORIZATION dbo;
+
+CREATE ROUTE [AutoCreatedLocal]  WITH  ADDRESS  = N'LOCAL'
+
+CREATE SERVER AUDIT [FormsAudit]
+TO FILE
+(	FILEPATH = N'C:\audit\'
+	,MAXSIZE = 100 MB
+	,MAX_FILES = 10
+	,RESERVE_DISK_SPACE = ON
+) WITH (QUEUE_DELAY = 1000, ON_FAILURE = CONTINUE, AUDIT_GUID = '00000000-0000-0000-0000-000000000000')
+ALTER SERVER AUDIT [FormsAudit] WITH (STATE = ON)
+CREATE SERVER AUDIT audit2 TO APPLICATION_LOG WHERE object_name = 'secret';
+
+CREATE ASSEMBLY [Replication]
+FROM 0x4D5A90000300000004000000FFFF0000B800000000000000400000000000000000000000000000000000000000000000
+WITH PERMISSION_SET = EXTERNAL_ACCESS
+CREATE ASSEMBLY asm2 AUTHORIZATION dbo FROM 'C:\lib\asm2.dll' WITH PERMISSION_SET = SAFE;
+DROP ASSEMBLY IF EXISTS asm2 WITH NO DEPENDENTS;
+
+--------------------------------------------------------------------------------
+
+(program
+  (statement
+    (create_fulltext_catalog
+      (keyword_create)
+      (keyword_fulltext)
+      (keyword_catalog)
+      (identifier)
+      (with_clause
+        (keyword_with)
+        (option
+          (identifier)
+          (keyword_on)))))
+  (statement
+    (create_fulltext_catalog
+      (keyword_create)
+      (keyword_fulltext)
+      (keyword_catalog)
+      (identifier)
+      (keyword_on)
+      (identifier)
+      (identifier)
+      (keyword_as)
+      (keyword_default)
+      (keyword_authorization)
+      (identifier)))
+  (statement
+    (create_route
+      (keyword_create)
+      (keyword_route)
+      (identifier)
+      (with_clause
+        (keyword_with)
+        (option
+          (identifier)
+          (literal)))))
+  (statement
+    (create_server_audit
+      (keyword_create)
+      (keyword_server)
+      (keyword_audit)
+      (identifier)
+      (keyword_to)
+      (identifier)
+      (option
+        (identifier)
+        (literal))
+      (option
+        (identifier)
+        (literal)
+        (identifier))
+      (option
+        (identifier)
+        (literal))
+      (option
+        (identifier)
+        (keyword_on))
+      (with_options
+        (keyword_with)
+        (option
+          (identifier)
+          (literal))
+        (option
+          (identifier)
+          (identifier))
+        (option
+          (identifier)
+          (literal)))))
+  (statement
+    (alter_server_audit
+      (keyword_alter)
+      (keyword_server)
+      (keyword_audit)
+      (identifier)
+      (with_options
+        (keyword_with)
+        (option
+          (identifier)
+          (keyword_on)))))
+  (statement
+    (create_server_audit
+      (keyword_create)
+      (keyword_server)
+      (keyword_audit)
+      (identifier)
+      (keyword_to)
+      (identifier)
+      (where
+        (keyword_where)
+        (binary_expression
+          (field
+            (identifier))
+          (literal)))))
+  (statement
+    (create_assembly
+      (keyword_create)
+      (keyword_assembly)
+      (identifier)
+      (keyword_from)
+      (literal)
+      (with_clause
+        (keyword_with)
+        (option
+          (identifier)
+          (identifier)))))
+  (statement
+    (create_assembly
+      (keyword_create)
+      (keyword_assembly)
+      (identifier)
+      (keyword_authorization)
+      (identifier)
+      (keyword_from)
+      (literal)
+      (with_clause
+        (keyword_with)
+        (option
+          (identifier)
+          (identifier)))))
+  (statement
+    (drop_assembly
+      (keyword_drop)
+      (keyword_assembly)
+      (keyword_if)
+      (keyword_exists)
+      (identifier)
+      (keyword_with)
+      (keyword_no)
+      (identifier))))
+
+================================================================================
+DBCC and RECONFIGURE
+================================================================================
+
+DBCC CHECKDB;
+DBCC CHECKTABLE ('dbo.t', @indid) WITH NO_INFOMSGS, TABLOCK;
+DBCC FREEPROCCACHE
+EXEC sp_configure 'show advanced options', 1;
+RECONFIGURE WITH OVERRIDE;
+RECONFIGURE
+
+--------------------------------------------------------------------------------
+
+(program
+  (statement
+    (dbcc_statement
+      (keyword_dbcc)
+      (identifier)))
+  (statement
+    (dbcc_statement
+      (keyword_dbcc)
+      (identifier)
+      (literal)
+      (field
+        (identifier))
+      (with_clause
+        (keyword_with)
+        (option
+          (identifier))
+        (option
+          (identifier)))))
+  (statement
+    (dbcc_statement
+      (keyword_dbcc)
+      (identifier)))
+  (statement
+    (execute_statement
+      (keyword_exec)
+      (object_reference
+        (identifier))
+      (exec_argument
+        (literal))
+      (exec_argument
+        (literal))))
+  (statement
+    (reconfigure_statement
+      (keyword_reconfigure)
+      (keyword_with)
+      (keyword_override)))
+  (statement
+    (reconfigure_statement
+      (keyword_reconfigure))))
+
+================================================================================
+Use database
+================================================================================
+
+USE master;
+USE [AppDB]
+
+--------------------------------------------------------------------------------
+
+(program
+  (statement
+    (use_statement
+      (keyword_use)
+      (object_reference
+        (identifier))))
+  (statement
+    (use_statement
+      (keyword_use)
+      (object_reference
+        (identifier)))))
+
+================================================================================
+Drop statistics
+================================================================================
+
+DROP STATISTICS dbo.t.st_a, dbo.t.st_b;
+
+--------------------------------------------------------------------------------
+
+(program
+  (statement
+    (drop_statistics
+      (keyword_drop)
+      (keyword_statistics)
+      (object_reference
+        (identifier)
+        (identifier)
+        (identifier))
+      (object_reference
+        (identifier)
+        (identifier)
+        (identifier)))))
+
+================================================================================
+KILL, SETUSER and BACKUP
+================================================================================
+
+KILL 54 WITH STATUSONLY;
+KILL 'D5499C66-E398-45CA-BF7E-DC9C194B48CF';
+SETUSER 'dbo' WITH NORESET;
+SETUSER;
+BACKUP DATABASE MyDb TO DISK = 'MyDb.bak', TAPE = '\\.\tape0' WITH PASSWORD = 'secret', COMPRESSION;
+BACKUP LOG MyDb TO MyDevice;
+
+--------------------------------------------------------------------------------
+
+(program
+  (statement
+    (kill_statement
+      (keyword_kill)
+      (literal)
+      (keyword_with)
+      (identifier)))
+  (statement
+    (kill_statement
+      (keyword_kill)
+      (literal)))
+  (statement
+    (setuser_statement
+      (keyword_setuser)
+      (literal)
+      (keyword_with)
+      (identifier)))
+  (statement
+    (setuser_statement
+      (keyword_setuser)))
+  (statement
+    (backup_statement
+      (keyword_backup)
+      (keyword_database)
+      (identifier)
+      (keyword_to)
+      (option
+        (identifier)
+        (literal))
+      (option
+        (identifier)
+        (literal))
+      (with_clause
+        (keyword_with)
+        (option
+          (identifier)
+          (literal))
+        (option
+          (identifier)))))
+  (statement
+    (backup_statement
+      (keyword_backup)
+      (keyword_log)
+      (identifier)
+      (keyword_to)
+      (option
+        (identifier)))))
+
+================================================================================
+The deprecated text-pointer statements READTEXT, WRITETEXT and UPDATETEXT
+================================================================================
+
+READTEXT dbo.Customer.Notes @ptrval 0 100 HOLDLOCK;
+WRITETEXT dbo.Customer.Notes @ptrval WITH LOG 'hello';
+UPDATETEXT dbo.Customer.Notes @ptrval @off @len 'hi';
+UPDATETEXT dbo.Customer.Notes @ptrval NULL NULL dbo.Customer.Notes @src;
+
+--------------------------------------------------------------------------------
+
+(program
+  (statement
+    (readtext_statement
+      (keyword_readtext)
+      (object_reference
+        (identifier)
+        (identifier)
+        (identifier))
+      (field
+        (identifier))
+      (literal)
+      (literal)
+      (keyword_holdlock)))
+  (statement
+    (writetext_statement
+      (keyword_writetext)
+      (object_reference
+        (identifier)
+        (identifier)
+        (identifier))
+      (field
+        (identifier))
+      (keyword_with)
+      (keyword_log)
+      (literal)))
+  (statement
+    (updatetext_statement
+      (keyword_updatetext)
+      (object_reference
+        (identifier)
+        (identifier)
+        (identifier))
+      (field
+        (identifier))
+      (field
+        (identifier))
+      (field
+        (identifier))
+      (literal)))
+  (statement
+    (updatetext_statement
+      (keyword_updatetext)
+      (object_reference
+        (identifier)
+        (identifier)
+        (identifier))
+      (field
+        (identifier))
+      (literal
+        (keyword_null))
+      (literal
+        (keyword_null))
+      (field
+        (object_reference
+          (identifier)
+          (identifier))
+        (identifier))
+      (field
+        (identifier)))))
+
+================================================================================
+CREATE EXTERNAL DATA SOURCE, FILE FORMAT and TABLE
+================================================================================
+
+CREATE EXTERNAL DATA SOURCE mydatasource WITH (TYPE = HADOOP, LOCATION = 'hdfs://host:8020');
+CREATE EXTERNAL FILE FORMAT myfileformat WITH (FORMAT_TYPE = DELIMITEDTEXT, FORMAT_OPTIONS (FIELD_TERMINATOR = '|'));
+CREATE EXTERNAL TABLE ClickStream (url VARCHAR(50), event_date DATE)
+WITH (DATA_SOURCE = mydatasource, LOCATION = '/webdata/employee.tbl', FILE_FORMAT = myfileformat);
+
+--------------------------------------------------------------------------------
+
+(program
+  (statement
+    (create_external_data_source
+      (keyword_create)
+      (keyword_external)
+      (keyword_data)
+      (keyword_source)
+      (identifier)
+      (with_options
+        (keyword_with)
+        (option
+          (identifier)
+          (identifier))
+        (option
+          (identifier)
+          (literal)))))
+  (statement
+    (create_external_file_format
+      (keyword_create)
+      (keyword_external)
+      (keyword_file)
+      (keyword_format)
+      (identifier)
+      (with_options
+        (keyword_with)
+        (option
+          (identifier)
+          (identifier))
+        (option
+          (identifier)
+          (option
+            (identifier)
+            (literal))))))
+  (statement
+    (create_table
+      (keyword_create)
+      (keyword_external)
+      (keyword_table)
+      (object_reference
+        (identifier))
+      (column_definitions
+        (column_definition
+          (identifier)
+          (varchar
+            (keyword_varchar)
+            (literal)))
+        (column_definition
+          (identifier)
+          (keyword_date)))
+      (with_options
+        (keyword_with)
+        (option
+          (identifier)
+          (identifier))
+        (option
+          (identifier)
+          (literal))
+        (option
+          (identifier)
+          (identifier))))))
+
+================================================================================
+CREATE STATISTICS and an ordered clustered columnstore index (2022)
+================================================================================
+
+CREATE STATISTICS ContactMail1 ON Person.Person (BusinessEntityID, EmailPromotion) WITH SAMPLE 5 PERCENT;
+CREATE CLUSTERED COLUMNSTORE INDEX cci ON Sales.OrderLines ORDER (SHIPDATE, PRODUCTKEY) WITH (DROP_EXISTING = ON);
+
+--------------------------------------------------------------------------------
+
+(program
+  (statement
+    (create_statistics
+      (keyword_create)
+      (keyword_statistics)
+      (identifier)
+      (keyword_on)
+      (object_reference
+        (identifier)
+        (identifier))
+      (identifier)
+      (identifier)
+      (with_clause
+        (keyword_with)
+        (option
+          (identifier)
+          (literal)
+          (identifier)))))
+  (statement
+    (create_index
+      (keyword_create)
+      (keyword_clustered)
+      (identifier)
+      (keyword_index)
+      (identifier)
+      (keyword_on)
+      (object_reference
+        (identifier)
+        (identifier))
+      (keyword_order)
+      (identifier)
+      (identifier)
+      (with_options
+        (keyword_with)
+        (option
+          (identifier)
+          (keyword_on))))))
+
+================================================================================
+DBCC with a parenthesized sub-option list
+================================================================================
+
+DBCC SHRINKDATABASE ([AdventureWorks2025], 20) WITH WAIT_AT_LOW_PRIORITY (ABORT_AFTER_WAIT = SELF), NO_INFOMSGS;
+
+--------------------------------------------------------------------------------
+
+(program
+  (statement
+    (dbcc_statement
+      (keyword_dbcc)
+      (identifier)
+      (field
+        (identifier))
+      (literal)
+      (with_clause
+        (keyword_with)
+        (option
+          (identifier)
+          (option
+            (identifier)
+            (identifier)))
+        (option
+          (identifier))))))
+
+================================================================================
+BULK INSERT
+================================================================================
+
+BULK INSERT dbo.Orders
+FROM 'C:\data\orders.csv'
+WITH (
+    FORMAT = 'CSV',
+    FIRSTROW = 2,
+    FIELDTERMINATOR = ',',
+    ROWTERMINATOR = '\n',
+    TABLOCK,
+    ORDER (OrderId ASC)
+);
+BULK INSERT dbo.Orders FROM 'C:\data\orders.dat';
+
+--------------------------------------------------------------------------------
+
+(program
+  (statement
+    (bulk_insert_statement
+      (keyword_bulk)
+      (keyword_insert)
+      (object_reference
+        (identifier)
+        (identifier))
+      (keyword_from)
+      (literal)
+      (with_options
+        (keyword_with)
+        (option
+          (identifier)
+          (literal))
+        (option
+          (identifier)
+          (literal))
+        (option
+          (identifier)
+          (literal))
+        (option
+          (identifier)
+          (literal))
+        (option
+          (identifier))
+        (option
+          (identifier)
+          (option
+            (identifier)
+            (identifier))))))
+  (statement
+    (bulk_insert_statement
+      (keyword_bulk)
+      (keyword_insert)
+      (object_reference
+        (identifier)
+        (identifier))
+      (keyword_from)
+      (literal))))
+
+================================================================================
+CREATE, ALTER and DROP EVENT SESSION
+================================================================================
+
+CREATE EVENT SESSION [Track_Deadlocks] ON SERVER
+ADD EVENT sqlserver.lock_deadlock(
+    ACTION(sqlserver.sql_text, sqlserver.session_id)
+    WHERE ([sqlserver].[database_name] = N'AdventureWorks2022')
+),
+ADD EVENT sqlserver.lock_deadlock_chain
+ADD TARGET package0.event_file(SET filename = N'C:\Logs\DeadlockGraphs.xel')
+WITH (
+    MAX_MEMORY = 4096 KB,
+    EVENT_RETENTION_MODE = ALLOW_SINGLE_EVENT_LOSS,
+    MAX_DISPATCH_LATENCY = 30 SECONDS,
+    TRACK_CAUSALITY = ON,
+    STARTUP_STATE = OFF
+);
+
+ALTER EVENT SESSION [Track_Deadlocks] ON SERVER
+ADD EVENT sqlserver.lock_deadlock
+DROP EVENT sqlserver.lock_deadlock_chain;
+
+ALTER EVENT SESSION [Track_Deadlocks] ON SERVER
+STATE = STOP;
+
+DROP EVENT SESSION [Track_Deadlocks] ON SERVER;
+
+--------------------------------------------------------------------------------
+
+(program
+  (statement
+    (create_event_session
+      (keyword_create)
+      (keyword_event)
+      (keyword_session)
+      (identifier)
+      (keyword_on)
+      (keyword_server)
+      (keyword_add)
+      (keyword_event)
+      (event_session_event
+        (object_reference
+          (identifier)
+          (identifier))
+        (keyword_action)
+        (object_reference
+          (identifier)
+          (identifier))
+        (object_reference
+          (identifier)
+          (identifier))
+        (where
+          (keyword_where)
+          (parenthesized_expression
+            (binary_expression
+              (field
+                (object_reference
+                  (identifier))
+                (identifier))
+              (literal)))))
+      (keyword_add)
+      (keyword_event)
+      (event_session_event
+        (object_reference
+          (identifier)
+          (identifier)))
+      (keyword_add)
+      (keyword_target)
+      (event_session_target
+        (object_reference
+          (identifier)
+          (identifier))
+        (keyword_set)
+        (option
+          (identifier)
+          (literal)))
+      (with_options
+        (keyword_with)
+        (option
+          (identifier)
+          (literal)
+          (identifier))
+        (option
+          (identifier)
+          (identifier))
+        (option
+          (identifier)
+          (literal)
+          (identifier))
+        (option
+          (identifier)
+          (keyword_on))
+        (option
+          (identifier)
+          (keyword_off)))))
+  (statement
+    (alter_event_session
+      (keyword_alter)
+      (keyword_event)
+      (keyword_session)
+      (identifier)
+      (keyword_on)
+      (keyword_server)
+      (keyword_add)
+      (keyword_event)
+      (event_session_event
+        (object_reference
+          (identifier)
+          (identifier)))
+      (keyword_drop)
+      (keyword_event)
+      (object_reference
+        (identifier)
+        (identifier))))
+  (statement
+    (alter_event_session
+      (keyword_alter)
+      (keyword_event)
+      (keyword_session)
+      (identifier)
+      (keyword_on)
+      (keyword_server)
+      (option
+        (identifier)
+        (identifier))))
+  (statement
+    (drop_event_session
+      (keyword_drop)
+      (keyword_event)
+      (keyword_session)
+      (identifier)
+      (keyword_on)
+      (keyword_server))))
+
+================================================================================
+XML schema collection: create, alter, drop
+================================================================================
+
+CREATE XML SCHEMA COLLECTION dbo.ManuInstructionsSchemaCollection AS N'<xs:schema/>';
+CREATE XML SCHEMA COLLECTION sc2 AS @xsd;
+ALTER XML SCHEMA COLLECTION dbo.ManuInstructionsSchemaCollection ADD N'<xs:schema/>';
+DROP XML SCHEMA COLLECTION IF EXISTS dbo.ManuInstructionsSchemaCollection;
+DROP XML SCHEMA COLLECTION sc2;
+
+--------------------------------------------------------------------------------
+
+(program
+  (statement
+    (create_xml_schema_collection
+      (keyword_create)
+      (keyword_xml)
+      (keyword_schema)
+      (keyword_collection)
+      (object_reference
+        (identifier)
+        (identifier))
+      (keyword_as)
+      (literal)))
+  (statement
+    (create_xml_schema_collection
+      (keyword_create)
+      (keyword_xml)
+      (keyword_schema)
+      (keyword_collection)
+      (object_reference
+        (identifier))
+      (keyword_as)
+      (field
+        (identifier))))
+  (statement
+    (alter_xml_schema_collection
+      (keyword_alter)
+      (keyword_xml)
+      (keyword_schema)
+      (keyword_collection)
+      (object_reference
+        (identifier)
+        (identifier))
+      (keyword_add)
+      (literal)))
+  (statement
+    (drop_xml_schema_collection
+      (keyword_drop)
+      (keyword_xml)
+      (keyword_schema)
+      (keyword_collection)
+      (keyword_if)
+      (keyword_exists)
+      (object_reference
+        (identifier)
+        (identifier))))
+  (statement
+    (drop_xml_schema_collection
+      (keyword_drop)
+      (keyword_xml)
+      (keyword_schema)
+      (keyword_collection)
+      (object_reference
+        (identifier)))))

@@ -1,0 +1,12 @@
+CREATE PROCEDURE dbo.sp @A INT, @B INT AS BEGIN SELECT @A, @B; END
+GO
+EXEC dbo.sp @A = 1, @B = 2;
+GO
+EXEC dbo.sp 1, 2;
+GO
+
+CREATE PROCEDURE dbo.sp_out @A INT OUTPUT AS BEGIN SET @A = 1; END
+GO
+DECLARE @x INT;
+EXEC dbo.sp_out @A = @x OUTPUT;
+GO

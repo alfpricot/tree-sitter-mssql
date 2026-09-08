@@ -1,0 +1,673 @@
+================================================================================
+One cte
+================================================================================
+
+WITH my_cte AS (
+  SELECT one, two
+  FROM my_table
+)
+SELECT *
+FROM my_cte;
+
+--------------------------------------------------------------------------------
+
+(program
+  (statement
+    (keyword_with)
+    (cte
+      (identifier)
+      (keyword_as)
+      (statement
+        (select
+          (keyword_select)
+          (select_expression
+            (term
+              (field
+                (identifier)))
+            (term
+              (field
+                (identifier)))))
+        (from
+          (keyword_from)
+          (relation
+            (object_reference
+              (identifier))))))
+    (select
+      (keyword_select)
+      (select_expression
+        (term
+          (all_fields))))
+    (from
+      (keyword_from)
+      (relation
+        (object_reference
+          (identifier))))))
+
+================================================================================
+Multiple ctes with column lists
+================================================================================
+
+WITH first (a, b) AS (
+  SELECT one, two FROM my_table
+), second AS (
+  SELECT one, two
+  FROM my_table
+)
+SELECT *
+FROM second;
+
+--------------------------------------------------------------------------------
+
+(program
+  (statement
+    (keyword_with)
+    (cte
+      (identifier)
+      (identifier)
+      (identifier)
+      (keyword_as)
+      (statement
+        (select
+          (keyword_select)
+          (select_expression
+            (term
+              (field
+                (identifier)))
+            (term
+              (field
+                (identifier)))))
+        (from
+          (keyword_from)
+          (relation
+            (object_reference
+              (identifier))))))
+    (cte
+      (identifier)
+      (keyword_as)
+      (statement
+        (select
+          (keyword_select)
+          (select_expression
+            (term
+              (field
+                (identifier)))
+            (term
+              (field
+                (identifier)))))
+        (from
+          (keyword_from)
+          (relation
+            (object_reference
+              (identifier))))))
+    (select
+      (keyword_select)
+      (select_expression
+        (term
+          (all_fields))))
+    (from
+      (keyword_from)
+      (relation
+        (object_reference
+          (identifier))))))
+
+================================================================================
+Parenthesized and nested ctes
+================================================================================
+
+(
+  WITH data AS (
+    SELECT 1 AS col
+  )
+  SELECT *
+  FROM data
+)
+
+WITH top_cte AS (
+  WITH nested_cte AS (
+    SELECT 1 as one, 2 as two
+  )
+  SELECT one, two
+  FROM nested_cte
+)
+SELECT *
+FROM top_cte;
+
+--------------------------------------------------------------------------------
+
+(program
+  (statement
+    (keyword_with)
+    (cte
+      (identifier)
+      (keyword_as)
+      (statement
+        (select
+          (keyword_select)
+          (select_expression
+            (term
+              (literal)
+              (keyword_as)
+              (identifier))))))
+    (select
+      (keyword_select)
+      (select_expression
+        (term
+          (all_fields))))
+    (from
+      (keyword_from)
+      (relation
+        (object_reference
+          (identifier)))))
+  (statement
+    (keyword_with)
+    (cte
+      (identifier)
+      (keyword_as)
+      (statement
+        (keyword_with)
+        (cte
+          (identifier)
+          (keyword_as)
+          (statement
+            (select
+              (keyword_select)
+              (select_expression
+                (term
+                  (literal)
+                  (keyword_as)
+                  (identifier))
+                (term
+                  (literal)
+                  (keyword_as)
+                  (identifier))))))
+        (select
+          (keyword_select)
+          (select_expression
+            (term
+              (field
+                (identifier)))
+            (term
+              (field
+                (identifier)))))
+        (from
+          (keyword_from)
+          (relation
+            (object_reference
+              (identifier))))))
+    (select
+      (keyword_select)
+      (select_expression
+        (term
+          (all_fields))))
+    (from
+      (keyword_from)
+      (relation
+        (object_reference
+          (identifier))))))
+
+================================================================================
+CTE with unions
+================================================================================
+
+with tb2 as (
+  SELECT * FROM tb1
+)
+(SELECT * FROM tb2)
+UNION
+(SELECT * FROM tb2)
+
+--------------------------------------------------------------------------------
+
+(program
+  (statement
+    (keyword_with)
+    (cte
+      (identifier)
+      (keyword_as)
+      (statement
+        (select
+          (keyword_select)
+          (select_expression
+            (term
+              (all_fields))))
+        (from
+          (keyword_from)
+          (relation
+            (object_reference
+              (identifier))))))
+    (set_operation
+      (select
+        (keyword_select)
+        (select_expression
+          (term
+            (all_fields))))
+      (from
+        (keyword_from)
+        (relation
+          (object_reference
+            (identifier))))
+      (keyword_union)
+      (select
+        (keyword_select)
+        (select_expression
+          (term
+            (all_fields))))
+      (from
+        (keyword_from)
+        (relation
+          (object_reference
+            (identifier)))))))
+
+================================================================================
+Recursive CTE
+================================================================================
+
+WITH included_parts(sub_part, part, quantity) AS (
+    SELECT sub_part, part, quantity FROM parts WHERE part = 'our_product'
+  UNION ALL
+    SELECT p.sub_part, p.part, p.quantity * pr.quantity
+    FROM included_parts pr, parts p
+    WHERE p.part = pr.sub_part
+)
+SELECT sub_part, SUM(quantity) as total_quantity
+FROM included_parts
+OPTION (MAXRECURSION 100)
+
+--------------------------------------------------------------------------------
+
+(program
+  (statement
+    (keyword_with)
+    (cte
+      (identifier)
+      (identifier)
+      (identifier)
+      (identifier)
+      (keyword_as)
+      (statement
+        (set_operation
+          (select
+            (keyword_select)
+            (select_expression
+              (term
+                (field
+                  (identifier)))
+              (term
+                (field
+                  (identifier)))
+              (term
+                (field
+                  (identifier)))))
+          (from
+            (keyword_from)
+            (relation
+              (object_reference
+                (identifier)))
+            (where
+              (keyword_where)
+              (binary_expression
+                (field
+                  (identifier))
+                (literal))))
+          (keyword_union)
+          (keyword_all)
+          (select
+            (keyword_select)
+            (select_expression
+              (term
+                (field
+                  (object_reference
+                    (identifier))
+                  (identifier)))
+              (term
+                (field
+                  (object_reference
+                    (identifier))
+                  (identifier)))
+              (term
+                (binary_expression
+                  (field
+                    (object_reference
+                      (identifier))
+                    (identifier))
+                  (field
+                    (object_reference
+                      (identifier))
+                    (identifier))))))
+          (from
+            (keyword_from)
+            (relation
+              (object_reference
+                (identifier))
+              (identifier))
+            (relation
+              (object_reference
+                (identifier))
+              (identifier))
+            (where
+              (keyword_where)
+              (binary_expression
+                (field
+                  (object_reference
+                    (identifier))
+                  (identifier))
+                (field
+                  (object_reference
+                    (identifier))
+                  (identifier))))))))
+    (select
+      (keyword_select)
+      (select_expression
+        (term
+          (field
+            (identifier)))
+        (term
+          (invocation
+            (object_reference
+              (identifier))
+            (term
+              (field
+                (identifier))))
+          (keyword_as)
+          (identifier))))
+    (from
+      (keyword_from)
+      (relation
+        (object_reference
+          (identifier)))
+      (option_clause
+        (keyword_option)
+        (query_hint
+          (identifier)
+          (literal))))))
+
+================================================================================
+CTE before INSERT, UPDATE, DELETE and MERGE
+================================================================================
+
+WITH src AS (SELECT id FROM staging)
+INSERT INTO target (id) SELECT id FROM src;
+
+WITH src AS (SELECT id FROM staging)
+UPDATE t SET t.flag = 1 FROM target t JOIN src ON src.id = t.id;
+
+WITH src AS (SELECT id FROM staging)
+DELETE t FROM target t JOIN src ON src.id = t.id;
+
+WITH src AS (SELECT id FROM staging)
+MERGE target AS t USING src ON t.id = src.id
+WHEN NOT MATCHED THEN INSERT (id) VALUES (src.id);
+
+--------------------------------------------------------------------------------
+
+(program
+  (statement
+    (keyword_with)
+    (cte
+      (identifier)
+      (keyword_as)
+      (statement
+        (select
+          (keyword_select)
+          (select_expression
+            (term
+              (field
+                (identifier)))))
+        (from
+          (keyword_from)
+          (relation
+            (object_reference
+              (identifier))))))
+    (insert
+      (keyword_insert)
+      (keyword_into)
+      (object_reference
+        (identifier))
+      (list
+        (column
+          (identifier)))
+      (select
+        (keyword_select)
+        (select_expression
+          (term
+            (field
+              (identifier)))))
+      (from
+        (keyword_from)
+        (relation
+          (object_reference
+            (identifier))))))
+  (statement
+    (keyword_with)
+    (cte
+      (identifier)
+      (keyword_as)
+      (statement
+        (select
+          (keyword_select)
+          (select_expression
+            (term
+              (field
+                (identifier)))))
+        (from
+          (keyword_from)
+          (relation
+            (object_reference
+              (identifier))))))
+    (update
+      (keyword_update)
+      (relation
+        (object_reference
+          (identifier)))
+      (keyword_set)
+      (assignment
+        (field
+          (object_reference
+            (identifier))
+          (identifier))
+        (assignment_operator)
+        (literal))
+      (from
+        (keyword_from)
+        (relation
+          (object_reference
+            (identifier))
+          (identifier))
+        (join
+          (keyword_join)
+          (relation
+            (object_reference
+              (identifier)))
+          (keyword_on)
+          (binary_expression
+            (field
+              (object_reference
+                (identifier))
+              (identifier))
+            (field
+              (object_reference
+                (identifier))
+              (identifier)))))))
+  (statement
+    (keyword_with)
+    (cte
+      (identifier)
+      (keyword_as)
+      (statement
+        (select
+          (keyword_select)
+          (select_expression
+            (term
+              (field
+                (identifier)))))
+        (from
+          (keyword_from)
+          (relation
+            (object_reference
+              (identifier))))))
+    (delete
+      (keyword_delete)
+      (object_reference
+        (identifier))
+      (from
+        (keyword_from)
+        (relation
+          (object_reference
+            (identifier))
+          (identifier))
+        (join
+          (keyword_join)
+          (relation
+            (object_reference
+              (identifier)))
+          (keyword_on)
+          (binary_expression
+            (field
+              (object_reference
+                (identifier))
+              (identifier))
+            (field
+              (object_reference
+                (identifier))
+              (identifier)))))))
+  (statement
+    (keyword_with)
+    (cte
+      (identifier)
+      (keyword_as)
+      (statement
+        (select
+          (keyword_select)
+          (select_expression
+            (term
+              (field
+                (identifier)))))
+        (from
+          (keyword_from)
+          (relation
+            (object_reference
+              (identifier))))))
+    (merge
+      (keyword_merge)
+      (object_reference
+        (identifier))
+      (keyword_as)
+      (identifier)
+      (keyword_using)
+      (object_reference
+        (identifier))
+      (keyword_on)
+      (binary_expression
+        (field
+          (object_reference
+            (identifier))
+          (identifier))
+        (field
+          (object_reference
+            (identifier))
+          (identifier)))
+      (merge_when_clause
+        (keyword_when)
+        (keyword_not)
+        (keyword_matched)
+        (keyword_then)
+        (keyword_insert)
+        (list
+          (column
+            (identifier)))
+        (keyword_values)
+        (list
+          (field
+            (object_reference
+              (identifier))
+            (identifier)))))))
+
+================================================================================
+WITH XMLNAMESPACES before a query, alone and with a CTE
+================================================================================
+
+WITH XMLNAMESPACES ('https://example.com/ns' AS MI, DEFAULT 'https://example.com/default')
+SELECT Locations.value('./@LocationID', 'int') AS LocID
+  FROM Production.ProductModel
+ CROSS APPLY Instructions.nodes('/MI:root/MI:Location') AS T1(Locations);
+WITH XMLNAMESPACES ('https://example.com/ns' AS ns), c AS (SELECT 1 AS n)
+SELECT n FROM c;
+
+--------------------------------------------------------------------------------
+
+(program
+  (statement
+    (keyword_with)
+    (xmlnamespaces
+      (keyword_xmlnamespaces)
+      (xmlnamespace
+        (literal)
+        (keyword_as)
+        (identifier))
+      (xmlnamespace
+        (keyword_default)
+        (literal)))
+    (select
+      (keyword_select)
+      (select_expression
+        (term
+          (invocation
+            (object_reference
+              (identifier)
+              (identifier))
+            (term
+              (literal))
+            (term
+              (literal)))
+          (keyword_as)
+          (identifier))))
+    (from
+      (keyword_from)
+      (relation
+        (object_reference
+          (identifier)
+          (identifier)))
+      (apply_join
+        (keyword_cross)
+        (keyword_apply)
+        (invocation
+          (object_reference
+            (identifier)
+            (identifier))
+          (term
+            (literal)))
+        (keyword_as)
+        (identifier)
+        (list
+          (column
+            (identifier))))))
+  (statement
+    (keyword_with)
+    (xmlnamespaces
+      (keyword_xmlnamespaces)
+      (xmlnamespace
+        (literal)
+        (keyword_as)
+        (identifier)))
+    (cte
+      (identifier)
+      (keyword_as)
+      (statement
+        (select
+          (keyword_select)
+          (select_expression
+            (term
+              (literal)
+              (keyword_as)
+              (identifier))))))
+    (select
+      (keyword_select)
+      (select_expression
+        (term
+          (field
+            (identifier)))))
+    (from
+      (keyword_from)
+      (relation
+        (object_reference
+          (identifier))))))

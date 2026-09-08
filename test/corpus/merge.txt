@@ -1,0 +1,526 @@
+================================================================================
+Merge delete
+================================================================================
+
+MERGE INTO accounts t
+USING monthly_accounts_update s
+    ON t.customer = s.customer
+    WHEN MATCHED
+        THEN DELETE
+
+--------------------------------------------------------------------------------
+
+(program
+  (statement
+    (merge
+      (keyword_merge)
+      (keyword_into)
+      (object_reference
+        (identifier))
+      (identifier)
+      (keyword_using)
+      (object_reference
+        (identifier))
+      (identifier)
+      (keyword_on)
+      (binary_expression
+        (field
+          (object_reference
+            (identifier))
+          (identifier))
+        (field
+          (object_reference
+            (identifier))
+          (identifier)))
+      (merge_when_clause
+        (keyword_when)
+        (keyword_matched)
+        (keyword_then)
+        (keyword_delete)))))
+
+================================================================================
+Merge upsert in the bare T-SQL spelling
+================================================================================
+
+MERGE accounts AS t
+USING monthly_accounts_update AS s
+    ON (t.customer = s.customer)
+    WHEN MATCHED
+        THEN UPDATE SET purchases = s.purchases + t.purchases
+    WHEN NOT MATCHED
+        THEN INSERT (customer, purchases, address)
+              VALUES(s.customer, s.purchases, s.address);
+
+--------------------------------------------------------------------------------
+
+(program
+  (statement
+    (merge
+      (keyword_merge)
+      (object_reference
+        (identifier))
+      (keyword_as)
+      (identifier)
+      (keyword_using)
+      (object_reference
+        (identifier))
+      (keyword_as)
+      (identifier)
+      (keyword_on)
+      (parenthesized_expression
+        (binary_expression
+          (field
+            (object_reference
+              (identifier))
+            (identifier))
+          (field
+            (object_reference
+              (identifier))
+            (identifier))))
+      (merge_when_clause
+        (keyword_when)
+        (keyword_matched)
+        (keyword_then)
+        (keyword_update)
+        (keyword_set)
+        (assignment
+          (field
+            (identifier))
+          (assignment_operator)
+          (binary_expression
+            (field
+              (object_reference
+                (identifier))
+              (identifier))
+            (field
+              (object_reference
+                (identifier))
+              (identifier)))))
+      (merge_when_clause
+        (keyword_when)
+        (keyword_not)
+        (keyword_matched)
+        (keyword_then)
+        (keyword_insert)
+        (list
+          (column
+            (identifier))
+          (column
+            (identifier))
+          (column
+            (identifier)))
+        (keyword_values)
+        (list
+          (field
+            (object_reference
+              (identifier))
+            (identifier))
+          (field
+            (object_reference
+              (identifier))
+            (identifier))
+          (field
+            (object_reference
+              (identifier))
+            (identifier)))))))
+
+================================================================================
+Merge with conditional clauses, BY SOURCE and BY TARGET
+================================================================================
+
+MERGE INTO accounts t
+USING monthly_accounts_update s
+    ON (t.customer = s.customer)
+    WHEN MATCHED AND s.address = 'Centreville'
+        THEN DELETE
+    WHEN MATCHED
+        THEN UPDATE
+            SET purchases = s.purchases + t.purchases, address = s.address
+    WHEN NOT MATCHED BY TARGET
+        THEN INSERT (customer, purchases, address)
+              VALUES(s.customer, s.purchases, s.address)
+    WHEN NOT MATCHED BY SOURCE
+        THEN DELETE;
+
+--------------------------------------------------------------------------------
+
+(program
+  (statement
+    (merge
+      (keyword_merge)
+      (keyword_into)
+      (object_reference
+        (identifier))
+      (identifier)
+      (keyword_using)
+      (object_reference
+        (identifier))
+      (identifier)
+      (keyword_on)
+      (parenthesized_expression
+        (binary_expression
+          (field
+            (object_reference
+              (identifier))
+            (identifier))
+          (field
+            (object_reference
+              (identifier))
+            (identifier))))
+      (merge_when_clause
+        (keyword_when)
+        (keyword_matched)
+        (keyword_and)
+        (binary_expression
+          (field
+            (object_reference
+              (identifier))
+            (identifier))
+          (literal))
+        (keyword_then)
+        (keyword_delete))
+      (merge_when_clause
+        (keyword_when)
+        (keyword_matched)
+        (keyword_then)
+        (keyword_update)
+        (keyword_set)
+        (assignment
+          (field
+            (identifier))
+          (assignment_operator)
+          (binary_expression
+            (field
+              (object_reference
+                (identifier))
+              (identifier))
+            (field
+              (object_reference
+                (identifier))
+              (identifier))))
+        (assignment
+          (field
+            (identifier))
+          (assignment_operator)
+          (field
+            (object_reference
+              (identifier))
+            (identifier))))
+      (merge_when_clause
+        (keyword_when)
+        (keyword_not)
+        (keyword_matched)
+        (keyword_by)
+        (keyword_target)
+        (keyword_then)
+        (keyword_insert)
+        (list
+          (column
+            (identifier))
+          (column
+            (identifier))
+          (column
+            (identifier)))
+        (keyword_values)
+        (list
+          (field
+            (object_reference
+              (identifier))
+            (identifier))
+          (field
+            (object_reference
+              (identifier))
+            (identifier))
+          (field
+            (object_reference
+              (identifier))
+            (identifier))))
+      (merge_when_clause
+        (keyword_when)
+        (keyword_not)
+        (keyword_matched)
+        (keyword_by)
+        (keyword_source)
+        (keyword_then)
+        (keyword_delete)))))
+
+================================================================================
+Merge with hints, a derived source, OUTPUT and $action
+================================================================================
+
+MERGE dbo.target WITH (HOLDLOCK) AS tgt
+USING (SELECT id, qty FROM @staging) AS src (id, qty)
+ON tgt.id = src.id
+WHEN MATCHED THEN UPDATE SET tgt.qty = src.qty
+WHEN NOT MATCHED THEN INSERT (id, qty) VALUES (src.id, src.qty)
+OUTPUT $action, inserted.id, deleted.qty INTO @log (action, id, qty)
+OPTION (MAXDOP 1);
+
+--------------------------------------------------------------------------------
+
+(program
+  (statement
+    (merge
+      (keyword_merge)
+      (object_reference
+        (identifier)
+        (identifier))
+      (table_hint
+        (keyword_with)
+        (table_hint_item
+          (identifier)))
+      (keyword_as)
+      (identifier)
+      (keyword_using)
+      (subquery
+        (select
+          (keyword_select)
+          (select_expression
+            (term
+              (field
+                (identifier)))
+            (term
+              (field
+                (identifier)))))
+        (from
+          (keyword_from)
+          (relation
+            (object_reference
+              (identifier)))))
+      (keyword_as)
+      (identifier)
+      (list
+        (column
+          (identifier))
+        (column
+          (identifier)))
+      (keyword_on)
+      (binary_expression
+        (field
+          (object_reference
+            (identifier))
+          (identifier))
+        (field
+          (object_reference
+            (identifier))
+          (identifier)))
+      (merge_when_clause
+        (keyword_when)
+        (keyword_matched)
+        (keyword_then)
+        (keyword_update)
+        (keyword_set)
+        (assignment
+          (field
+            (object_reference
+              (identifier))
+            (identifier))
+          (assignment_operator)
+          (field
+            (object_reference
+              (identifier))
+            (identifier))))
+      (merge_when_clause
+        (keyword_when)
+        (keyword_not)
+        (keyword_matched)
+        (keyword_then)
+        (keyword_insert)
+        (list
+          (column
+            (identifier))
+          (column
+            (identifier)))
+        (keyword_values)
+        (list
+          (field
+            (object_reference
+              (identifier))
+            (identifier))
+          (field
+            (object_reference
+              (identifier))
+            (identifier))))
+      (output_clause
+        (keyword_output)
+        (term
+          (field
+            (identifier)))
+        (term
+          (field
+            (object_reference
+              (identifier))
+            (identifier)))
+        (term
+          (field
+            (object_reference
+              (identifier))
+            (identifier)))
+        (keyword_into)
+        (object_reference
+          (identifier))
+        (identifier)
+        (identifier)
+        (identifier))
+      (option_clause
+        (keyword_option)
+        (query_hint
+          (identifier)
+          (literal))))))
+
+================================================================================
+Merge from a table-valued function with INSERT DEFAULT VALUES
+================================================================================
+
+MERGE TOP (10) t USING dbo.fn_source(@site) s ON t.id = s.id
+WHEN NOT MATCHED THEN INSERT DEFAULT VALUES;
+
+--------------------------------------------------------------------------------
+
+(program
+  (statement
+    (merge
+      (keyword_merge)
+      (top_clause
+        (keyword_top)
+        (literal))
+      (object_reference
+        (identifier))
+      (keyword_using)
+      (invocation
+        (object_reference
+          (identifier)
+          (identifier))
+        (term
+          (field
+            (identifier))))
+      (identifier)
+      (keyword_on)
+      (binary_expression
+        (field
+          (object_reference
+            (identifier))
+          (identifier))
+        (field
+          (object_reference
+            (identifier))
+          (identifier)))
+      (merge_when_clause
+        (keyword_when)
+        (keyword_not)
+        (keyword_matched)
+        (keyword_then)
+        (keyword_insert)
+        (keyword_default)
+        (keyword_values)))))
+
+================================================================================
+MERGE with OUTPUT as a FROM source
+================================================================================
+
+INSERT INTO dbo.Changes
+SELECT ProductID, NewQty
+  FROM (MERGE dbo.Inventory AS pi
+        USING dbo.Orders AS src ON pi.ProductID = src.ProductID
+        WHEN MATCHED THEN UPDATE SET pi.Quantity = pi.Quantity - src.OrderQty
+        OUTPUT $action, Inserted.ProductID, Inserted.Quantity AS NewQty) AS Changes(Action, ProductID, NewQty)
+ WHERE Action = 'UPDATE';
+
+--------------------------------------------------------------------------------
+
+(program
+  (statement
+    (insert
+      (keyword_insert)
+      (keyword_into)
+      (object_reference
+        (identifier)
+        (identifier))
+      (select
+        (keyword_select)
+        (select_expression
+          (term
+            (field
+              (identifier)))
+          (term
+            (field
+              (identifier)))))
+      (from
+        (keyword_from)
+        (relation
+          (merge
+            (keyword_merge)
+            (object_reference
+              (identifier)
+              (identifier))
+            (keyword_as)
+            (identifier)
+            (keyword_using)
+            (object_reference
+              (identifier)
+              (identifier))
+            (keyword_as)
+            (identifier)
+            (keyword_on)
+            (binary_expression
+              (field
+                (object_reference
+                  (identifier))
+                (identifier))
+              (field
+                (object_reference
+                  (identifier))
+                (identifier)))
+            (merge_when_clause
+              (keyword_when)
+              (keyword_matched)
+              (keyword_then)
+              (keyword_update)
+              (keyword_set)
+              (assignment
+                (field
+                  (object_reference
+                    (identifier))
+                  (identifier))
+                (assignment_operator)
+                (binary_expression
+                  (field
+                    (object_reference
+                      (identifier))
+                    (identifier))
+                  (field
+                    (object_reference
+                      (identifier))
+                    (identifier)))))
+            (output_clause
+              (keyword_output)
+              (term
+                (field
+                  (identifier)))
+              (term
+                (field
+                  (object_reference
+                    (identifier))
+                  (identifier)))
+              (term
+                (field
+                  (object_reference
+                    (identifier))
+                  (identifier))
+                (keyword_as)
+                (identifier))))
+          (keyword_as)
+          (identifier)
+          (list
+            (column
+              (identifier))
+            (column
+              (identifier))
+            (column
+              (identifier))))
+        (where
+          (keyword_where)
+          (binary_expression
+            (field
+              (identifier))
+            (literal)))))))

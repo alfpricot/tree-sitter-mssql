@@ -1,0 +1,5 @@
+SELECT Id FROM dbo.Customer NOLOCK;
+GO
+
+SELECT Id FROM dbo.Customer WITH (NOLOCK);
+GO

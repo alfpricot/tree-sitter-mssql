@@ -1,0 +1,655 @@
+================================================================================
+Instead-of trigger with bare body
+================================================================================
+
+CREATE TRIGGER dbo.sample_tbl_insert_trg
+ON dbo.sample_tbl
+INSTEAD OF INSERT
+AS
+IF @@ROWCOUNT = 0 RETURN;
+SET NOCOUNT ON;
+INSERT sample_tbl (id, name) SELECT id, name FROM inserted;
+RETURN;
+
+--------------------------------------------------------------------------------
+
+(program
+  (statement
+    (create_trigger
+      (keyword_create)
+      (keyword_trigger)
+      (object_reference
+        (identifier)
+        (identifier))
+      (keyword_on)
+      (object_reference
+        (identifier)
+        (identifier))
+      (keyword_instead)
+      (keyword_of)
+      (trigger_event
+        (keyword_insert))
+      (procedure_body
+        (keyword_as)
+        (statement
+          (if_statement
+            (keyword_if)
+            (binary_expression
+              (field
+                (identifier))
+              (literal))
+            (statement
+              (return_statement
+                (keyword_return)))))
+        (statement
+          (set_statement
+            (keyword_set)
+            (object_reference
+              (identifier))
+            (keyword_on)))
+        (statement
+          (insert
+            (keyword_insert)
+            (object_reference
+              (identifier))
+            (list
+              (column
+                (identifier))
+              (column
+                (identifier)))
+            (select
+              (keyword_select)
+              (select_expression
+                (term
+                  (field
+                    (identifier)))
+                (term
+                  (field
+                    (identifier)))))
+            (from
+              (keyword_from)
+              (relation
+                (object_reference
+                  (identifier))))))
+        (statement
+          (return_statement
+            (keyword_return)))))))
+
+================================================================================
+After trigger with options and event list
+================================================================================
+
+CREATE OR ALTER TRIGGER audit_trg ON dbo.t
+WITH EXECUTE AS CALLER
+AFTER INSERT, UPDATE, DELETE
+NOT FOR REPLICATION
+AS
+BEGIN
+  INSERT INTO audit (id) SELECT id FROM deleted;
+END
+
+--------------------------------------------------------------------------------
+
+(program
+  (statement
+    (create_trigger
+      (keyword_create)
+      (keyword_or)
+      (keyword_alter)
+      (keyword_trigger)
+      (object_reference
+        (identifier))
+      (keyword_on)
+      (object_reference
+        (identifier)
+        (identifier))
+      (trigger_options
+        (keyword_with)
+        (trigger_option
+          (execute_as_clause
+            (keyword_execute)
+            (keyword_as)
+            (keyword_caller))))
+      (keyword_after)
+      (trigger_event
+        (keyword_insert))
+      (trigger_event
+        (keyword_update))
+      (trigger_event
+        (keyword_delete))
+      (keyword_not)
+      (keyword_for)
+      (keyword_replication)
+      (procedure_body
+        (keyword_as)
+        (block
+          (keyword_begin)
+          (statement
+            (insert
+              (keyword_insert)
+              (keyword_into)
+              (object_reference
+                (identifier))
+              (list
+                (column
+                  (identifier)))
+              (select
+                (keyword_select)
+                (select_expression
+                  (term
+                    (field
+                      (identifier)))))
+              (from
+                (keyword_from)
+                (relation
+                  (object_reference
+                    (identifier))))))
+          (keyword_end))))))
+
+================================================================================
+Delete trigger, vendor style
+================================================================================
+
+CREATE TRIGGER [dbo].[ABOPTS_mstDel]
+on [dbo].[ABOPTS_mst]
+FOR DELETE
+AS
+
+IF @@ROWCOUNT = 0 RETURN
+
+IF dbo.SkipBaseTrigger() = 1
+   RETURN
+
+DECLARE
+  @Severity INT
+, @Infobar  InfobarType
+
+SET @Severity = 0
+
+if @Severity = 0
+BEGIN
+   DELETE DocumentObjectReference
+   FROM deleted dd
+   INNER JOIN DocumentObjectReference dor ON
+     dor.TableRowPointer = dd.RowPointer
+   WHERE dor.TableName = 'ABOPTS'
+END
+
+IF @Severity <> 0
+BEGIN
+    EXEC dbo.RaiseErrorSp @Infobar, @Severity, 3
+    IF @Severity != 0
+    BEGIN
+       ROLLBACK TRANSACTION
+       RETURN
+    END
+END
+
+--------------------------------------------------------------------------------
+
+(program
+  (statement
+    (create_trigger
+      (keyword_create)
+      (keyword_trigger)
+      (object_reference
+        (identifier)
+        (identifier))
+      (keyword_on)
+      (object_reference
+        (identifier)
+        (identifier))
+      (keyword_for)
+      (trigger_event
+        (keyword_delete))
+      (procedure_body
+        (keyword_as)
+        (statement
+          (if_statement
+            (keyword_if)
+            (binary_expression
+              (field
+                (identifier))
+              (literal))
+            (statement
+              (return_statement
+                (keyword_return)))))
+        (statement
+          (if_statement
+            (keyword_if)
+            (binary_expression
+              (invocation
+                (object_reference
+                  (identifier)
+                  (identifier)))
+              (literal))
+            (statement
+              (return_statement
+                (keyword_return)))))
+        (statement
+          (var_declarations
+            (keyword_declare)
+            (var_declaration
+              (identifier)
+              (keyword_int))
+            (var_declaration
+              (identifier)
+              (custom_type
+                (object_reference
+                  (identifier))))))
+        (statement
+          (set_statement
+            (keyword_set)
+            (object_reference
+              (identifier))
+            (assignment_operator)
+            (literal)))
+        (statement
+          (if_statement
+            (keyword_if)
+            (binary_expression
+              (field
+                (identifier))
+              (literal))
+            (block
+              (keyword_begin)
+              (statement
+                (delete
+                  (keyword_delete)
+                  (object_reference
+                    (identifier))
+                  (from
+                    (keyword_from)
+                    (relation
+                      (object_reference
+                        (identifier))
+                      (identifier))
+                    (join
+                      (keyword_inner)
+                      (keyword_join)
+                      (relation
+                        (object_reference
+                          (identifier))
+                        (identifier))
+                      (keyword_on)
+                      (binary_expression
+                        (field
+                          (object_reference
+                            (identifier))
+                          (identifier))
+                        (field
+                          (object_reference
+                            (identifier))
+                          (identifier))))
+                    (where
+                      (keyword_where)
+                      (binary_expression
+                        (field
+                          (object_reference
+                            (identifier))
+                          (identifier))
+                        (literal))))))
+              (keyword_end))))
+        (statement
+          (if_statement
+            (keyword_if)
+            (binary_expression
+              (field
+                (identifier))
+              (literal))
+            (block
+              (keyword_begin)
+              (statement
+                (execute_statement
+                  (keyword_exec)
+                  (object_reference
+                    (identifier)
+                    (identifier))
+                  (exec_argument
+                    (field
+                      (identifier)))
+                  (exec_argument
+                    (field
+                      (identifier)))
+                  (exec_argument
+                    (literal))))
+              (statement
+                (if_statement
+                  (keyword_if)
+                  (binary_expression
+                    (field
+                      (identifier))
+                    (literal))
+                  (block
+                    (keyword_begin)
+                    (statement
+                      (rollback_statement
+                        (keyword_rollback)
+                        (keyword_transaction)))
+                    (statement
+                      (return_statement
+                        (keyword_return)))
+                    (keyword_end))))
+              (keyword_end))))))))
+
+================================================================================
+ALTER TRIGGER
+================================================================================
+
+ALTER TRIGGER dbo.t_trg ON dbo.t FOR UPDATE
+AS
+BEGIN
+  SET NOCOUNT ON;
+END
+
+--------------------------------------------------------------------------------
+
+(program
+  (statement
+    (alter_trigger
+      (keyword_alter)
+      (keyword_trigger)
+      (object_reference
+        (identifier)
+        (identifier))
+      (keyword_on)
+      (object_reference
+        (identifier)
+        (identifier))
+      (keyword_for)
+      (trigger_event
+        (keyword_update))
+      (procedure_body
+        (keyword_as)
+        (block
+          (keyword_begin)
+          (statement
+            (set_statement
+              (keyword_set)
+              (object_reference
+                (identifier))
+              (keyword_on)))
+          (keyword_end))))))
+
+================================================================================
+Database DDL trigger
+================================================================================
+
+CREATE TRIGGER trg_no_drop ON DATABASE
+FOR DROP_TABLE, ALTER_TABLE
+AS
+BEGIN
+  RAISERROR ('Tables may not be dropped.', 16, 1);
+  ROLLBACK;
+END
+
+--------------------------------------------------------------------------------
+
+(program
+  (statement
+    (create_trigger
+      (keyword_create)
+      (keyword_trigger)
+      (object_reference
+        (identifier))
+      (keyword_on)
+      (keyword_database)
+      (keyword_for)
+      (trigger_event
+        (identifier))
+      (trigger_event
+        (identifier))
+      (procedure_body
+        (keyword_as)
+        (block
+          (keyword_begin)
+          (statement
+            (raiserror_statement
+              (keyword_raiserror)
+              (literal)
+              (literal)
+              (literal)))
+          (statement
+            (rollback_statement
+              (keyword_rollback)))
+          (keyword_end))))))
+
+================================================================================
+Server DDL and logon triggers
+================================================================================
+
+create   trigger [CUST_database_event_trigger]
+on all server
+with execute
+as
+caller
+for ddl_database_level_events /*, ddl_server_level_events */ as
+begin
+    begin try
+        set nocount on;
+        if eventdata() is null
+            return;
+    end try
+    begin catch
+        return;
+    end catch;
+end;
+
+CREATE TRIGGER [ShopFloor_Connections]
+            ON ALL SERVER FOR logon
+            AS
+BEGIN
+    DECLARE @L_Context VARBINARY(128)
+    SET @L_Context = CAST(@L_PadSite AS VARBINARY(128))
+    SET CONTEXT_INFO @L_Context
+END
+
+--------------------------------------------------------------------------------
+
+(program
+  (statement
+    (create_trigger
+      (keyword_create)
+      (keyword_trigger)
+      (object_reference
+        (identifier))
+      (keyword_on)
+      (keyword_all)
+      (keyword_server)
+      (trigger_options
+        (keyword_with)
+        (trigger_option
+          (execute_as_clause
+            (keyword_execute)
+            (keyword_as)
+            (keyword_caller))))
+      (keyword_for)
+      (trigger_event
+        (identifier))
+      (marginalia)
+      (procedure_body
+        (keyword_as)
+        (block
+          (keyword_begin)
+          (statement
+            (try_catch_statement
+              (try_block
+                (keyword_begin)
+                (keyword_try)
+                (statement
+                  (set_statement
+                    (keyword_set)
+                    (object_reference
+                      (identifier))
+                    (keyword_on)))
+                (statement
+                  (if_statement
+                    (keyword_if)
+                    (binary_expression
+                      (invocation
+                        (object_reference
+                          (identifier)))
+                      (keyword_is)
+                      (literal
+                        (keyword_null)))
+                    (statement
+                      (return_statement
+                        (keyword_return)))))
+                (keyword_end)
+                (keyword_try))
+              (catch_block
+                (keyword_begin)
+                (keyword_catch)
+                (statement
+                  (return_statement
+                    (keyword_return)))
+                (keyword_end)
+                (keyword_catch))))
+          (keyword_end))
+        (statement
+          (create_trigger
+            (keyword_create)
+            (keyword_trigger)
+            (object_reference
+              (identifier))
+            (keyword_on)
+            (keyword_all)
+            (keyword_server)
+            (keyword_for)
+            (trigger_event
+              (identifier))
+            (procedure_body
+              (keyword_as)
+              (block
+                (keyword_begin)
+                (statement
+                  (var_declarations
+                    (keyword_declare)
+                    (var_declaration
+                      (identifier)
+                      (varbinary
+                        (keyword_varbinary)
+                        (literal)))))
+                (statement
+                  (set_statement
+                    (keyword_set)
+                    (object_reference
+                      (identifier))
+                    (assignment_operator)
+                    (cast
+                      (keyword_cast)
+                      (field
+                        (identifier))
+                      (keyword_as)
+                      (varbinary
+                        (keyword_varbinary)
+                        (literal)))))
+                (statement
+                  (set_statement
+                    (keyword_set)
+                    (object_reference
+                      (identifier))
+                    (field
+                      (identifier))))
+                (keyword_end)))))))))
+
+================================================================================
+Enable and disable triggers
+================================================================================
+
+ENABLE TRIGGER [CUST_database_event_trigger] ON ALL SERVER
+DISABLE TRIGGER trg_no_drop ON DATABASE
+ENABLE TRIGGER ALL ON dbo.t
+DISABLE TRIGGER dbo.trg_a, dbo.trg_b ON dbo.t
+
+--------------------------------------------------------------------------------
+
+(program
+  (statement
+    (enable_trigger_statement
+      (keyword_enable)
+      (keyword_trigger)
+      (object_reference
+        (identifier))
+      (keyword_on)
+      (keyword_all)
+      (keyword_server)))
+  (statement
+    (enable_trigger_statement
+      (keyword_disable)
+      (keyword_trigger)
+      (object_reference
+        (identifier))
+      (keyword_on)
+      (keyword_database)))
+  (statement
+    (enable_trigger_statement
+      (keyword_enable)
+      (keyword_trigger)
+      (keyword_all)
+      (keyword_on)
+      (object_reference
+        (identifier)
+        (identifier))))
+  (statement
+    (enable_trigger_statement
+      (keyword_disable)
+      (keyword_trigger)
+      (object_reference
+        (identifier)
+        (identifier))
+      (object_reference
+        (identifier)
+        (identifier))
+      (keyword_on)
+      (object_reference
+        (identifier)
+        (identifier)))))
+
+================================================================================
+Drop trigger
+================================================================================
+
+DROP TRIGGER IF EXISTS dbo.t_trg;
+DROP TRIGGER [dbo].[sample_tbl_insert_trg];
+DROP TRIGGER trg_no_drop ON DATABASE;
+DROP TRIGGER IF EXISTS trg_logon ON ALL SERVER;
+
+--------------------------------------------------------------------------------
+
+(program
+  (statement
+    (drop_trigger
+      (keyword_drop)
+      (keyword_trigger)
+      (keyword_if)
+      (keyword_exists)
+      (object_reference
+        (identifier)
+        (identifier))))
+  (statement
+    (drop_trigger
+      (keyword_drop)
+      (keyword_trigger)
+      (object_reference
+        (identifier)
+        (identifier))))
+  (statement
+    (drop_trigger
+      (keyword_drop)
+      (keyword_trigger)
+      (object_reference
+        (identifier))
+      (keyword_on)
+      (keyword_database)))
+  (statement
+    (drop_trigger
+      (keyword_drop)
+      (keyword_trigger)
+      (keyword_if)
+      (keyword_exists)
+      (object_reference
+        (identifier))
+      (keyword_on)
+      (keyword_all)
+      (keyword_server))))

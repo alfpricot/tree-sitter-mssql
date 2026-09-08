@@ -1,0 +1,52 @@
+IF NOT EXISTS (   SELECT srv.name
+                    FROM sys.servers AS srv
+                   WHERE srv.server_id != 0
+                     AND srv.name      = N'LINKED01')
+BEGIN
+    EXEC master.dbo.sp_addlinkedserver @server = N'LINKED01',
+                                       @srvproduct = N'SQL Server';
+    EXEC master.dbo.sp_addlinkedsrvlogin @rmtsrvname = N'LINKED01',
+                                         @useself = N'False',
+                                         @locallogin = NULL,
+                                         @rmtuser = N'sa',
+                                         @rmtpassword = '########';
+END;
+EXEC master.dbo.sp_serveroption @server = N'LINKED01',
+                                @optname = N'collation compatible',
+                                @optvalue = N'false';
+EXEC master.dbo.sp_serveroption @server = N'LINKED01',
+                                @optname = N'data access',
+                                @optvalue = N'true';
+EXEC master.dbo.sp_serveroption @server = N'LINKED01',
+                                @optname = N'dist',
+                                @optvalue = N'false';
+EXEC master.dbo.sp_serveroption @server = N'LINKED01',
+                                @optname = N'pub',
+                                @optvalue = N'false';
+EXEC master.dbo.sp_serveroption @server = N'LINKED01',
+                                @optname = N'rpc',
+                                @optvalue = N'false';
+EXEC master.dbo.sp_serveroption @server = N'LINKED01',
+                                @optname = N'rpc out',
+                                @optvalue = N'false';
+EXEC master.dbo.sp_serveroption @server = N'LINKED01',
+                                @optname = N'sub',
+                                @optvalue = N'false';
+EXEC master.dbo.sp_serveroption @server = N'LINKED01',
+                                @optname = N'connect timeout',
+                                @optvalue = N'0';
+EXEC master.dbo.sp_serveroption @server = N'LINKED01',
+                                @optname = N'collation name',
+                                @optvalue = null;
+EXEC master.dbo.sp_serveroption @server = N'LINKED01',
+                                @optname = N'lazy schema validation',
+                                @optvalue = N'false';
+EXEC master.dbo.sp_serveroption @server = N'LINKED01',
+                                @optname = N'query timeout',
+                                @optvalue = N'0';
+EXEC master.dbo.sp_serveroption @server = N'LINKED01',
+                                @optname = N'use remote collation',
+                                @optvalue = N'true';
+EXEC master.dbo.sp_serveroption @server = N'LINKED01',
+                                @optname = N'remote proc transaction promotion',
+                                @optvalue = N'true';

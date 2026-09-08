@@ -1,0 +1,2 @@
+SELECT Id FROM dbo.Customer OPTION (FAST 1);
+GO

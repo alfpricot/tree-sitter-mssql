@@ -1,0 +1,421 @@
+================================================================================
+Functions
+================================================================================
+
+SELECT MAX(id), GETDATE(), dbo.fn(1), [dbo].[fn](2), master.dbo.fn(3)
+FROM my_table;
+
+--------------------------------------------------------------------------------
+
+(program
+  (statement
+    (select
+      (keyword_select)
+      (select_expression
+        (term
+          (invocation
+            (object_reference
+              (identifier))
+            (term
+              (field
+                (identifier)))))
+        (term
+          (invocation
+            (object_reference
+              (identifier))))
+        (term
+          (invocation
+            (object_reference
+              (identifier)
+              (identifier))
+            (term
+              (literal))))
+        (term
+          (invocation
+            (object_reference
+              (identifier)
+              (identifier))
+            (term
+              (literal))))
+        (term
+          (invocation
+            (object_reference
+              (identifier)
+              (identifier)
+              (identifier))
+            (term
+              (literal))))))
+    (from
+      (keyword_from)
+      (relation
+        (object_reference
+          (identifier))))))
+
+================================================================================
+Nested and expression arguments
+================================================================================
+
+SELECT
+  user_id,
+  user_defined_func(user_id, 123, other_func(user_id, 321), user_id + 1 > 5) as something,
+  ISNULL(NULLIF(LTRIM(RTRIM(t.username)), ''), N'-') as username,
+  DATEADD(dd, 1 - DATEPART(dayofyear, @EndDate), @EndDate),
+  DATEDIFF(m, 0, @EndDate) + 1
+FROM my_table AS t;
+
+--------------------------------------------------------------------------------
+
+(program
+  (statement
+    (select
+      (keyword_select)
+      (select_expression
+        (term
+          (field
+            (identifier)))
+        (term
+          (invocation
+            (object_reference
+              (identifier))
+            (term
+              (field
+                (identifier)))
+            (term
+              (literal))
+            (term
+              (invocation
+                (object_reference
+                  (identifier))
+                (term
+                  (field
+                    (identifier)))
+                (term
+                  (literal))))
+            (term
+              (binary_expression
+                (binary_expression
+                  (field
+                    (identifier))
+                  (literal))
+                (literal))))
+          (keyword_as)
+          (identifier))
+        (term
+          (invocation
+            (object_reference
+              (identifier))
+            (term
+              (invocation
+                (object_reference
+                  (identifier))
+                (term
+                  (invocation
+                    (object_reference
+                      (identifier))
+                    (term
+                      (invocation
+                        (object_reference
+                          (identifier))
+                        (term
+                          (field
+                            (object_reference
+                              (identifier))
+                            (identifier)))))))
+                (term
+                  (literal))))
+            (term
+              (literal)))
+          (keyword_as)
+          (identifier))
+        (term
+          (invocation
+            (object_reference
+              (identifier))
+            (term
+              (field
+                (identifier)))
+            (term
+              (binary_expression
+                (literal)
+                (invocation
+                  (object_reference
+                    (identifier))
+                  (term
+                    (field
+                      (identifier)))
+                  (term
+                    (field
+                      (identifier))))))
+            (term
+              (field
+                (identifier)))))
+        (term
+          (binary_expression
+            (invocation
+              (object_reference
+                (identifier))
+              (term
+                (field
+                  (identifier)))
+              (term
+                (literal))
+              (term
+                (field
+                  (identifier))))
+            (literal)))))
+    (from
+      (keyword_from)
+      (relation
+        (object_reference
+          (identifier))
+        (keyword_as)
+        (identifier)))))
+
+================================================================================
+DEFAULT as an argument
+================================================================================
+
+SELECT dbo.MultiLineAddressSp(ISNULL(name, ''), DEFAULT, DEFAULT, ISNULL(country, '')) AS long_address
+FROM do_hdr;
+
+--------------------------------------------------------------------------------
+
+(program
+  (statement
+    (select
+      (keyword_select)
+      (select_expression
+        (term
+          (invocation
+            (object_reference
+              (identifier)
+              (identifier))
+            (term
+              (invocation
+                (object_reference
+                  (identifier))
+                (term
+                  (field
+                    (identifier)))
+                (term
+                  (literal))))
+            (keyword_default)
+            (keyword_default)
+            (term
+              (invocation
+                (object_reference
+                  (identifier))
+                (term
+                  (field
+                    (identifier)))
+                (term
+                  (literal)))))
+          (keyword_as)
+          (identifier))))
+    (from
+      (keyword_from)
+      (relation
+        (object_reference
+          (identifier))))))
+
+================================================================================
+OBJECT_ID and metadata functions
+================================================================================
+
+SELECT OBJECT_ID (N'dbo.LEVENSHTEIN_DISTANCE', N'FN'),
+  OBJECT_ID(QUOTENAME(N'VerifySp_' + [om].[ModuleName])),
+  SCHEMA_ID(N'frm'), SUSER_SNAME(), NEWID()
+FROM [optional_module] [om];
+
+--------------------------------------------------------------------------------
+
+(program
+  (statement
+    (select
+      (keyword_select)
+      (select_expression
+        (term
+          (invocation
+            (object_reference
+              (identifier))
+            (term
+              (literal))
+            (term
+              (literal))))
+        (term
+          (invocation
+            (object_reference
+              (identifier))
+            (term
+              (invocation
+                (object_reference
+                  (identifier))
+                (term
+                  (binary_expression
+                    (literal)
+                    (field
+                      (object_reference
+                        (identifier))
+                      (identifier))))))))
+        (term
+          (invocation
+            (object_reference
+              (identifier))
+            (term
+              (literal))))
+        (term
+          (invocation
+            (object_reference
+              (identifier))))
+        (term
+          (invocation
+            (object_reference
+              (identifier))))))
+    (from
+      (keyword_from)
+      (relation
+        (object_reference
+          (identifier))
+        (identifier)))))
+
+================================================================================
+XML methods on a variable
+================================================================================
+
+SELECT @Event.value('(/EVENT_INSTANCE/EventType)[1]', 'nvarchar(512)'),
+  @Event.query('/EVENT_INSTANCE')
+FROM t
+CROSS APPLY @Event.nodes('/EVENT_INSTANCE') AS n (node);
+
+--------------------------------------------------------------------------------
+
+(program
+  (statement
+    (select
+      (keyword_select)
+      (select_expression
+        (term
+          (invocation
+            (object_reference
+              (identifier)
+              (identifier))
+            (term
+              (literal))
+            (term
+              (literal))))
+        (term
+          (invocation
+            (object_reference
+              (identifier)
+              (identifier))
+            (term
+              (literal))))))
+    (from
+      (keyword_from)
+      (relation
+        (object_reference
+          (identifier)))
+      (apply_join
+        (keyword_cross)
+        (keyword_apply)
+        (invocation
+          (object_reference
+            (identifier)
+            (identifier))
+          (term
+            (literal)))
+        (keyword_as)
+        (identifier)
+        (list
+          (column
+            (identifier)))))))
+
+================================================================================
+STRING_AGG WITHIN GROUP
+================================================================================
+
+SELECT STRING_AGG(name, ', ') WITHIN GROUP (ORDER BY name) FROM t;
+
+--------------------------------------------------------------------------------
+
+(program
+  (statement
+    (select
+      (keyword_select)
+      (select_expression
+        (term
+          (invocation
+            (object_reference
+              (identifier))
+            (term
+              (field
+                (identifier)))
+            (term
+              (literal))
+            (keyword_within)
+            (keyword_group)
+            (order_by
+              (keyword_order)
+              (keyword_by)
+              (order_target
+                (field
+                  (identifier))))))))
+    (from
+      (keyword_from)
+      (relation
+        (object_reference
+          (identifier))))))
+
+================================================================================
+IIF and CHAR concatenation
+================================================================================
+
+SELECT IIf(IsNull(consignor_whse, '') = '', '', consignor_whse + CHAR(13) + CHAR(10)) AS addr
+FROM @rpt_set;
+
+--------------------------------------------------------------------------------
+
+(program
+  (statement
+    (select
+      (keyword_select)
+      (select_expression
+        (term
+          (invocation
+            (object_reference
+              (identifier))
+            (term
+              (binary_expression
+                (invocation
+                  (object_reference
+                    (identifier))
+                  (term
+                    (field
+                      (identifier)))
+                  (term
+                    (literal)))
+                (literal)))
+            (term
+              (literal))
+            (term
+              (binary_expression
+                (binary_expression
+                  (field
+                    (identifier))
+                  (invocation
+                    (object_reference
+                      (identifier))
+                    (term
+                      (literal))))
+                (invocation
+                  (object_reference
+                    (identifier))
+                  (term
+                    (literal))))))
+          (keyword_as)
+          (identifier))))
+    (from
+      (keyword_from)
+      (relation
+        (object_reference
+          (identifier))))))

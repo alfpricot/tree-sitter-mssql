@@ -1,0 +1,595 @@
+================================================================================
+Alter table add columns
+================================================================================
+
+ALTER TABLE my_table
+  ADD val3 VARCHAR(100) NOT NULL;
+
+ALTER TABLE tab
+ADD
+col1 VARCHAR(255) NOT NULL DEFAULT('EMPTY'),
+col2 VARCHAR(255) NOT NULL DEFAULT('EMPTY');
+
+--------------------------------------------------------------------------------
+
+(program
+  (statement
+    (alter_table
+      (keyword_alter)
+      (keyword_table)
+      (object_reference
+        (identifier))
+      (keyword_add)
+      (column_definition
+        (identifier)
+        (varchar
+          (keyword_varchar)
+          (literal))
+        (keyword_not)
+        (keyword_null))))
+  (statement
+    (alter_table
+      (keyword_alter)
+      (keyword_table)
+      (object_reference
+        (identifier))
+      (keyword_add)
+      (column_definition
+        (identifier)
+        (varchar
+          (keyword_varchar)
+          (literal))
+        (keyword_not)
+        (keyword_null)
+        (keyword_default)
+        (parenthesized_expression
+          (literal)))
+      (column_definition
+        (identifier)
+        (varchar
+          (keyword_varchar)
+          (literal))
+        (keyword_not)
+        (keyword_null)
+        (keyword_default)
+        (parenthesized_expression
+          (literal))))))
+
+================================================================================
+Alter table add constraints, SSMS style
+================================================================================
+
+ALTER TABLE [dbo].[ABDataServices] ADD  CONSTRAINT [PK_ABDataServices] PRIMARY KEY CLUSTERED
+(
+	[ProjectId] ASC,
+	[Id] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, IGNORE_DUP_KEY = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+
+ALTER TABLE [dbo].[ABDataServices] ADD  CONSTRAINT [IX_ABDataServices_RowPointer] UNIQUE NONCLUSTERED
+(
+	[RowPointer] ASC
+)WITH (PAD_INDEX = OFF) ON [PRIMARY]
+
+--------------------------------------------------------------------------------
+
+(program
+  (statement
+    (alter_table
+      (keyword_alter)
+      (keyword_table)
+      (object_reference
+        (identifier)
+        (identifier))
+      (keyword_add)
+      (constraint
+        (keyword_constraint)
+        (identifier)
+        (keyword_primary)
+        (keyword_key)
+        (keyword_clustered)
+        (ordered_columns
+          (column
+            (identifier)
+            (direction
+              (keyword_asc)))
+          (column
+            (identifier)
+            (direction
+              (keyword_asc))))
+        (with_options
+          (keyword_with)
+          (option
+            (identifier)
+            (keyword_off))
+          (option
+            (identifier)
+            (keyword_off))
+          (option
+            (identifier)
+            (keyword_off))
+          (option
+            (identifier)
+            (keyword_off))
+          (option
+            (identifier)
+            (keyword_off))
+          (option
+            (identifier)
+            (keyword_on))
+          (option
+            (identifier)
+            (keyword_on)))
+        (on_filegroup
+          (keyword_on)
+          (identifier)))))
+  (statement
+    (alter_table
+      (keyword_alter)
+      (keyword_table)
+      (object_reference
+        (identifier)
+        (identifier))
+      (keyword_add)
+      (constraint
+        (keyword_constraint)
+        (identifier)
+        (keyword_unique)
+        (keyword_nonclustered)
+        (ordered_columns
+          (column
+            (identifier)
+            (direction
+              (keyword_asc))))
+        (with_options
+          (keyword_with)
+          (option
+            (identifier)
+            (keyword_off)))
+        (on_filegroup
+          (keyword_on)
+          (identifier))))))
+
+================================================================================
+Alter table add default and check constraints
+================================================================================
+
+ALTER TABLE [dbo].[BATWAIT] ADD  CONSTRAINT [DF_BATWAIT_site_ref]  DEFAULT (rtrim(CONVERT([nvarchar](8),context_info(),0))) FOR [site_ref]
+ALTER TABLE [dbo].[BATWAIT] ADD  CONSTRAINT [DF_BATWAIT_NoteExistsFlag]  DEFAULT ((0)) FOR [NoteExistsFlag]
+ALTER TABLE dbo.t ADD DEFAULT GETDATE() FOR created
+ALTER TABLE [dbo].[ABDataServices]  WITH CHECK ADD  CONSTRAINT [CK_ABDataServices_InWorkflow] CHECK  (([InWorkflow]=(0) OR [InWorkflow]=(1)))
+ALTER TABLE dbo.t WITH NOCHECK ADD CONSTRAINT CK_t CHECK NOT FOR REPLICATION (qty > 0)
+
+--------------------------------------------------------------------------------
+
+(program
+  (statement
+    (alter_table
+      (keyword_alter)
+      (keyword_table)
+      (object_reference
+        (identifier)
+        (identifier))
+      (keyword_add)
+      (constraint
+        (keyword_constraint)
+        (identifier)
+        (keyword_default)
+        (parenthesized_expression
+          (invocation
+            (object_reference
+              (identifier))
+            (term
+              (invocation
+                (object_reference
+                  (identifier))
+                (term
+                  (invocation
+                    (object_reference
+                      (identifier))
+                    (term
+                      (literal))))
+                (term
+                  (invocation
+                    (object_reference
+                      (identifier))))
+                (term
+                  (literal))))))
+        (keyword_for)
+        (identifier))))
+  (statement
+    (alter_table
+      (keyword_alter)
+      (keyword_table)
+      (object_reference
+        (identifier)
+        (identifier))
+      (keyword_add)
+      (constraint
+        (keyword_constraint)
+        (identifier)
+        (keyword_default)
+        (parenthesized_expression
+          (parenthesized_expression
+            (literal)))
+        (keyword_for)
+        (identifier))))
+  (statement
+    (alter_table
+      (keyword_alter)
+      (keyword_table)
+      (object_reference
+        (identifier)
+        (identifier))
+      (keyword_add)
+      (constraint
+        (keyword_default)
+        (invocation
+          (object_reference
+            (identifier)))
+        (keyword_for)
+        (identifier))))
+  (statement
+    (alter_table
+      (keyword_alter)
+      (keyword_table)
+      (object_reference
+        (identifier)
+        (identifier))
+      (keyword_with)
+      (keyword_check)
+      (keyword_add)
+      (constraint
+        (keyword_constraint)
+        (identifier)
+        (keyword_check)
+        (parenthesized_expression
+          (binary_expression
+            (binary_expression
+              (field
+                (identifier))
+              (parenthesized_expression
+                (literal)))
+            (keyword_or)
+            (binary_expression
+              (field
+                (identifier))
+              (parenthesized_expression
+                (literal))))))))
+  (statement
+    (alter_table
+      (keyword_alter)
+      (keyword_table)
+      (object_reference
+        (identifier)
+        (identifier))
+      (keyword_with)
+      (keyword_nocheck)
+      (keyword_add)
+      (constraint
+        (keyword_constraint)
+        (identifier)
+        (keyword_check)
+        (keyword_not)
+        (keyword_for)
+        (keyword_replication)
+        (binary_expression
+          (field
+            (identifier))
+          (literal))))))
+
+================================================================================
+Alter table add foreign key
+================================================================================
+
+ALTER TABLE [dbo].[ack_mst]  WITH CHECK ADD  CONSTRAINT [FK_ack_mst_trans_nat_2_site_ref] FOREIGN KEY([trans_nat_2], [site_ref])
+REFERENCES [dbo].[trans_nature_2_mst] ([trans_nat_2], [site_ref])
+
+ALTER TABLE "AccountRole" ADD CONSTRAINT "fkAccountRoleAccount"
+FOREIGN KEY ("accountId") REFERENCES "Account" ("accountId")
+ON DELETE SET NULL
+ON UPDATE SET DEFAULT;
+
+--------------------------------------------------------------------------------
+
+(program
+  (statement
+    (alter_table
+      (keyword_alter)
+      (keyword_table)
+      (object_reference
+        (identifier)
+        (identifier))
+      (keyword_with)
+      (keyword_check)
+      (keyword_add)
+      (constraint
+        (keyword_constraint)
+        (identifier)
+        (keyword_foreign)
+        (keyword_key)
+        (identifier)
+        (identifier)
+        (keyword_references)
+        (object_reference
+          (identifier)
+          (identifier))
+        (identifier)
+        (identifier))))
+  (statement
+    (alter_table
+      (keyword_alter)
+      (keyword_table)
+      (object_reference
+        (identifier))
+      (keyword_add)
+      (constraint
+        (keyword_constraint)
+        (identifier)
+        (keyword_foreign)
+        (keyword_key)
+        (identifier)
+        (keyword_references)
+        (object_reference
+          (identifier))
+        (identifier)
+        (referential_action
+          (keyword_on)
+          (keyword_delete)
+          (keyword_set)
+          (keyword_null))
+        (referential_action
+          (keyword_on)
+          (keyword_update)
+          (keyword_set)
+          (keyword_default))))))
+
+================================================================================
+Alter table check and nocheck constraints
+================================================================================
+
+ALTER TABLE [dbo].[ack_mst] CHECK CONSTRAINT [FK_ack_mst_trans_nat_2_site_ref]
+ALTER TABLE dbo.t NOCHECK CONSTRAINT ALL
+ALTER TABLE dbo.t WITH CHECK CHECK CONSTRAINT CK_a, CK_b
+
+--------------------------------------------------------------------------------
+
+(program
+  (statement
+    (alter_table
+      (keyword_alter)
+      (keyword_table)
+      (object_reference
+        (identifier)
+        (identifier))
+      (keyword_check)
+      (keyword_constraint)
+      (identifier)))
+  (statement
+    (alter_table
+      (keyword_alter)
+      (keyword_table)
+      (object_reference
+        (identifier)
+        (identifier))
+      (keyword_nocheck)
+      (keyword_constraint)
+      (keyword_all)))
+  (statement
+    (alter_table
+      (keyword_alter)
+      (keyword_table)
+      (object_reference
+        (identifier)
+        (identifier))
+      (keyword_with)
+      (keyword_check)
+      (keyword_check)
+      (keyword_constraint)
+      (identifier)
+      (identifier))))
+
+================================================================================
+Alter table drop constraints and columns
+================================================================================
+
+ALTER TABLE posts DROP CONSTRAINT posts_user_id_fkey;
+ALTER TABLE posts DROP CONSTRAINT IF EXISTS a, b;
+ALTER TABLE posts DROP posts_user_id_fkey;
+ALTER TABLE my_table DROP COLUMN val3;
+ALTER TABLE my_table DROP COLUMN IF EXISTS val3, val4;
+
+--------------------------------------------------------------------------------
+
+(program
+  (statement
+    (alter_table
+      (keyword_alter)
+      (keyword_table)
+      (object_reference
+        (identifier))
+      (keyword_drop)
+      (keyword_constraint)
+      (identifier)))
+  (statement
+    (alter_table
+      (keyword_alter)
+      (keyword_table)
+      (object_reference
+        (identifier))
+      (keyword_drop)
+      (keyword_constraint)
+      (keyword_if)
+      (keyword_exists)
+      (identifier)
+      (identifier)))
+  (statement
+    (alter_table
+      (keyword_alter)
+      (keyword_table)
+      (object_reference
+        (identifier))
+      (keyword_drop)
+      (identifier)))
+  (statement
+    (alter_table
+      (keyword_alter)
+      (keyword_table)
+      (object_reference
+        (identifier))
+      (keyword_drop)
+      (keyword_column)
+      (identifier)))
+  (statement
+    (alter_table
+      (keyword_alter)
+      (keyword_table)
+      (object_reference
+        (identifier))
+      (keyword_drop)
+      (keyword_column)
+      (keyword_if)
+      (keyword_exists)
+      (identifier)
+      (identifier))))
+
+================================================================================
+Alter table alter column
+================================================================================
+
+ALTER TABLE my_table ALTER COLUMN val3 VARCHAR(255) NOT NULL;
+ALTER TABLE my_table ALTER COLUMN val3 nvarchar(50) COLLATE Latin1_General_CI_AS NULL;
+ALTER TABLE my_table ALTER COLUMN val3 ADD ROWGUIDCOL;
+ALTER TABLE my_table ALTER COLUMN val3 DROP NOT_FOR_REPLICATION;
+
+--------------------------------------------------------------------------------
+
+(program
+  (statement
+    (alter_table
+      (keyword_alter)
+      (keyword_table)
+      (object_reference
+        (identifier))
+      (keyword_alter)
+      (keyword_column)
+      (identifier)
+      (varchar
+        (keyword_varchar)
+        (literal))
+      (keyword_not)
+      (keyword_null)))
+  (statement
+    (alter_table
+      (keyword_alter)
+      (keyword_table)
+      (object_reference
+        (identifier))
+      (keyword_alter)
+      (keyword_column)
+      (identifier)
+      (nvarchar
+        (keyword_nvarchar)
+        (literal))
+      (keyword_collate)
+      (identifier)
+      (keyword_null)))
+  (statement
+    (alter_table
+      (keyword_alter)
+      (keyword_table)
+      (object_reference
+        (identifier))
+      (keyword_alter)
+      (keyword_column)
+      (identifier)
+      (keyword_add)
+      (identifier)))
+  (statement
+    (alter_table
+      (keyword_alter)
+      (keyword_table)
+      (object_reference
+        (identifier))
+      (keyword_alter)
+      (keyword_column)
+      (identifier)
+      (keyword_drop)
+      (identifier))))
+
+================================================================================
+Alter table enable and disable triggers
+================================================================================
+
+ALTER TABLE [dbo].[ABDataServices] ENABLE TRIGGER [ABDataServicesInsert]
+ALTER TABLE dbo.t DISABLE TRIGGER ALL
+ALTER TABLE dbo.t ENABLE TRIGGER trg_a, trg_b
+
+--------------------------------------------------------------------------------
+
+(program
+  (statement
+    (alter_table
+      (keyword_alter)
+      (keyword_table)
+      (object_reference
+        (identifier)
+        (identifier))
+      (keyword_enable)
+      (keyword_trigger)
+      (identifier)))
+  (statement
+    (alter_table
+      (keyword_alter)
+      (keyword_table)
+      (object_reference
+        (identifier)
+        (identifier))
+      (keyword_disable)
+      (keyword_trigger)
+      (keyword_all)))
+  (statement
+    (alter_table
+      (keyword_alter)
+      (keyword_table)
+      (object_reference
+        (identifier)
+        (identifier))
+      (keyword_enable)
+      (keyword_trigger)
+      (identifier)
+      (identifier))))
+
+================================================================================
+Alter table set options and rebuild
+================================================================================
+
+ALTER TABLE dbo.t SET (LOCK_ESCALATION = AUTO);
+ALTER TABLE dbo.t REBUILD WITH (DATA_COMPRESSION = PAGE);
+
+--------------------------------------------------------------------------------
+
+(program
+  (statement
+    (alter_table
+      (keyword_alter)
+      (keyword_table)
+      (object_reference
+        (identifier)
+        (identifier))
+      (keyword_set)
+      (option
+        (identifier)
+        (identifier))))
+  (statement
+    (alter_table
+      (keyword_alter)
+      (keyword_table)
+      (object_reference
+        (identifier)
+        (identifier))
+      (keyword_rebuild)
+      (with_options
+        (keyword_with)
+        (option
+          (identifier)
+          (identifier))))))

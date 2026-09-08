@@ -1,0 +1,24 @@
+ALTER DATABASE SCOPED CONFIGURATION
+SET PREVIEW_FEATURES = ON;
+GO
+CREATE TABLE dbo.vectors
+(
+    id INT PRIMARY KEY,
+    v VECTOR(3) NOT NULL
+);
+INSERT INTO dbo.vectors (id, v)
+VALUES (1, '[0.1, 2, 30]'),
+       (2, '[-100.2, 0.123, 9.876]'),
+       (3, JSON_ARRAY(1.0, 2.0, 3.0));
+SELECT *
+FROM dbo.vectors;
+DECLARE @v AS VECTOR(3) = '[0.1, 2, 30]';
+SELECT @v;
+CREATE PROCEDURE dbo.SampleStoredProcedure
+@V VECTOR(3),
+@V2 VECTOR(3) OUTPUT
+AS
+BEGIN
+    SELECT @V;
+    SET @V2 = @V;
+END

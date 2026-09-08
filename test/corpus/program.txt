@@ -1,0 +1,697 @@
+================================================================================
+SSMS script header and GO batches
+================================================================================
+
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE PROCEDURE dbo.p AS SELECT 1
+GO
+GO 5
+SELECT 2;
+GO
+
+--------------------------------------------------------------------------------
+
+(program
+  (statement
+    (set_statement
+      (keyword_set)
+      (object_reference
+        (identifier))
+      (keyword_on)))
+  (go_statement
+    (keyword_go))
+  (statement
+    (set_statement
+      (keyword_set)
+      (object_reference
+        (identifier))
+      (keyword_on)))
+  (go_statement
+    (keyword_go))
+  (statement
+    (create_procedure
+      (keyword_create)
+      (keyword_procedure)
+      (object_reference
+        (identifier)
+        (identifier))
+      (procedure_body
+        (keyword_as)
+        (statement
+          (select
+            (keyword_select)
+            (select_expression
+              (term
+                (literal))))))))
+  (go_statement
+    (keyword_go))
+  (go_statement
+    (keyword_go)
+    (literal))
+  (statement
+    (select
+      (keyword_select)
+      (select_expression
+        (term
+          (literal)))))
+  (go_statement
+    (keyword_go)))
+
+================================================================================
+Statements without separators, SMO style
+================================================================================
+
+SET ANSI_NULLS ON
+SET QUOTED_IDENTIFIER ON
+IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[t]') AND type in (N'U'))
+BEGIN
+CREATE TABLE [dbo].[t](
+	[id] [int] NOT NULL
+) ON [PRIMARY]
+END
+SET ANSI_PADDING ON
+
+IF NOT EXISTS (SELECT * FROM sys.indexes WHERE object_id = OBJECT_ID(N'[dbo].[t]') AND name = N'IX_t')
+CREATE NONCLUSTERED INDEX [IX_t] ON [dbo].[t]
+(
+	[id] ASC
+)WITH (PAD_INDEX = OFF) ON [PRIMARY]
+IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[DF_t_id]') AND type = 'D')
+BEGIN
+ALTER TABLE [dbo].[t] ADD  CONSTRAINT [DF_t_id]  DEFAULT ((0)) FOR [id]
+END
+IF  EXISTS (SELECT * FROM sys.check_constraints WHERE object_id = OBJECT_ID(N'[dbo].[CK_t]'))
+ALTER TABLE [dbo].[t] CHECK CONSTRAINT [CK_t]
+
+--------------------------------------------------------------------------------
+
+(program
+  (statement
+    (set_statement
+      (keyword_set)
+      (object_reference
+        (identifier))
+      (keyword_on)))
+  (statement
+    (set_statement
+      (keyword_set)
+      (object_reference
+        (identifier))
+      (keyword_on)))
+  (statement
+    (if_statement
+      (keyword_if)
+      (unary_expression
+        (keyword_not)
+        (exists
+          (keyword_exists)
+          (subquery
+            (select
+              (keyword_select)
+              (select_expression
+                (term
+                  (all_fields))))
+            (from
+              (keyword_from)
+              (relation
+                (object_reference
+                  (identifier)
+                  (identifier)))
+              (where
+                (keyword_where)
+                (binary_expression
+                  (binary_expression
+                    (field
+                      (identifier))
+                    (invocation
+                      (object_reference
+                        (identifier))
+                      (term
+                        (literal))))
+                  (keyword_and)
+                  (binary_expression
+                    (field
+                      (identifier))
+                    (keyword_in)
+                    (list
+                      (literal)))))))))
+      (block
+        (keyword_begin)
+        (statement
+          (create_table
+            (keyword_create)
+            (keyword_table)
+            (object_reference
+              (identifier)
+              (identifier))
+            (column_definitions
+              (column_definition
+                (identifier)
+                (custom_type
+                  (object_reference
+                    (identifier)))
+                (keyword_not)
+                (keyword_null)))
+            (on_filegroup
+              (keyword_on)
+              (identifier))))
+        (keyword_end))))
+  (statement
+    (set_statement
+      (keyword_set)
+      (object_reference
+        (identifier))
+      (keyword_on)))
+  (statement
+    (if_statement
+      (keyword_if)
+      (unary_expression
+        (keyword_not)
+        (exists
+          (keyword_exists)
+          (subquery
+            (select
+              (keyword_select)
+              (select_expression
+                (term
+                  (all_fields))))
+            (from
+              (keyword_from)
+              (relation
+                (object_reference
+                  (identifier)
+                  (identifier)))
+              (where
+                (keyword_where)
+                (binary_expression
+                  (binary_expression
+                    (field
+                      (identifier))
+                    (invocation
+                      (object_reference
+                        (identifier))
+                      (term
+                        (literal))))
+                  (keyword_and)
+                  (binary_expression
+                    (field
+                      (identifier))
+                    (literal))))))))
+      (statement
+        (create_index
+          (keyword_create)
+          (keyword_nonclustered)
+          (keyword_index)
+          (identifier)
+          (keyword_on)
+          (object_reference
+            (identifier)
+            (identifier))
+          (ordered_columns
+            (column
+              (identifier)
+              (direction
+                (keyword_asc))))
+          (with_options
+            (keyword_with)
+            (option
+              (identifier)
+              (keyword_off)))
+          (on_filegroup
+            (keyword_on)
+            (identifier))))))
+  (statement
+    (if_statement
+      (keyword_if)
+      (unary_expression
+        (keyword_not)
+        (exists
+          (keyword_exists)
+          (subquery
+            (select
+              (keyword_select)
+              (select_expression
+                (term
+                  (all_fields))))
+            (from
+              (keyword_from)
+              (relation
+                (object_reference
+                  (identifier)
+                  (identifier)))
+              (where
+                (keyword_where)
+                (binary_expression
+                  (binary_expression
+                    (field
+                      (identifier))
+                    (invocation
+                      (object_reference
+                        (identifier))
+                      (term
+                        (literal))))
+                  (keyword_and)
+                  (binary_expression
+                    (field
+                      (identifier))
+                    (literal))))))))
+      (block
+        (keyword_begin)
+        (statement
+          (alter_table
+            (keyword_alter)
+            (keyword_table)
+            (object_reference
+              (identifier)
+              (identifier))
+            (keyword_add)
+            (constraint
+              (keyword_constraint)
+              (identifier)
+              (keyword_default)
+              (parenthesized_expression
+                (parenthesized_expression
+                  (literal)))
+              (keyword_for)
+              (identifier))))
+        (keyword_end))))
+  (statement
+    (if_statement
+      (keyword_if)
+      (exists
+        (keyword_exists)
+        (subquery
+          (select
+            (keyword_select)
+            (select_expression
+              (term
+                (all_fields))))
+          (from
+            (keyword_from)
+            (relation
+              (object_reference
+                (identifier)
+                (identifier)))
+            (where
+              (keyword_where)
+              (binary_expression
+                (field
+                  (identifier))
+                (invocation
+                  (object_reference
+                    (identifier))
+                  (term
+                    (literal))))))))
+      (statement
+        (alter_table
+          (keyword_alter)
+          (keyword_table)
+          (object_reference
+            (identifier)
+            (identifier))
+          (keyword_check)
+          (keyword_constraint)
+          (identifier))))))
+
+================================================================================
+Stub CREATE PROCEDURE followed by ALTER PROCEDURE
+================================================================================
+
+IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[p]') AND type in (N'P', N'PC'))
+BEGIN
+EXEC dbo.sp_executesql @statement = N'CREATE PROCEDURE [dbo].[p] AS'
+END
+/* header removed */
+ALTER PROCEDURE [dbo].[p] (
+	 @EndDate			Date
+	,@SalesPerson		nvarchar(10)
+--	,@ForceDataRebuild	FlagNyType
+	,@DisplayHeader		FlagNyType
+)AS
+
+BEGIN TRANSACTION
+SET XACT_ABORT ON
+
+IF dbo.GetIsolationLevel(N'Report') = N'COMMITTED'
+	SET TRANSACTION ISOLATION LEVEL READ COMMITTED
+ELSE
+	SET TRANSACTION ISOLATION LEVEL READ UNCOMMITTED
+
+DECLARE @StartDate date;
+SET @StartDate = (Select start =
+			CASE @cur_quarter
+				WHEN 1 THEN CONVERT(datetime, '1/1/' + CAST(@cur_year AS varchar(4)), 101)
+				When 2 THEN CONVERT(datetime, '4/1/' + CAST(@cur_year AS varchar(4)), 101)
+			END);
+COMMIT TRANSACTION--- Procedure
+RETURN 0
+
+--------------------------------------------------------------------------------
+
+(program
+  (statement
+    (if_statement
+      (keyword_if)
+      (unary_expression
+        (keyword_not)
+        (exists
+          (keyword_exists)
+          (subquery
+            (select
+              (keyword_select)
+              (select_expression
+                (term
+                  (all_fields))))
+            (from
+              (keyword_from)
+              (relation
+                (object_reference
+                  (identifier)
+                  (identifier)))
+              (where
+                (keyword_where)
+                (binary_expression
+                  (binary_expression
+                    (field
+                      (identifier))
+                    (invocation
+                      (object_reference
+                        (identifier))
+                      (term
+                        (literal))))
+                  (keyword_and)
+                  (binary_expression
+                    (field
+                      (identifier))
+                    (keyword_in)
+                    (list
+                      (literal)
+                      (literal)))))))))
+      (block
+        (keyword_begin)
+        (statement
+          (execute_statement
+            (keyword_exec)
+            (object_reference
+              (identifier)
+              (identifier))
+            (exec_argument
+              (identifier)
+              (literal))))
+        (keyword_end))))
+  (marginalia)
+  (statement
+    (alter_procedure
+      (keyword_alter)
+      (keyword_procedure)
+      (object_reference
+        (identifier)
+        (identifier))
+      (function_arguments
+        (function_argument
+          (identifier)
+          (keyword_date))
+        (function_argument
+          (identifier)
+          (nvarchar
+            (keyword_nvarchar)
+            (literal)))
+        (comment)
+        (function_argument
+          (identifier)
+          (custom_type
+            (object_reference
+              (identifier)))))
+      (procedure_body
+        (keyword_as)
+        (statement
+          (begin_transaction_statement
+            (keyword_begin)
+            (keyword_transaction)))
+        (statement
+          (set_statement
+            (keyword_set)
+            (object_reference
+              (identifier))
+            (keyword_on)))
+        (statement
+          (if_statement
+            (keyword_if)
+            (binary_expression
+              (invocation
+                (object_reference
+                  (identifier)
+                  (identifier))
+                (term
+                  (literal)))
+              (literal))
+            (statement
+              (set_statement
+                (keyword_set)
+                (keyword_transaction)
+                (keyword_isolation)
+                (keyword_level)
+                (keyword_read)
+                (keyword_committed)))
+            (else_clause
+              (keyword_else)
+              (statement
+                (set_statement
+                  (keyword_set)
+                  (keyword_transaction)
+                  (keyword_isolation)
+                  (keyword_level)
+                  (keyword_read)
+                  (keyword_uncommitted))))))
+        (statement
+          (var_declarations
+            (keyword_declare)
+            (var_declaration
+              (identifier)
+              (keyword_date))))
+        (statement
+          (set_statement
+            (keyword_set)
+            (object_reference
+              (identifier))
+            (assignment_operator)
+            (subquery
+              (select
+                (keyword_select)
+                (select_expression
+                  (term
+                    (binary_expression
+                      (field
+                        (identifier))
+                      (case
+                        (keyword_case)
+                        (field
+                          (identifier))
+                        (when_clause
+                          (keyword_when)
+                          (literal)
+                          (keyword_then)
+                          (invocation
+                            (object_reference
+                              (identifier))
+                            (term
+                              (field
+                                (identifier)))
+                            (term
+                              (binary_expression
+                                (literal)
+                                (cast
+                                  (keyword_cast)
+                                  (field
+                                    (identifier))
+                                  (keyword_as)
+                                  (varchar
+                                    (keyword_varchar)
+                                    (literal)))))
+                            (term
+                              (literal))))
+                        (when_clause
+                          (keyword_when)
+                          (literal)
+                          (keyword_then)
+                          (invocation
+                            (object_reference
+                              (identifier))
+                            (term
+                              (field
+                                (identifier)))
+                            (term
+                              (binary_expression
+                                (literal)
+                                (cast
+                                  (keyword_cast)
+                                  (field
+                                    (identifier))
+                                  (keyword_as)
+                                  (varchar
+                                    (keyword_varchar)
+                                    (literal)))))
+                            (term
+                              (literal))))
+                        (keyword_end)))))))))
+        (statement
+          (commit_statement
+            (keyword_commit)
+            (keyword_transaction)))
+        (comment)
+        (statement
+          (return_statement
+            (keyword_return)
+            (literal)))))))
+
+================================================================================
+Top-level block and mixed separators
+================================================================================
+
+BEGIN
+  CREATE TABLE FOO (bar INT);
+END;
+SELECT 1
+;
+SELECT 2
+GO
+BEGIN
+  SELECT 3
+END
+
+--------------------------------------------------------------------------------
+
+(program
+  (block
+    (keyword_begin)
+    (statement
+      (create_table
+        (keyword_create)
+        (keyword_table)
+        (object_reference
+          (identifier))
+        (column_definitions
+          (column_definition
+            (identifier)
+            (keyword_int)))))
+    (keyword_end))
+  (statement
+    (select
+      (keyword_select)
+      (select_expression
+        (term
+          (literal)))))
+  (statement
+    (select
+      (keyword_select)
+      (select_expression
+        (term
+          (literal)))))
+  (go_statement
+    (keyword_go))
+  (block
+    (keyword_begin)
+    (statement
+      (select
+        (keyword_select)
+        (select_expression
+          (term
+            (literal)))))
+    (keyword_end)))
+
+================================================================================
+Module wrapped in sp_executesql followed by ALTER TABLE
+================================================================================
+
+SET ANSI_NULLS ON
+SET QUOTED_IDENTIFIER ON
+IF NOT EXISTS (SELECT * FROM sys.triggers WHERE object_id = OBJECT_ID(N'[dbo].[trg]'))
+EXEC dbo.sp_executesql @statement = N'CREATE TRIGGER [trg]
+ON [t]
+INSTEAD OF INSERT
+AS
+   IF @@ROWCOUNT = 0 RETURN
+   RETURN'
+ALTER TABLE [dbo].[t] ENABLE TRIGGER [trg]
+EXEC sp_settriggerorder @triggername=N'[dbo].[trg]', @order=N'First', @stmttype=N'INSERT'
+
+--------------------------------------------------------------------------------
+
+(program
+  (statement
+    (set_statement
+      (keyword_set)
+      (object_reference
+        (identifier))
+      (keyword_on)))
+  (statement
+    (set_statement
+      (keyword_set)
+      (object_reference
+        (identifier))
+      (keyword_on)))
+  (statement
+    (if_statement
+      (keyword_if)
+      (unary_expression
+        (keyword_not)
+        (exists
+          (keyword_exists)
+          (subquery
+            (select
+              (keyword_select)
+              (select_expression
+                (term
+                  (all_fields))))
+            (from
+              (keyword_from)
+              (relation
+                (object_reference
+                  (identifier)
+                  (identifier)))
+              (where
+                (keyword_where)
+                (binary_expression
+                  (field
+                    (identifier))
+                  (invocation
+                    (object_reference
+                      (identifier))
+                    (term
+                      (literal)))))))))
+      (statement
+        (execute_statement
+          (keyword_exec)
+          (object_reference
+            (identifier)
+            (identifier))
+          (exec_argument
+            (identifier)
+            (literal))))))
+  (statement
+    (alter_table
+      (keyword_alter)
+      (keyword_table)
+      (object_reference
+        (identifier)
+        (identifier))
+      (keyword_enable)
+      (keyword_trigger)
+      (identifier)))
+  (statement
+    (execute_statement
+      (keyword_exec)
+      (object_reference
+        (identifier))
+      (exec_argument
+        (identifier)
+        (literal))
+      (exec_argument
+        (identifier)
+        (literal))
+      (exec_argument
+        (identifier)
+        (literal)))))

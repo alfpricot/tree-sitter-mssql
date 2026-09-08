@@ -1,0 +1,40 @@
+{
+  "grammars": [
+    {
+      "name": "mssql",
+      "camelcase": "MSSQL",
+      "scope": "source.mssql",
+      "path": ".",
+      "file-types": [
+        "sql"
+      ],
+      "highlights": [
+        "queries/highlights.scm"
+      ]
+    }
+  ],
+  "metadata": {
+    "version": "0.1.0",
+    "license": "MIT",
+    "description": "Tree-sitter grammar for Microsoft SQL Server T-SQL",
+    "authors": [
+      {
+        "name": "Derek Stride"
+      },
+      {
+        "name": "M. Reifschneider"
+      }
+    ],
+    "links": {
+      "repository": "git+https://github.com/meloncholic/tree-sitter-mssql.git"
+    }
+  },
+  "bindings": {
+    "c": true,
+    "go": false,
+    "node": true,
+    "python": false,
+    "rust": true,
+    "swift": false
+  }
+}

@@ -1,0 +1,355 @@
+================================================================================
+Insert values
+================================================================================
+
+INSERT INTO my_table
+VALUES('foo', 'bar', 3);
+
+INSERT INTO my_table (name, id, year)
+VALUES ('foo', 123, '2020'), ('baz', 124, '2021');
+
+--------------------------------------------------------------------------------
+
+(program
+  (statement
+    (insert
+      (keyword_insert)
+      (keyword_into)
+      (object_reference
+        (identifier))
+      (keyword_values)
+      (list
+        (literal)
+        (literal)
+        (literal))))
+  (statement
+    (insert
+      (keyword_insert)
+      (keyword_into)
+      (object_reference
+        (identifier))
+      (list
+        (column
+          (identifier))
+        (column
+          (identifier))
+        (column
+          (identifier)))
+      (keyword_values)
+      (list
+        (literal)
+        (literal)
+        (literal))
+      (list
+        (literal)
+        (literal)
+        (literal)))))
+
+================================================================================
+Insert without INTO
+================================================================================
+
+INSERT my_table (id, name) SELECT id, name FROM inserted;
+
+--------------------------------------------------------------------------------
+
+(program
+  (statement
+    (insert
+      (keyword_insert)
+      (object_reference
+        (identifier))
+      (list
+        (column
+          (identifier))
+        (column
+          (identifier)))
+      (select
+        (keyword_select)
+        (select_expression
+          (term
+            (field
+              (identifier)))
+          (term
+            (field
+              (identifier)))))
+      (from
+        (keyword_from)
+        (relation
+          (object_reference
+            (identifier)))))))
+
+================================================================================
+Insert select
+================================================================================
+
+INSERT INTO my_table (a, b, c)
+SELECT a, b, c
+FROM my_other_table
+WHERE a > 0;
+
+INSERT INTO some_table (field)
+  (SELECT 'x' UNION SELECT 'y');
+
+--------------------------------------------------------------------------------
+
+(program
+  (statement
+    (insert
+      (keyword_insert)
+      (keyword_into)
+      (object_reference
+        (identifier))
+      (list
+        (column
+          (identifier))
+        (column
+          (identifier))
+        (column
+          (identifier)))
+      (select
+        (keyword_select)
+        (select_expression
+          (term
+            (field
+              (identifier)))
+          (term
+            (field
+              (identifier)))
+          (term
+            (field
+              (identifier)))))
+      (from
+        (keyword_from)
+        (relation
+          (object_reference
+            (identifier)))
+        (where
+          (keyword_where)
+          (binary_expression
+            (field
+              (identifier))
+            (literal))))))
+  (statement
+    (insert
+      (keyword_insert)
+      (keyword_into)
+      (object_reference
+        (identifier))
+      (list
+        (column
+          (identifier)))
+      (set_operation
+        (select
+          (keyword_select)
+          (select_expression
+            (term
+              (literal))))
+        (keyword_union)
+        (select
+          (keyword_select)
+          (select_expression
+            (term
+              (literal))))))))
+
+================================================================================
+Insert into a table variable and a temp table
+================================================================================
+
+INSERT INTO @sites SELECT site FROM site_group WITH (READUNCOMMITTED);
+INSERT INTO #results (a) VALUES (1);
+INSERT @t VALUES (1);
+
+--------------------------------------------------------------------------------
+
+(program
+  (statement
+    (insert
+      (keyword_insert)
+      (keyword_into)
+      (object_reference
+        (identifier))
+      (select
+        (keyword_select)
+        (select_expression
+          (term
+            (field
+              (identifier)))))
+      (from
+        (keyword_from)
+        (relation
+          (object_reference
+            (identifier)))
+        (table_hint
+          (keyword_with)
+          (table_hint_item
+            (identifier))))))
+  (statement
+    (insert
+      (keyword_insert)
+      (keyword_into)
+      (object_reference
+        (identifier))
+      (list
+        (column
+          (identifier)))
+      (keyword_values)
+      (list
+        (literal))))
+  (statement
+    (insert
+      (keyword_insert)
+      (object_reference
+        (identifier))
+      (keyword_values)
+      (list
+        (literal)))))
+
+================================================================================
+Insert with TOP and a table hint
+================================================================================
+
+INSERT TOP (10) INTO my_table WITH (TABLOCK) (a) SELECT a FROM src;
+
+--------------------------------------------------------------------------------
+
+(program
+  (statement
+    (insert
+      (keyword_insert)
+      (top_clause
+        (keyword_top)
+        (literal))
+      (keyword_into)
+      (object_reference
+        (identifier))
+      (table_hint
+        (keyword_with)
+        (table_hint_item
+          (identifier)))
+      (list
+        (column
+          (identifier)))
+      (select
+        (keyword_select)
+        (select_expression
+          (term
+            (field
+              (identifier)))))
+      (from
+        (keyword_from)
+        (relation
+          (object_reference
+            (identifier)))))))
+
+================================================================================
+Insert with OUTPUT
+================================================================================
+
+INSERT INTO my_table (a)
+OUTPUT inserted.id, inserted.a INTO @ids (id, a)
+VALUES (1);
+
+INSERT INTO my_table (a) OUTPUT inserted.* SELECT a FROM src;
+
+--------------------------------------------------------------------------------
+
+(program
+  (statement
+    (insert
+      (keyword_insert)
+      (keyword_into)
+      (object_reference
+        (identifier))
+      (list
+        (column
+          (identifier)))
+      (output_clause
+        (keyword_output)
+        (term
+          (field
+            (object_reference
+              (identifier))
+            (identifier)))
+        (term
+          (field
+            (object_reference
+              (identifier))
+            (identifier)))
+        (keyword_into)
+        (object_reference
+          (identifier))
+        (identifier)
+        (identifier))
+      (keyword_values)
+      (list
+        (literal))))
+  (statement
+    (insert
+      (keyword_insert)
+      (keyword_into)
+      (object_reference
+        (identifier))
+      (list
+        (column
+          (identifier)))
+      (output_clause
+        (keyword_output)
+        (term
+          (all_fields
+            (object_reference
+              (identifier)))))
+      (select
+        (keyword_select)
+        (select_expression
+          (term
+            (field
+              (identifier)))))
+      (from
+        (keyword_from)
+        (relation
+          (object_reference
+            (identifier)))))))
+
+================================================================================
+Insert from EXEC and DEFAULT VALUES
+================================================================================
+
+INSERT INTO #results EXEC dbo.GetResults @site = 'MAIN';
+INSERT INTO #results EXEC ('SELECT 1');
+INSERT INTO log_table DEFAULT VALUES;
+
+--------------------------------------------------------------------------------
+
+(program
+  (statement
+    (insert
+      (keyword_insert)
+      (keyword_into)
+      (object_reference
+        (identifier))
+      (execute_statement
+        (keyword_exec)
+        (object_reference
+          (identifier)
+          (identifier))
+        (exec_argument
+          (identifier)
+          (literal)))))
+  (statement
+    (insert
+      (keyword_insert)
+      (keyword_into)
+      (object_reference
+        (identifier))
+      (execute_statement
+        (keyword_exec)
+        (literal))))
+  (statement
+    (insert
+      (keyword_insert)
+      (keyword_into)
+      (object_reference
+        (identifier))
+      (keyword_default)
+      (keyword_values))))

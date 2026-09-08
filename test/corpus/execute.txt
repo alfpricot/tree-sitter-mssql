@@ -1,0 +1,336 @@
+================================================================================
+Execute a procedure with positional and named arguments
+================================================================================
+
+EXEC sp_configure 'recovery interval', 75
+EXECUTE dbo.MsgAppSp @Infobar OUTPUT, 'E=NoExist', @LinkedServerName
+EXEC dbo.InitSessionContextSp
+        @ContextName = 'Report'
+      , @SessionID   = @RptSessionID OUTPUT
+      , @Site        = @pSite
+EXEC dbo.ApplyDateOffsetSp @Date = @PickupDateStarting OUT, @Offset = @PickupDateStartingOffset, @IsEndDate = 0
+
+--------------------------------------------------------------------------------
+
+(program
+  (statement
+    (execute_statement
+      (keyword_exec)
+      (object_reference
+        (identifier))
+      (exec_argument
+        (literal))
+      (exec_argument
+        (literal))))
+  (statement
+    (execute_statement
+      (keyword_execute)
+      (object_reference
+        (identifier)
+        (identifier))
+      (exec_argument
+        (field
+          (identifier))
+        (keyword_output))
+      (exec_argument
+        (literal))
+      (exec_argument
+        (field
+          (identifier)))))
+  (statement
+    (execute_statement
+      (keyword_exec)
+      (object_reference
+        (identifier)
+        (identifier))
+      (exec_argument
+        (identifier)
+        (literal))
+      (exec_argument
+        (identifier)
+        (field
+          (identifier))
+        (keyword_output))
+      (exec_argument
+        (identifier)
+        (field
+          (identifier)))))
+  (statement
+    (execute_statement
+      (keyword_exec)
+      (object_reference
+        (identifier)
+        (identifier))
+      (exec_argument
+        (identifier)
+        (field
+          (identifier))
+        (keyword_out))
+      (exec_argument
+        (identifier)
+        (field
+          (identifier)))
+      (exec_argument
+        (identifier)
+        (literal)))))
+
+================================================================================
+Execute with a return status and a procedure variable
+================================================================================
+
+exec @Severity = @ALTGEN_SpName @PVendNum, @PInvNum, @Infobar OUTPUT
+EXEC @return_value = [dbo].[PJ_Archive_TMS_AuditSp]
+		@SuccessDetail = @SuccessDetail OUTPUT,
+		@SuccessID = @SuccessID OUTPUT
+
+--------------------------------------------------------------------------------
+
+(program
+  (statement
+    (execute_statement
+      (keyword_exec)
+      (identifier)
+      (object_reference
+        (identifier))
+      (exec_argument
+        (field
+          (identifier)))
+      (exec_argument
+        (field
+          (identifier)))
+      (exec_argument
+        (field
+          (identifier))
+        (keyword_output))))
+  (statement
+    (execute_statement
+      (keyword_exec)
+      (identifier)
+      (object_reference
+        (identifier)
+        (identifier))
+      (exec_argument
+        (identifier)
+        (field
+          (identifier))
+        (keyword_output))
+      (exec_argument
+        (identifier)
+        (field
+          (identifier))
+        (keyword_output)))))
+
+================================================================================
+Execute sp_executesql and system procedures
+================================================================================
+
+EXEC sys.sp_executesql N'CREATE SCHEMA [frm]'
+EXEC dbo.sp_executesql @statement = N'CREATE PROCEDURE [dbo].[X] AS'
+execute sys.sp_executesql @stmt = @SQL, @params = N'@ObjectName nvarchar(512), @Result bit = 0 output', @ObjectName = @TargetObjectName, @Result = @Result output;
+EXEC sp_settriggerorder @triggername=N'[dbo].[ABOPTS_mstDel]', @order=N'First', @stmttype=N'DELETE'
+EXEC master.dbo.sp_serveroption @server=N'LINKED01', @optname=N'collation name', @optvalue=null
+exec [PowerBIReportServer].dbo.AddEvent @EventType='TimedSubscription', @EventData='x'
+
+--------------------------------------------------------------------------------
+
+(program
+  (statement
+    (execute_statement
+      (keyword_exec)
+      (object_reference
+        (identifier)
+        (identifier))
+      (exec_argument
+        (literal))))
+  (statement
+    (execute_statement
+      (keyword_exec)
+      (object_reference
+        (identifier)
+        (identifier))
+      (exec_argument
+        (identifier)
+        (literal))))
+  (statement
+    (execute_statement
+      (keyword_execute)
+      (object_reference
+        (identifier)
+        (identifier))
+      (exec_argument
+        (identifier)
+        (field
+          (identifier)))
+      (exec_argument
+        (identifier)
+        (literal))
+      (exec_argument
+        (identifier)
+        (field
+          (identifier)))
+      (exec_argument
+        (identifier)
+        (field
+          (identifier))
+        (keyword_output))))
+  (statement
+    (execute_statement
+      (keyword_exec)
+      (object_reference
+        (identifier))
+      (exec_argument
+        (identifier)
+        (literal))
+      (exec_argument
+        (identifier)
+        (literal))
+      (exec_argument
+        (identifier)
+        (literal))))
+  (statement
+    (execute_statement
+      (keyword_exec)
+      (object_reference
+        (identifier)
+        (identifier)
+        (identifier))
+      (exec_argument
+        (identifier)
+        (literal))
+      (exec_argument
+        (identifier)
+        (literal))
+      (exec_argument
+        (identifier)
+        (literal
+          (keyword_null)))))
+  (statement
+    (execute_statement
+      (keyword_exec)
+      (object_reference
+        (identifier)
+        (identifier)
+        (identifier))
+      (exec_argument
+        (identifier)
+        (literal))
+      (exec_argument
+        (identifier)
+        (literal)))))
+
+================================================================================
+Execute a string, a linked server command and DEFAULT arguments
+================================================================================
+
+EXEC (@sql);
+EXEC ('SELECT 1' + @suffix, @more);
+EXECUTE ('SELECT 1') AT LINKED01;
+EXEC dbo.p DEFAULT, 3, @b = DEFAULT;
+EXEC dbo.p WITH RECOMPILE;
+
+--------------------------------------------------------------------------------
+
+(program
+  (statement
+    (execute_statement
+      (keyword_exec)
+      (field
+        (identifier))))
+  (statement
+    (execute_statement
+      (keyword_exec)
+      (binary_expression
+        (literal)
+        (field
+          (identifier)))
+      (field
+        (identifier))))
+  (statement
+    (execute_statement
+      (keyword_execute)
+      (literal)
+      (keyword_at)
+      (identifier)))
+  (statement
+    (execute_statement
+      (keyword_exec)
+      (object_reference
+        (identifier)
+        (identifier))
+      (exec_argument
+        (keyword_default))
+      (exec_argument
+        (literal))
+      (exec_argument
+        (identifier)
+        (keyword_default))))
+  (statement
+    (execute_statement
+      (keyword_exec)
+      (object_reference
+        (identifier)
+        (identifier))
+      (keyword_with)
+      (keyword_recompile))))
+
+================================================================================
+Positional arguments before named ones, signed constants and an AS USER context
+================================================================================
+
+EXEC dbo.p 1, -2, +3, @c, @d = DEFAULT, @e = @f OUTPUT;
+EXECUTE dbo.p @a = 'x';
+EXECUTE ('SELECT 1') AS USER = 'someuser';
+EXEC ('SELECT 1') AS LOGIN = @login;
+
+--------------------------------------------------------------------------------
+
+(program
+  (statement
+    (execute_statement
+      (keyword_exec)
+      (object_reference
+        (identifier)
+        (identifier))
+      (exec_argument
+        (literal))
+      (exec_argument
+        (unary_expression
+          (literal)))
+      (exec_argument
+        (unary_expression
+          (literal)))
+      (exec_argument
+        (field
+          (identifier)))
+      (exec_argument
+        (identifier)
+        (keyword_default))
+      (exec_argument
+        (identifier)
+        (field
+          (identifier))
+        (keyword_output))))
+  (statement
+    (execute_statement
+      (keyword_execute)
+      (object_reference
+        (identifier)
+        (identifier))
+      (exec_argument
+        (identifier)
+        (literal))))
+  (statement
+    (execute_statement
+      (keyword_execute)
+      (literal)
+      (keyword_as)
+      (keyword_user)
+      (literal)))
+  (statement
+    (execute_statement
+      (keyword_exec)
+      (literal)
+      (keyword_as)
+      (keyword_login)
+      (field
+        (identifier)))))

@@ -1,0 +1,2 @@
+CREATE TABLE ##Temp (Id INT);
+GO

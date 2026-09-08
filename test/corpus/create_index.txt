@@ -1,0 +1,396 @@
+================================================================================
+Create index
+================================================================================
+
+CREATE INDEX idx ON tab (col);
+CREATE UNIQUE INDEX "akRoleName" ON "Role" ("name");
+
+--------------------------------------------------------------------------------
+
+(program
+  (statement
+    (create_index
+      (keyword_create)
+      (keyword_index)
+      (identifier)
+      (keyword_on)
+      (object_reference
+        (identifier))
+      (ordered_columns
+        (column
+          (identifier)))))
+  (statement
+    (create_index
+      (keyword_create)
+      (keyword_unique)
+      (keyword_index)
+      (identifier)
+      (keyword_on)
+      (object_reference
+        (identifier))
+      (ordered_columns
+        (column
+          (identifier))))))
+
+================================================================================
+Create clustered and nonclustered indexes with options, SSMS style
+================================================================================
+
+CREATE CLUSTERED INDEX [IX_BATWAIT_BATDEFID] ON [dbo].[BATWAIT]
+(
+	[BATDEFID] ASC,
+	[BATID] ASC,
+	[site_ref] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+
+CREATE UNIQUE NONCLUSTERED INDEX [IX_orders_stat] ON [dbo].[orders]
+(
+	[stat] DESC
+)WITH (FILLFACTOR = 90) ON [PRIMARY]
+
+--------------------------------------------------------------------------------
+
+(program
+  (statement
+    (create_index
+      (keyword_create)
+      (keyword_clustered)
+      (keyword_index)
+      (identifier)
+      (keyword_on)
+      (object_reference
+        (identifier)
+        (identifier))
+      (ordered_columns
+        (column
+          (identifier)
+          (direction
+            (keyword_asc)))
+        (column
+          (identifier)
+          (direction
+            (keyword_asc)))
+        (column
+          (identifier)
+          (direction
+            (keyword_asc))))
+      (with_options
+        (keyword_with)
+        (option
+          (identifier)
+          (keyword_off))
+        (option
+          (identifier)
+          (keyword_off))
+        (option
+          (identifier)
+          (keyword_off))
+        (option
+          (identifier)
+          (keyword_off))
+        (option
+          (identifier)
+          (keyword_off))
+        (option
+          (identifier)
+          (keyword_on))
+        (option
+          (identifier)
+          (keyword_on)))
+      (on_filegroup
+        (keyword_on)
+        (identifier))))
+  (statement
+    (create_index
+      (keyword_create)
+      (keyword_unique)
+      (keyword_nonclustered)
+      (keyword_index)
+      (identifier)
+      (keyword_on)
+      (object_reference
+        (identifier)
+        (identifier))
+      (ordered_columns
+        (column
+          (identifier)
+          (direction
+            (keyword_desc))))
+      (with_options
+        (keyword_with)
+        (option
+          (identifier)
+          (literal)))
+      (on_filegroup
+        (keyword_on)
+        (identifier)))))
+
+================================================================================
+Create covering and filtered indexes
+================================================================================
+
+CREATE INDEX idx_covering ON tree.sitter (other_id, foo) INCLUDE (bar, baz);
+
+CREATE NONCLUSTERED INDEX idx_active ON dbo.orders (customer_id)
+INCLUDE (total)
+WHERE stat = 'A'
+WITH (ONLINE = ON, DATA_COMPRESSION = PAGE);
+
+--------------------------------------------------------------------------------
+
+(program
+  (statement
+    (create_index
+      (keyword_create)
+      (keyword_index)
+      (identifier)
+      (keyword_on)
+      (object_reference
+        (identifier)
+        (identifier))
+      (ordered_columns
+        (column
+          (identifier))
+        (column
+          (identifier)))
+      (covering_columns
+        (keyword_include)
+        (identifier)
+        (identifier))))
+  (statement
+    (create_index
+      (keyword_create)
+      (keyword_nonclustered)
+      (keyword_index)
+      (identifier)
+      (keyword_on)
+      (object_reference
+        (identifier)
+        (identifier))
+      (ordered_columns
+        (column
+          (identifier)))
+      (covering_columns
+        (keyword_include)
+        (identifier))
+      (where
+        (keyword_where)
+        (binary_expression
+          (field
+            (identifier))
+          (literal)))
+      (with_options
+        (keyword_with)
+        (option
+          (identifier)
+          (keyword_on))
+        (option
+          (identifier)
+          (identifier))))))
+
+================================================================================
+Create columnstore index
+================================================================================
+
+CREATE CLUSTERED COLUMNSTORE INDEX cci_facts ON dbo.facts;
+CREATE NONCLUSTERED COLUMNSTORE INDEX ncci ON dbo.facts (a, b);
+
+--------------------------------------------------------------------------------
+
+(program
+  (statement
+    (create_index
+      (keyword_create)
+      (keyword_clustered)
+      (identifier)
+      (keyword_index)
+      (identifier)
+      (keyword_on)
+      (object_reference
+        (identifier)
+        (identifier))))
+  (statement
+    (create_index
+      (keyword_create)
+      (keyword_nonclustered)
+      (identifier)
+      (keyword_index)
+      (identifier)
+      (keyword_on)
+      (object_reference
+        (identifier)
+        (identifier))
+      (ordered_columns
+        (column
+          (identifier))
+        (column
+          (identifier))))))
+
+================================================================================
+Alter index
+================================================================================
+
+ALTER INDEX ALL ON dbo.t REBUILD;
+ALTER INDEX ix_t ON dbo.t REBUILD WITH (FILLFACTOR = 80, ONLINE = ON);
+ALTER INDEX ix_t ON dbo.t REORGANIZE;
+ALTER INDEX ix_t ON dbo.t DISABLE;
+ALTER INDEX ix_t ON dbo.t SET (ALLOW_PAGE_LOCKS = OFF);
+
+--------------------------------------------------------------------------------
+
+(program
+  (statement
+    (alter_index
+      (keyword_alter)
+      (keyword_index)
+      (keyword_all)
+      (keyword_on)
+      (object_reference
+        (identifier)
+        (identifier))
+      (keyword_rebuild)))
+  (statement
+    (alter_index
+      (keyword_alter)
+      (keyword_index)
+      (identifier)
+      (keyword_on)
+      (object_reference
+        (identifier)
+        (identifier))
+      (keyword_rebuild)
+      (with_options
+        (keyword_with)
+        (option
+          (identifier)
+          (literal))
+        (option
+          (identifier)
+          (keyword_on)))))
+  (statement
+    (alter_index
+      (keyword_alter)
+      (keyword_index)
+      (identifier)
+      (keyword_on)
+      (object_reference
+        (identifier)
+        (identifier))
+      (keyword_reorganize)))
+  (statement
+    (alter_index
+      (keyword_alter)
+      (keyword_index)
+      (identifier)
+      (keyword_on)
+      (object_reference
+        (identifier)
+        (identifier))
+      (keyword_disable)))
+  (statement
+    (alter_index
+      (keyword_alter)
+      (keyword_index)
+      (identifier)
+      (keyword_on)
+      (object_reference
+        (identifier)
+        (identifier))
+      (keyword_set)
+      (option
+        (identifier)
+        (keyword_off)))))
+
+================================================================================
+Drop index
+================================================================================
+
+DROP INDEX idx ON tbl;
+DROP INDEX IF EXISTS idx ON dbo.tbl, idx2 ON dbo.tbl2;
+DROP INDEX tbl.idx;
+
+--------------------------------------------------------------------------------
+
+(program
+  (statement
+    (drop_index
+      (keyword_drop)
+      (keyword_index)
+      (object_reference
+        (identifier))
+      (keyword_on)
+      (object_reference
+        (identifier))))
+  (statement
+    (drop_index
+      (keyword_drop)
+      (keyword_index)
+      (keyword_if)
+      (keyword_exists)
+      (object_reference
+        (identifier))
+      (keyword_on)
+      (object_reference
+        (identifier)
+        (identifier))
+      (object_reference
+        (identifier))
+      (keyword_on)
+      (object_reference
+        (identifier)
+        (identifier))))
+  (statement
+    (drop_index
+      (keyword_drop)
+      (keyword_index)
+      (object_reference
+        (identifier)
+        (identifier)))))
+
+================================================================================
+Update statistics
+================================================================================
+
+UPDATE STATISTICS dbo.t;
+UPDATE STATISTICS dbo.t ix_t WITH FULLSCAN;
+UPDATE STATISTICS dbo.t (st_a, st_b) WITH SAMPLE 50 PERCENT, NORECOMPUTE;
+
+--------------------------------------------------------------------------------
+
+(program
+  (statement
+    (update_statistics_statement
+      (keyword_update)
+      (keyword_statistics)
+      (object_reference
+        (identifier)
+        (identifier))))
+  (statement
+    (update_statistics_statement
+      (keyword_update)
+      (keyword_statistics)
+      (object_reference
+        (identifier)
+        (identifier))
+      (identifier)
+      (with_clause
+        (keyword_with)
+        (option
+          (identifier)))))
+  (statement
+    (update_statistics_statement
+      (keyword_update)
+      (keyword_statistics)
+      (object_reference
+        (identifier)
+        (identifier))
+      (identifier)
+      (identifier)
+      (with_clause
+        (keyword_with)
+        (option
+          (identifier)
+          (literal)
+          (identifier))
+        (option
+          (identifier))))))

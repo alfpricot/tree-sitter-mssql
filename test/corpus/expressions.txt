@@ -1,0 +1,1237 @@
+================================================================================
+Field predicates
+================================================================================
+
+SELECT *
+FROM my_table m
+WHERE m.is_visible AND NOT m.is_deleted;
+
+--------------------------------------------------------------------------------
+
+(program
+  (statement
+    (select
+      (keyword_select)
+      (select_expression
+        (term
+          (all_fields))))
+    (from
+      (keyword_from)
+      (relation
+        (object_reference
+          (identifier))
+        (identifier))
+      (where
+        (keyword_where)
+        (binary_expression
+          (field
+            (object_reference
+              (identifier))
+            (identifier))
+          (keyword_and)
+          (unary_expression
+            (keyword_not)
+            (field
+              (object_reference
+                (identifier))
+              (identifier))))))))
+
+================================================================================
+Mixed and disjunctive predicates
+================================================================================
+
+SELECT *
+FROM my_table m
+WHERE m.status = 'success'
+  AND m.name = N'foobar'
+  OR m.id = 5
+  AND m.is_not_deleted = 1
+
+--------------------------------------------------------------------------------
+
+(program
+  (statement
+    (select
+      (keyword_select)
+      (select_expression
+        (term
+          (all_fields))))
+    (from
+      (keyword_from)
+      (relation
+        (object_reference
+          (identifier))
+        (identifier))
+      (where
+        (keyword_where)
+        (binary_expression
+          (binary_expression
+            (binary_expression
+              (field
+                (object_reference
+                  (identifier))
+                (identifier))
+              (literal))
+            (keyword_and)
+            (binary_expression
+              (field
+                (object_reference
+                  (identifier))
+                (identifier))
+              (literal)))
+          (keyword_or)
+          (binary_expression
+            (binary_expression
+              (field
+                (object_reference
+                  (identifier))
+                (identifier))
+              (literal))
+            (keyword_and)
+            (binary_expression
+              (field
+                (object_reference
+                  (identifier))
+                (identifier))
+              (literal))))))))
+
+================================================================================
+IS NULL, IS NOT NULL, IS [NOT] DISTINCT FROM
+================================================================================
+
+SELECT *
+FROM my_table
+WHERE id IS NOT NULL
+  AND name IS NULL
+  AND col IS DISTINCT FROM NULL
+  AND col IS NOT DISTINCT FROM other;
+
+--------------------------------------------------------------------------------
+
+(program
+  (statement
+    (select
+      (keyword_select)
+      (select_expression
+        (term
+          (all_fields))))
+    (from
+      (keyword_from)
+      (relation
+        (object_reference
+          (identifier)))
+      (where
+        (keyword_where)
+        (binary_expression
+          (binary_expression
+            (binary_expression
+              (binary_expression
+                (field
+                  (identifier))
+                (is_not
+                  (keyword_is)
+                  (keyword_not))
+                (literal
+                  (keyword_null)))
+              (keyword_and)
+              (binary_expression
+                (field
+                  (identifier))
+                (keyword_is)
+                (literal
+                  (keyword_null))))
+            (keyword_and)
+            (binary_expression
+              (field
+                (identifier))
+              (distinct_from
+                (keyword_is)
+                (keyword_distinct)
+                (keyword_from))
+              (literal
+                (keyword_null))))
+          (keyword_and)
+          (binary_expression
+            (field
+              (identifier))
+            (not_distinct_from
+              (keyword_is)
+              (keyword_not)
+              (keyword_distinct)
+              (keyword_from))
+            (field
+              (identifier))))))))
+
+================================================================================
+Comparison operators
+================================================================================
+
+SELECT *
+FROM a
+WHERE a <> 'x' AND b != 1 AND c !< 2 AND d !> 3 AND e >= 4 AND f <= 5;
+
+--------------------------------------------------------------------------------
+
+(program
+  (statement
+    (select
+      (keyword_select)
+      (select_expression
+        (term
+          (all_fields))))
+    (from
+      (keyword_from)
+      (relation
+        (object_reference
+          (identifier)))
+      (where
+        (keyword_where)
+        (binary_expression
+          (binary_expression
+            (binary_expression
+              (binary_expression
+                (binary_expression
+                  (binary_expression
+                    (field
+                      (identifier))
+                    (literal))
+                  (keyword_and)
+                  (binary_expression
+                    (field
+                      (identifier))
+                    (literal)))
+                (keyword_and)
+                (binary_expression
+                  (field
+                    (identifier))
+                  (literal)))
+              (keyword_and)
+              (binary_expression
+                (field
+                  (identifier))
+                (literal)))
+            (keyword_and)
+            (binary_expression
+              (field
+                (identifier))
+              (literal)))
+          (keyword_and)
+          (binary_expression
+            (field
+              (identifier))
+            (literal)))))))
+
+================================================================================
+LIKE and NOT LIKE
+================================================================================
+
+SELECT *
+FROM a
+WHERE a LIKE '%a' AND a NOT LIKE '%a' AND a LIKE N'[_]all';
+
+--------------------------------------------------------------------------------
+
+(program
+  (statement
+    (select
+      (keyword_select)
+      (select_expression
+        (term
+          (all_fields))))
+    (from
+      (keyword_from)
+      (relation
+        (object_reference
+          (identifier)))
+      (where
+        (keyword_where)
+        (binary_expression
+          (binary_expression
+            (binary_expression
+              (field
+                (identifier))
+              (keyword_like)
+              (literal))
+            (keyword_and)
+            (binary_expression
+              (field
+                (identifier))
+              (not_like
+                (keyword_not)
+                (keyword_like))
+              (literal)))
+          (keyword_and)
+          (binary_expression
+            (field
+              (identifier))
+            (keyword_like)
+            (literal)))))))
+
+================================================================================
+BETWEEN and NOT BETWEEN
+================================================================================
+
+SELECT a
+FROM b
+WHERE a BETWEEN '2022-01-01' AND '2023-01-01'
+  AND c NOT BETWEEN 1 AND 3;
+
+--------------------------------------------------------------------------------
+
+(program
+  (statement
+    (select
+      (keyword_select)
+      (select_expression
+        (term
+          (field
+            (identifier)))))
+    (from
+      (keyword_from)
+      (relation
+        (object_reference
+          (identifier)))
+      (where
+        (keyword_where)
+        (binary_expression
+          (between_expression
+            (field
+              (identifier))
+            (keyword_between)
+            (literal)
+            (keyword_and)
+            (literal))
+          (keyword_and)
+          (between_expression
+            (field
+              (identifier))
+            (keyword_not)
+            (keyword_between)
+            (literal)
+            (keyword_and)
+            (literal)))))))
+
+================================================================================
+Arithmetic, string concatenation and modulo
+================================================================================
+
+SELECT a + 3, a - b * c / 2, a % 3, 'a' + name + N'b'
+FROM b
+WHERE a >= -14 AND b >= -3.14;
+
+--------------------------------------------------------------------------------
+
+(program
+  (statement
+    (select
+      (keyword_select)
+      (select_expression
+        (term
+          (binary_expression
+            (field
+              (identifier))
+            (literal)))
+        (term
+          (binary_expression
+            (field
+              (identifier))
+            (binary_expression
+              (binary_expression
+                (field
+                  (identifier))
+                (field
+                  (identifier)))
+              (literal))))
+        (term
+          (binary_expression
+            (field
+              (identifier))
+            (literal)))
+        (term
+          (binary_expression
+            (binary_expression
+              (literal)
+              (field
+                (identifier)))
+            (literal)))))
+    (from
+      (keyword_from)
+      (relation
+        (object_reference
+          (identifier)))
+      (where
+        (keyword_where)
+        (binary_expression
+          (binary_expression
+            (field
+              (identifier))
+            (unary_expression
+              (literal)))
+          (keyword_and)
+          (binary_expression
+            (field
+              (identifier))
+            (unary_expression
+              (literal))))))))
+
+================================================================================
+Unary operators
+================================================================================
+
+SELECT -@x, +@y, ~@flags, -(a + b), NOT (a = 1);
+
+--------------------------------------------------------------------------------
+
+(program
+  (statement
+    (select
+      (keyword_select)
+      (select_expression
+        (term
+          (unary_expression
+            (field
+              (identifier))))
+        (term
+          (unary_expression
+            (field
+              (identifier))))
+        (term
+          (unary_expression
+            (field
+              (identifier))))
+        (term
+          (unary_expression
+            (parenthesized_expression
+              (binary_expression
+                (field
+                  (identifier))
+                (field
+                  (identifier))))))
+        (term
+          (unary_expression
+            (keyword_not)
+            (parenthesized_expression
+              (binary_expression
+                (field
+                  (identifier))
+                (literal)))))))))
+
+================================================================================
+Bitwise operators
+================================================================================
+
+SELECT a & 1, a | 2, a ^ 3
+FROM t
+WHERE ISNULL(IS_SRVROLEMEMBER('sysadmin'), 0) | ISNULL(IS_SRVROLEMEMBER('serveradmin'), 0) > 0;
+
+--------------------------------------------------------------------------------
+
+(program
+  (statement
+    (select
+      (keyword_select)
+      (select_expression
+        (term
+          (binary_expression
+            (field
+              (identifier))
+            (op_other)
+            (literal)))
+        (term
+          (binary_expression
+            (field
+              (identifier))
+            (op_other)
+            (literal)))
+        (term
+          (binary_expression
+            (field
+              (identifier))
+            (literal)))))
+    (from
+      (keyword_from)
+      (relation
+        (object_reference
+          (identifier)))
+      (where
+        (keyword_where)
+        (binary_expression
+          (binary_expression
+            (invocation
+              (object_reference
+                (identifier))
+              (term
+                (invocation
+                  (object_reference
+                    (identifier))
+                  (term
+                    (literal))))
+              (term
+                (literal)))
+            (op_other)
+            (invocation
+              (object_reference
+                (identifier))
+              (term
+                (invocation
+                  (object_reference
+                    (identifier))
+                  (term
+                    (literal))))
+              (term
+                (literal))))
+          (literal))))))
+
+================================================================================
+COLLATE in an expression
+================================================================================
+
+SELECT name COLLATE Latin1_General_CI_AS
+FROM t
+WHERE name = @name COLLATE Latin1_General_BIN;
+
+--------------------------------------------------------------------------------
+
+(program
+  (statement
+    (select
+      (keyword_select)
+      (select_expression
+        (term
+          (binary_expression
+            (field
+              (identifier))
+            (keyword_collate)
+            (field
+              (identifier))))))
+    (from
+      (keyword_from)
+      (relation
+        (object_reference
+          (identifier)))
+      (where
+        (keyword_where)
+        (binary_expression
+          (field
+            (identifier))
+          (binary_expression
+            (field
+              (identifier))
+            (keyword_collate)
+            (field
+              (identifier))))))))
+
+================================================================================
+Simple CASE
+================================================================================
+
+SELECT a, CASE b WHEN 1 THEN 'yes' ELSE 'no' END AS is_b
+FROM my_table;
+
+--------------------------------------------------------------------------------
+
+(program
+  (statement
+    (select
+      (keyword_select)
+      (select_expression
+        (term
+          (field
+            (identifier)))
+        (term
+          (case
+            (keyword_case)
+            (field
+              (identifier))
+            (when_clause
+              (keyword_when)
+              (literal)
+              (keyword_then)
+              (literal))
+            (keyword_else)
+            (literal)
+            (keyword_end))
+          (keyword_as)
+          (identifier))))
+    (from
+      (keyword_from)
+      (relation
+        (object_reference
+          (identifier))))))
+
+================================================================================
+Searched CASE
+================================================================================
+
+SELECT
+    a,
+    CASE
+        WHEN b BETWEEN 0 AND 1 THEN 'small'
+        WHEN (b < 100) THEN 'lower_hundred'
+        WHEN ((b < 1000) AND (b > 300)) THEN 'middle'
+        ELSE 'no'
+    END AS is_b,
+    CASE b WHEN 1 THEN 'yes' WHEN 2 THEN 'maybe' END is_b_really
+FROM my_table;
+
+--------------------------------------------------------------------------------
+
+(program
+  (statement
+    (select
+      (keyword_select)
+      (select_expression
+        (term
+          (field
+            (identifier)))
+        (term
+          (case
+            (keyword_case)
+            (when_clause
+              (keyword_when)
+              (between_expression
+                (field
+                  (identifier))
+                (keyword_between)
+                (literal)
+                (keyword_and)
+                (literal))
+              (keyword_then)
+              (literal))
+            (when_clause
+              (keyword_when)
+              (parenthesized_expression
+                (binary_expression
+                  (field
+                    (identifier))
+                  (literal)))
+              (keyword_then)
+              (literal))
+            (when_clause
+              (keyword_when)
+              (parenthesized_expression
+                (binary_expression
+                  (parenthesized_expression
+                    (binary_expression
+                      (field
+                        (identifier))
+                      (literal)))
+                  (keyword_and)
+                  (parenthesized_expression
+                    (binary_expression
+                      (field
+                        (identifier))
+                      (literal)))))
+              (keyword_then)
+              (literal))
+            (keyword_else)
+            (literal)
+            (keyword_end))
+          (keyword_as)
+          (identifier))
+        (term
+          (case
+            (keyword_case)
+            (field
+              (identifier))
+            (when_clause
+              (keyword_when)
+              (literal)
+              (keyword_then)
+              (literal))
+            (when_clause
+              (keyword_when)
+              (literal)
+              (keyword_then)
+              (literal))
+            (keyword_end))
+          (identifier))))
+    (from
+      (keyword_from)
+      (relation
+        (object_reference
+          (identifier))))))
+
+================================================================================
+CASE as an operand
+================================================================================
+
+SELECT SUM(CASE WHEN c.plan_cost > 0 THEN c.plan_cost ELSE c.fcst_cost END * (1 + d.calc_ovh * 0.01))
+FROM projcost c;
+
+--------------------------------------------------------------------------------
+
+(program
+  (statement
+    (select
+      (keyword_select)
+      (select_expression
+        (term
+          (invocation
+            (object_reference
+              (identifier))
+            (term
+              (binary_expression
+                (case
+                  (keyword_case)
+                  (when_clause
+                    (keyword_when)
+                    (binary_expression
+                      (field
+                        (object_reference
+                          (identifier))
+                        (identifier))
+                      (literal))
+                    (keyword_then)
+                    (field
+                      (object_reference
+                        (identifier))
+                      (identifier)))
+                  (keyword_else)
+                  (field
+                    (object_reference
+                      (identifier))
+                    (identifier))
+                  (keyword_end))
+                (parenthesized_expression
+                  (binary_expression
+                    (literal)
+                    (binary_expression
+                      (field
+                        (object_reference
+                          (identifier))
+                        (identifier))
+                      (literal))))))))))
+    (from
+      (keyword_from)
+      (relation
+        (object_reference
+          (identifier))
+        (identifier)))))
+
+================================================================================
+Subquery expressions: IN, EXISTS, NOT EXISTS, ANY, ALL
+================================================================================
+
+SELECT *
+FROM foo
+WHERE id IN (SELECT 1 FROM bar)
+  AND (NOT EXISTS (SELECT 1 FROM bar WHERE 0 = 1) OR EXISTS (SELECT 1 FROM baz))
+  AND id = ANY (SELECT id FROM qux)
+  AND id > ALL (SELECT id FROM qux)
+  AND id < (SELECT TOP 1 id FROM bar);
+
+--------------------------------------------------------------------------------
+
+(program
+  (statement
+    (select
+      (keyword_select)
+      (select_expression
+        (term
+          (all_fields))))
+    (from
+      (keyword_from)
+      (relation
+        (object_reference
+          (identifier)))
+      (where
+        (keyword_where)
+        (binary_expression
+          (binary_expression
+            (binary_expression
+              (binary_expression
+                (binary_expression
+                  (field
+                    (identifier))
+                  (keyword_in)
+                  (subquery
+                    (select
+                      (keyword_select)
+                      (select_expression
+                        (term
+                          (literal))))
+                    (from
+                      (keyword_from)
+                      (relation
+                        (object_reference
+                          (identifier))))))
+                (keyword_and)
+                (parenthesized_expression
+                  (binary_expression
+                    (unary_expression
+                      (keyword_not)
+                      (exists
+                        (keyword_exists)
+                        (subquery
+                          (select
+                            (keyword_select)
+                            (select_expression
+                              (term
+                                (literal))))
+                          (from
+                            (keyword_from)
+                            (relation
+                              (object_reference
+                                (identifier)))
+                            (where
+                              (keyword_where)
+                              (binary_expression
+                                (literal)
+                                (literal)))))))
+                    (keyword_or)
+                    (exists
+                      (keyword_exists)
+                      (subquery
+                        (select
+                          (keyword_select)
+                          (select_expression
+                            (term
+                              (literal))))
+                        (from
+                          (keyword_from)
+                          (relation
+                            (object_reference
+                              (identifier)))))))))
+              (keyword_and)
+              (binary_expression
+                (field
+                  (identifier))
+                (unary_expression
+                  (keyword_any)
+                  (subquery
+                    (select
+                      (keyword_select)
+                      (select_expression
+                        (term
+                          (field
+                            (identifier)))))
+                    (from
+                      (keyword_from)
+                      (relation
+                        (object_reference
+                          (identifier))))))))
+            (keyword_and)
+            (binary_expression
+              (field
+                (identifier))
+              (unary_expression
+                (keyword_all)
+                (subquery
+                  (select
+                    (keyword_select)
+                    (select_expression
+                      (term
+                        (field
+                          (identifier)))))
+                  (from
+                    (keyword_from)
+                    (relation
+                      (object_reference
+                        (identifier))))))))
+          (keyword_and)
+          (binary_expression
+            (field
+              (identifier))
+            (subquery
+              (select
+                (keyword_select)
+                (top_clause
+                  (keyword_top)
+                  (literal))
+                (select_expression
+                  (term
+                    (field
+                      (identifier)))))
+              (from
+                (keyword_from)
+                (relation
+                  (object_reference
+                    (identifier)))))))))))
+
+================================================================================
+Parenthesized predicates
+================================================================================
+
+SELECT 1
+FROM foo
+WHERE (foo = 1 OR bar = 2) AND baz = 3
+
+--------------------------------------------------------------------------------
+
+(program
+  (statement
+    (select
+      (keyword_select)
+      (select_expression
+        (term
+          (literal))))
+    (from
+      (keyword_from)
+      (relation
+        (object_reference
+          (identifier)))
+      (where
+        (keyword_where)
+        (binary_expression
+          (parenthesized_expression
+            (binary_expression
+              (binary_expression
+                (field
+                  (identifier))
+                (literal))
+              (keyword_or)
+              (binary_expression
+                (field
+                  (identifier))
+                (literal))))
+          (keyword_and)
+          (binary_expression
+            (field
+              (identifier))
+            (literal)))))))
+
+================================================================================
+CAST and TRY_CAST
+================================================================================
+
+SELECT CAST(1 AS nvarchar(10)) AS fieldname,
+  CAST('100' AS INTEGER),
+  CAST(100 AS NUMERIC(32)),
+  CAST(x AS decimal(18, 4)),
+  CAST(@a AS varbinary(max)),
+  TRY_CAST(ORIGINAL_LOGIN() AS nvarchar(512)),
+  CAST(CONTEXT_INFO() AS NVARCHAR(8)),
+  CAST([col] AS [nvarchar](50));
+
+--------------------------------------------------------------------------------
+
+(program
+  (statement
+    (select
+      (keyword_select)
+      (select_expression
+        (term
+          (cast
+            (keyword_cast)
+            (literal)
+            (keyword_as)
+            (nvarchar
+              (keyword_nvarchar)
+              (literal)))
+          (keyword_as)
+          (identifier))
+        (term
+          (cast
+            (keyword_cast)
+            (literal)
+            (keyword_as)
+            (keyword_int)))
+        (term
+          (cast
+            (keyword_cast)
+            (literal)
+            (keyword_as)
+            (numeric
+              (keyword_numeric)
+              (literal))))
+        (term
+          (cast
+            (keyword_cast)
+            (field
+              (identifier))
+            (keyword_as)
+            (decimal
+              (keyword_decimal)
+              (literal)
+              (literal))))
+        (term
+          (cast
+            (keyword_cast)
+            (field
+              (identifier))
+            (keyword_as)
+            (varbinary
+              (keyword_varbinary)
+              (keyword_max))))
+        (term
+          (cast
+            (keyword_try_cast)
+            (invocation
+              (object_reference
+                (identifier)))
+            (keyword_as)
+            (nvarchar
+              (keyword_nvarchar)
+              (literal))))
+        (term
+          (cast
+            (keyword_cast)
+            (invocation
+              (object_reference
+                (identifier)))
+            (keyword_as)
+            (nvarchar
+              (keyword_nvarchar)
+              (literal))))
+        (term
+          (cast
+            (keyword_cast)
+            (field
+              (identifier))
+            (keyword_as)
+            (custom_type
+              (object_reference
+                (identifier))
+              (literal))))))))
+
+================================================================================
+CONVERT with a type name as its first argument
+================================================================================
+
+SELECT CONVERT(datetime, '1/1/' + CAST(@year AS varchar(4)), 101),
+  CONVERT(VARCHAR, cust_seq),
+  CONVERT([nvarchar](8), CONTEXT_INFO(), 0),
+  TRY_CONVERT(int, @s);
+
+--------------------------------------------------------------------------------
+
+(program
+  (statement
+    (select
+      (keyword_select)
+      (select_expression
+        (term
+          (invocation
+            (object_reference
+              (identifier))
+            (term
+              (field
+                (identifier)))
+            (term
+              (binary_expression
+                (literal)
+                (cast
+                  (keyword_cast)
+                  (field
+                    (identifier))
+                  (keyword_as)
+                  (varchar
+                    (keyword_varchar)
+                    (literal)))))
+            (term
+              (literal))))
+        (term
+          (invocation
+            (object_reference
+              (identifier))
+            (term
+              (field
+                (identifier)))
+            (term
+              (field
+                (identifier)))))
+        (term
+          (invocation
+            (object_reference
+              (identifier))
+            (term
+              (invocation
+                (object_reference
+                  (identifier))
+                (term
+                  (literal))))
+            (term
+              (invocation
+                (object_reference
+                  (identifier))))
+            (term
+              (literal))))
+        (term
+          (invocation
+            (object_reference
+              (identifier))
+            (term
+              (field
+                (identifier)))
+            (term
+              (field
+                (identifier)))))))))
+
+================================================================================
+NEXT VALUE FOR
+================================================================================
+
+SELECT NEXT VALUE FOR dbo.order_seq, NEXT VALUE FOR seq2 AS n;
+
+--------------------------------------------------------------------------------
+
+(program
+  (statement
+    (select
+      (keyword_select)
+      (select_expression
+        (term
+          (next_value_for
+            (keyword_next)
+            (keyword_value)
+            (keyword_for)
+            (object_reference
+              (identifier)
+              (identifier))))
+        (term
+          (next_value_for
+            (keyword_next)
+            (keyword_value)
+            (keyword_for)
+            (object_reference
+              (identifier)))
+          (keyword_as)
+          (identifier))))))
+
+================================================================================
+ODBC function escape
+================================================================================
+
+SELECT {fn OCTET_LENGTH(@x)}, {fn CURDATE()};
+
+--------------------------------------------------------------------------------
+
+(program
+  (statement
+    (select
+      (keyword_select)
+      (select_expression
+        (term
+          (odbc_function_escape
+            (keyword_fn)
+            (invocation
+              (object_reference
+                (identifier))
+              (term
+                (field
+                  (identifier))))))
+        (term
+          (odbc_function_escape
+            (keyword_fn)
+            (invocation
+              (object_reference
+                (identifier)))))))))
+
+================================================================================
+Money and dollar action
+================================================================================
+
+SELECT $300, $1,234.56, $action FROM t;
+
+--------------------------------------------------------------------------------
+
+(program
+  (statement
+    (select
+      (keyword_select)
+      (select_expression
+        (term
+          (literal))
+        (term
+          (literal))
+        (term
+          (field
+            (identifier)))))
+    (from
+      (keyword_from)
+      (relation
+        (object_reference
+          (identifier))))))
+
+================================================================================
+TRIM with a FROM argument and LEADING, TRAILING, BOTH (2022)
+================================================================================
+
+SELECT TRIM('x'), TRIM('.,! ' FROM @s), TRIM(LEADING '.' FROM @s), TRIM(TRAILING '.' FROM @s), TRIM(BOTH '1' FROM @s);
+
+--------------------------------------------------------------------------------
+
+(program
+  (statement
+    (select
+      (keyword_select)
+      (select_expression
+        (term
+          (trim
+            (keyword_trim)
+            (literal)))
+        (term
+          (trim
+            (keyword_trim)
+            (literal)
+            (keyword_from)
+            (field
+              (identifier))))
+        (term
+          (trim
+            (keyword_trim)
+            (keyword_leading)
+            (literal)
+            (keyword_from)
+            (field
+              (identifier))))
+        (term
+          (trim
+            (keyword_trim)
+            (keyword_trailing)
+            (literal)
+            (keyword_from)
+            (field
+              (identifier))))
+        (term
+          (trim
+            (keyword_trim)
+            (keyword_both)
+            (literal)
+            (keyword_from)
+            (field
+              (identifier))))))))
+
+================================================================================
+AI_GENERATE_EMBEDDINGS with USE MODEL and PARAMETERS (2025)
+================================================================================
+
+SELECT AI_GENERATE_EMBEDDINGS(large_text USE MODEL MyModel), AI_GENERATE_EMBEDDINGS(t.text USE MODEL dbo.MyModel PARAMETERS @params) FROM t;
+
+--------------------------------------------------------------------------------
+
+(program
+  (statement
+    (select
+      (keyword_select)
+      (select_expression
+        (term
+          (ai_generate_embeddings
+            (keyword_ai_generate_embeddings)
+            (field
+              (identifier))
+            (keyword_use)
+            (keyword_model)
+            (object_reference
+              (identifier))))
+        (term
+          (ai_generate_embeddings
+            (keyword_ai_generate_embeddings)
+            (field
+              (object_reference
+                (identifier))
+              (identifier))
+            (keyword_use)
+            (keyword_model)
+            (object_reference
+              (identifier)
+              (identifier))
+            (keyword_parameters)
+            (field
+              (identifier))))))
+    (from
+      (keyword_from)
+      (relation
+        (object_reference
+          (identifier))))))

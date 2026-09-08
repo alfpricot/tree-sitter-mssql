@@ -1,0 +1,2 @@
+EXECUTE AS USER = 'dbo';
+GO

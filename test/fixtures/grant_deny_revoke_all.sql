@@ -1,0 +1,8 @@
+GRANT ALL ON dbo.Customer TO PUBLIC;
+GO
+
+DENY ALL ON dbo.Customer TO PUBLIC;
+GO
+
+REVOKE ALL ON dbo.Customer TO PUBLIC;
+GO

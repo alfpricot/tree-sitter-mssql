@@ -1,0 +1,250 @@
+================================================================================
+Delete whole table
+================================================================================
+
+DELETE FROM my_table;
+DELETE my_database.my_schema.my_table;
+
+--------------------------------------------------------------------------------
+
+(program
+  (statement
+    (delete
+      (keyword_delete)
+      (keyword_from)
+      (object_reference
+        (identifier))))
+  (statement
+    (delete
+      (keyword_delete)
+      (object_reference
+        (identifier)
+        (identifier)
+        (identifier)))))
+
+================================================================================
+Delete with WHERE
+================================================================================
+
+DELETE FROM my_table
+WHERE id = 9;
+
+DELETE @ALTGEN WHERE [SpName] = @ALTGEN_SpName;
+
+DELETE FROM #prod_info WHERE (t_sls = 0 AND t_sls_qty = 0);
+
+--------------------------------------------------------------------------------
+
+(program
+  (statement
+    (delete
+      (keyword_delete)
+      (keyword_from)
+      (object_reference
+        (identifier))
+      (where
+        (keyword_where)
+        (binary_expression
+          (field
+            (identifier))
+          (literal)))))
+  (statement
+    (delete
+      (keyword_delete)
+      (object_reference
+        (identifier))
+      (where
+        (keyword_where)
+        (binary_expression
+          (field
+            (identifier))
+          (field
+            (identifier))))))
+  (statement
+    (delete
+      (keyword_delete)
+      (keyword_from)
+      (object_reference
+        (identifier))
+      (where
+        (keyword_where)
+        (parenthesized_expression
+          (binary_expression
+            (binary_expression
+              (field
+                (identifier))
+              (literal))
+            (keyword_and)
+            (binary_expression
+              (field
+                (identifier))
+              (literal))))))))
+
+================================================================================
+Delete through an alias with FROM and joins
+================================================================================
+
+DELETE DocumentObjectReference
+FROM deleted dd
+INNER JOIN DocumentObjectReference dor ON dor.TableRowPointer = dd.RowPointer
+WHERE dor.TableName = 'ABOPTS';
+
+DELETE ObjectNotes
+FROM deleted dd, ObjectNotes obn
+WHERE obn.RefRowPointer = dd.RowPointer;
+
+DELETE t FROM dbo.target AS t JOIN src ON src.id = t.id;
+
+--------------------------------------------------------------------------------
+
+(program
+  (statement
+    (delete
+      (keyword_delete)
+      (object_reference
+        (identifier))
+      (from
+        (keyword_from)
+        (relation
+          (object_reference
+            (identifier))
+          (identifier))
+        (join
+          (keyword_inner)
+          (keyword_join)
+          (relation
+            (object_reference
+              (identifier))
+            (identifier))
+          (keyword_on)
+          (binary_expression
+            (field
+              (object_reference
+                (identifier))
+              (identifier))
+            (field
+              (object_reference
+                (identifier))
+              (identifier))))
+        (where
+          (keyword_where)
+          (binary_expression
+            (field
+              (object_reference
+                (identifier))
+              (identifier))
+            (literal))))))
+  (statement
+    (delete
+      (keyword_delete)
+      (object_reference
+        (identifier))
+      (from
+        (keyword_from)
+        (relation
+          (object_reference
+            (identifier))
+          (identifier))
+        (relation
+          (object_reference
+            (identifier))
+          (identifier))
+        (where
+          (keyword_where)
+          (binary_expression
+            (field
+              (object_reference
+                (identifier))
+              (identifier))
+            (field
+              (object_reference
+                (identifier))
+              (identifier)))))))
+  (statement
+    (delete
+      (keyword_delete)
+      (object_reference
+        (identifier))
+      (from
+        (keyword_from)
+        (relation
+          (object_reference
+            (identifier)
+            (identifier))
+          (keyword_as)
+          (identifier))
+        (join
+          (keyword_join)
+          (relation
+            (object_reference
+              (identifier)))
+          (keyword_on)
+          (binary_expression
+            (field
+              (object_reference
+                (identifier))
+              (identifier))
+            (field
+              (object_reference
+                (identifier))
+              (identifier))))))))
+
+================================================================================
+Delete with TOP, a table hint and OUTPUT
+================================================================================
+
+DELETE TOP (1000) FROM dbo.log WITH (ROWLOCK)
+OUTPUT deleted.id INTO #deleted
+WHERE logged < @cutoff;
+
+--------------------------------------------------------------------------------
+
+(program
+  (statement
+    (delete
+      (keyword_delete)
+      (top_clause
+        (keyword_top)
+        (literal))
+      (keyword_from)
+      (object_reference
+        (identifier)
+        (identifier))
+      (table_hint
+        (keyword_with)
+        (table_hint_item
+          (identifier)))
+      (output_clause
+        (keyword_output)
+        (term
+          (field
+            (object_reference
+              (identifier))
+            (identifier)))
+        (keyword_into)
+        (object_reference
+          (identifier)))
+      (where
+        (keyword_where)
+        (binary_expression
+          (field
+            (identifier))
+          (field
+            (identifier)))))))
+
+================================================================================
+Truncate table
+================================================================================
+
+TRUNCATE TABLE dbo.employees;
+
+--------------------------------------------------------------------------------
+
+(program
+  (statement
+    (truncate_statement
+      (keyword_truncate)
+      (keyword_table)
+      (object_reference
+        (identifier)
+        (identifier)))))

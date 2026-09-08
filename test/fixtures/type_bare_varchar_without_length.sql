@@ -1,0 +1,5 @@
+CREATE TABLE dbo.T (Name VARCHAR);
+GO
+
+SELECT CAST(Id AS VARCHAR) FROM dbo.Customer;
+GO

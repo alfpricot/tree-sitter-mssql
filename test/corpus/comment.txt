@@ -1,0 +1,229 @@
+================================================================================
+Line comments
+================================================================================
+
+-- hello
+SELECT 1; --hi
+-- hi again
+SELECT 2;
+--
+
+--------------------------------------------------------------------------------
+
+(program
+  (comment)
+  (statement
+    (select
+      (keyword_select)
+      (select_expression
+        (term
+          (literal)))))
+  (comment)
+  (comment)
+  (statement
+    (select
+      (keyword_select)
+      (select_expression
+        (term
+          (literal)))))
+  (comment))
+
+================================================================================
+Block comments
+================================================================================
+
+/* application=super-app */
+SELECT id /* MAX_EXECUTION_TIME(500) */
+FROM my_table;
+
+/*
+This is a query
+With a multiline comment
+*/
+SELECT id
+/*
+SELECT id FROM my_table;
+*/
+FROM my_table;
+
+/*
+*/
+SELECT id
+/*
+
+*/
+FROM my_table;
+
+--------------------------------------------------------------------------------
+
+(program
+  (marginalia)
+  (statement
+    (select
+      (keyword_select)
+      (select_expression
+        (term
+          (field
+            (identifier)))))
+    (marginalia)
+    (from
+      (keyword_from)
+      (relation
+        (object_reference
+          (identifier)))))
+  (marginalia)
+  (statement
+    (select
+      (keyword_select)
+      (select_expression
+        (term
+          (field
+            (identifier)))))
+    (marginalia)
+    (from
+      (keyword_from)
+      (relation
+        (object_reference
+          (identifier)))))
+  (marginalia)
+  (statement
+    (select
+      (keyword_select)
+      (select_expression
+        (term
+          (field
+            (identifier)))))
+    (marginalia)
+    (from
+      (keyword_from)
+      (relation
+        (object_reference
+          (identifier))))))
+
+================================================================================
+Block comments with more symbols
+================================================================================
+
+/**
+ * Javadoc style
+ * -- with an inline comment
+ */
+SELECT id
+/******/
+FROM my_table;
+
+--------------------------------------------------------------------------------
+
+(program
+  (marginalia)
+  (statement
+    (select
+      (keyword_select)
+      (select_expression
+        (term
+          (field
+            (identifier)))))
+    (marginalia)
+    (from
+      (keyword_from)
+      (relation
+        (object_reference
+          (identifier))))))
+
+================================================================================
+Comment between a statement and its terminator
+================================================================================
+
+DELETE /* MAX_EXECUTION_TIME(500) */
+FROM my_table -- trailing
+;
+
+--------------------------------------------------------------------------------
+
+(program
+  (statement
+    (delete
+      (keyword_delete)
+      (marginalia)
+      (keyword_from)
+      (object_reference
+        (identifier))))
+  (comment))
+
+================================================================================
+Nested block comments
+================================================================================
+
+/* outer /* inner */ still the outer comment */
+SELECT a /* in a list /* nested */ x */, b - /* after minus */ 1, c * /* after star */ 2
+FROM t /* after a relation */
+WHERE d / /* after slash */ 3 = 1;
+CREATE PROCEDURE p AS
+BEGIN
+  /* in a body /* nested */ */
+  SELECT * /* after the wildcard */ FROM t;
+END
+
+--------------------------------------------------------------------------------
+
+(program
+  (marginalia)
+  (statement
+    (select
+      (keyword_select)
+      (select_expression
+        (term
+          (field
+            (identifier)))
+        (marginalia)
+        (term
+          (binary_expression
+            (field
+              (identifier))
+            (marginalia)
+            (literal)))
+        (term
+          (binary_expression
+            (field
+              (identifier))
+            (marginalia)
+            (literal)))))
+    (from
+      (keyword_from)
+      (relation
+        (object_reference
+          (identifier)))
+      (marginalia)
+      (where
+        (keyword_where)
+        (binary_expression
+          (binary_expression
+            (field
+              (identifier))
+            (marginalia)
+            (literal))
+          (literal)))))
+  (statement
+    (create_procedure
+      (keyword_create)
+      (keyword_procedure)
+      (object_reference
+        (identifier))
+      (procedure_body
+        (keyword_as)
+        (block
+          (keyword_begin)
+          (marginalia)
+          (statement
+            (select
+              (keyword_select)
+              (select_expression
+                (term
+                  (all_fields))))
+            (marginalia)
+            (from
+              (keyword_from)
+              (relation
+                (object_reference
+                  (identifier)))))
+          (keyword_end))))))

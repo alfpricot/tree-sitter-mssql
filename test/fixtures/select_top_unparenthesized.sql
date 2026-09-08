@@ -1,0 +1,3 @@
+SELECT TOP 10 Id
+  FROM dbo.T;
+GO

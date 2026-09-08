@@ -1,0 +1,219 @@
+================================================================================
+Create view
+================================================================================
+
+CREATE VIEW my_view AS
+SELECT * FROM my_table;
+
+CREATE VIEW [dbo].[ServiceTypeView]
+as
+select
+	[site_ref]
+    ,[serv_type]
+  FROM [dbo].[fs_serv_type_mst]
+
+--------------------------------------------------------------------------------
+
+(program
+  (statement
+    (create_view
+      (keyword_create)
+      (keyword_view)
+      (object_reference
+        (identifier))
+      (keyword_as)
+      (select
+        (keyword_select)
+        (select_expression
+          (term
+            (all_fields))))
+      (from
+        (keyword_from)
+        (relation
+          (object_reference
+            (identifier))))))
+  (statement
+    (create_view
+      (keyword_create)
+      (keyword_view)
+      (object_reference
+        (identifier)
+        (identifier))
+      (keyword_as)
+      (select
+        (keyword_select)
+        (select_expression
+          (term
+            (field
+              (identifier)))
+          (term
+            (field
+              (identifier)))))
+      (from
+        (keyword_from)
+        (relation
+          (object_reference
+            (identifier)
+            (identifier)))))))
+
+================================================================================
+Create or alter view with columns, options and check option
+================================================================================
+
+CREATE OR ALTER VIEW dbo.foo (a, b)
+WITH SCHEMABINDING, VIEW_METADATA
+AS SELECT 1 a, 2 b FROM dbo.t
+WITH CHECK OPTION;
+
+--------------------------------------------------------------------------------
+
+(program
+  (statement
+    (create_view
+      (keyword_create)
+      (keyword_or)
+      (keyword_alter)
+      (keyword_view)
+      (object_reference
+        (identifier)
+        (identifier))
+      (identifier)
+      (identifier)
+      (keyword_with)
+      (view_option
+        (keyword_schemabinding))
+      (view_option
+        (identifier))
+      (keyword_as)
+      (select
+        (keyword_select)
+        (select_expression
+          (term
+            (literal)
+            (identifier))
+          (term
+            (literal)
+            (identifier))))
+      (from
+        (keyword_from)
+        (relation
+          (object_reference
+            (identifier)
+            (identifier))))
+      (keyword_with)
+      (keyword_check)
+      (keyword_option))))
+
+================================================================================
+Create view with a cte
+================================================================================
+
+CREATE VIEW tableName AS WITH _cte AS (
+    SELECT a FROM b
+)
+SELECT * FROM _cte
+
+--------------------------------------------------------------------------------
+
+(program
+  (statement
+    (create_view
+      (keyword_create)
+      (keyword_view)
+      (object_reference
+        (identifier))
+      (keyword_as)
+      (keyword_with)
+      (cte
+        (identifier)
+        (keyword_as)
+        (statement
+          (select
+            (keyword_select)
+            (select_expression
+              (term
+                (field
+                  (identifier)))))
+          (from
+            (keyword_from)
+            (relation
+              (object_reference
+                (identifier))))))
+      (select
+        (keyword_select)
+        (select_expression
+          (term
+            (all_fields))))
+      (from
+        (keyword_from)
+        (relation
+          (object_reference
+            (identifier)))))))
+
+================================================================================
+Alter view and drop view
+================================================================================
+
+ALTER VIEW dbo.my_view AS SELECT id, name FROM dbo.t WHERE [site_ref] = CAST(CONTEXT_INFO() AS NVARCHAR(8));
+DROP VIEW my_view;
+DROP VIEW IF EXISTS my_database.my_schema.my_view, dbo.other_view;
+
+--------------------------------------------------------------------------------
+
+(program
+  (statement
+    (alter_view
+      (keyword_alter)
+      (keyword_view)
+      (object_reference
+        (identifier)
+        (identifier))
+      (keyword_as)
+      (select
+        (keyword_select)
+        (select_expression
+          (term
+            (field
+              (identifier)))
+          (term
+            (field
+              (identifier)))))
+      (from
+        (keyword_from)
+        (relation
+          (object_reference
+            (identifier)
+            (identifier)))
+        (where
+          (keyword_where)
+          (binary_expression
+            (field
+              (identifier))
+            (cast
+              (keyword_cast)
+              (invocation
+                (object_reference
+                  (identifier)))
+              (keyword_as)
+              (nvarchar
+                (keyword_nvarchar)
+                (literal))))))))
+  (statement
+    (drop_view
+      (keyword_drop)
+      (keyword_view)
+      (object_reference
+        (identifier))))
+  (statement
+    (drop_view
+      (keyword_drop)
+      (keyword_view)
+      (keyword_if)
+      (keyword_exists)
+      (object_reference
+        (identifier)
+        (identifier)
+        (identifier))
+      (object_reference
+        (identifier)
+        (identifier)))))
