@@ -25,6 +25,7 @@ alter_xml_schema_collection
 apply_join
 assignment
 assignment_operator
+at_time_zone
 backup_statement
 begin_dialog_statement
 begin_transaction_statement
@@ -37,6 +38,7 @@ bulk_insert_statement
 case
 cast
 catch_block
+changetable
 char
 close_cursor_statement
 close_key_statement
@@ -136,6 +138,7 @@ field
 float
 for_clause
 for_option
+for_system_time_clause
 frame_definition
 from
 fulltext_index_column
@@ -205,6 +208,8 @@ keyword_cast
 keyword_catalog
 keyword_catch
 keyword_certificate
+keyword_changes
+keyword_changetable
 keyword_char
 keyword_check
 keyword_close
@@ -215,6 +220,7 @@ keyword_column
 keyword_commit
 keyword_committed
 keyword_constraint
+keyword_contained
 keyword_continue
 keyword_contract
 keyword_conversation
@@ -263,6 +269,7 @@ keyword_float
 keyword_fn
 keyword_following
 keyword_for
+keyword_for_system_time
 keyword_force
 keyword_foreign
 keyword_format
@@ -344,6 +351,7 @@ keyword_offset
 keyword_on
 keyword_only
 keyword_open
+keyword_opendatasource
 keyword_optimize
 keyword_option
 keyword_or
@@ -357,6 +365,7 @@ keyword_owner
 keyword_parameters
 keyword_partition
 keyword_percent
+keyword_period_for_system_time
 keyword_persisted
 keyword_pivot
 keyword_policy
@@ -430,7 +439,9 @@ keyword_start
 keyword_statistics
 keyword_symmetric
 keyword_synonym
+keyword_system
 keyword_table
+keyword_tablesample
 keyword_target
 keyword_text
 keyword_then
@@ -469,6 +480,7 @@ keyword_values
 keyword_varbinary
 keyword_varchar
 keyword_varying
+keyword_version
 keyword_view
 keyword_waitfor
 keyword_when
@@ -482,6 +494,7 @@ keyword_wrapper
 keyword_writetext
 keyword_xml
 keyword_xmlnamespaces
+keyword_zone
 kill_statement
 label_statement
 list
@@ -505,6 +518,7 @@ on_filegroup
 op_other
 open_cursor_statement
 open_key_statement
+opendatasource_reference
 openjson_column
 openjson_schema
 optimize_for_item
@@ -516,6 +530,7 @@ ordered_columns
 output_clause
 parenthesized_expression
 partition_by
+period_for_system_time
 permission
 pivot_clause
 print_statement
@@ -548,9 +563,11 @@ sqlcmd_include
 sqlcmd_setvar
 statement
 subquery
+system_time_qualifier
 table_hint
 table_hint_item
 table_var_declaration
+tablesample_clause
 term
 throw_statement
 time

@@ -1,4 +1,4 @@
-import { aliased_with_columns, comma_list, optional_parenthesis, paren_list, wrapped_in_parenthesis } from "../helpers.js";
+import { aliased_with_columns, comma_list, optional_parenthesis, paren_list, paren_pair, wrapped_in_parenthesis } from "../helpers.js";
 
 export default {
 
@@ -274,6 +274,17 @@ export default {
     ),
   ),
 
+  // `relation`/`_relation_with_hint` are also reused for an UPDATE/DELETE
+  // target (see update.js/delete.js), so every alternative added here —
+  // `opendatasource_reference`, `changetable`, `for_system_time_clause`,
+  // `tablesample_clause` — is also syntactically reachable there even
+  // though SQL Server only accepts them as a read-side row source, never
+  // as a write target. Deliberate: this grammar already accepts a wider
+  // surface than SQL Server itself in several places (`option`,
+  // `query_hint`, the bare-identifier tail of `_column_constraint`) on the
+  // reasoning that a linter consuming this tree can reject what SQL Server
+  // would, and a narrower grammar can only ever reject a valid query, never
+  // accept an invalid one silently in the other direction.
   relation: $ => prec.right(
     seq(
       choice(
@@ -284,7 +295,14 @@ export default {
         // A MERGE with an OUTPUT clause is a legal row source: INSERT
         // ... SELECT ... FROM (MERGE ... OUTPUT ...) AS changes.
         wrapped_in_parenthesis($.merge),
+        $.opendatasource_reference,
+        $.changetable,
       ),
+      // FOR SYSTEM_TIME sits between the table reference and its alias
+      // (`FROM t FOR SYSTEM_TIME AS OF x AS t1`), per the documented
+      // syntax — not after the alias, where table hints and TABLESAMPLE
+      // go.
+      optional($.for_system_time_clause),
       aliased_with_columns($),
       // The deprecated bare hint sits inside `relation` rather than beside
       // it in `_relation_with_hint`: after the table name the parser has
@@ -295,18 +313,79 @@ export default {
     ),
   ),
 
+  // FOR SYSTEM_TIME <qualifier> — queries a system-versioned temporal
+  // table as of a point or range in its history. Uses the single atomic
+  // `keyword_for_system_time` token rather than `keyword_for` +
+  // `keyword_system_time` — see that token's comment in keywords.js.
+  for_system_time_clause: $ => seq(
+    $.keyword_for_system_time,
+    $.system_time_qualifier,
+  ),
+
+  system_time_qualifier: $ => choice(
+    seq($.keyword_as, $.keyword_of, $._expression),
+    seq($.keyword_from, $._expression, $.keyword_to, $._expression),
+    seq($.keyword_between, $._expression, $.keyword_and, $._expression),
+    seq(
+      $.keyword_contained,
+      $.keyword_in,
+      paren_pair($._expression, $._expression),
+    ),
+    $.keyword_all,
+  ),
+
+  // OPENDATASOURCE('provider', 'init string').database.schema.name — the
+  // one rowset function whose result is followed by a dotted object
+  // suffix rather than used as-is. Modeled as its own rule rather than
+  // generalizing `invocation` to accept a trailing dotted suffix, which
+  // reaches `object_reference` from a new position and is the state-space
+  // blowup the `apply_join` comment above documents from experience.
+  opendatasource_reference: $ => seq(
+    $.keyword_opendatasource,
+    paren_pair($._expression, $._expression),
+    '.',
+    field('database', $.identifier),
+    '.',
+    field('schema', $.identifier),
+    '.',
+    field('name', $.identifier),
+  ),
+
+  // CHANGETABLE(CHANGES table, last_sync_version) AS ct
+  // CHANGETABLE(VERSION table, (pk_columns), (pk_values)) AS ct
+  // The first argument is the bare keyword CHANGES or VERSION followed by
+  // a table reference, which is not an expression, so this can't be an
+  // ordinary invocation the way OPENROWSET/OPENQUERY/OPENJSON are.
+  changetable: $ => seq(
+    $.keyword_changetable,
+    wrapped_in_parenthesis(seq(
+      choice($.keyword_changes, $.keyword_version),
+      $.object_reference,
+      ',',
+      // `$.list` (a parenthesized expression list, for VERSION's pk-column
+      // and pk-value lists) is already one of `_expression`'s own
+      // alternatives, so no separate branch is needed here.
+      comma_list($._expression, true),
+    )),
+  ),
+
   // A relation with an optional trailing table hint, e.g. `dbo.t AS x WITH
-  // (NOLOCK)`, or OPENJSON's schema followed by its own alias:
-  // `OPENJSON(@j) WITH (a INT '$.a') AS j`. The schema sits here, after
-  // `relation` has reduced, rather than inside `relation` next to the
-  // invocation: `relation` is prec.right, so a schema alternative inside
-  // it wins the `WITH (` outright and a table hint after an un-aliased
-  // function call (`FROM dbo.f(1) WITH (NOLOCK)`) is read as a column list
-  // with an empty type. From this state the two are an ordinary LR(1)
-  // choice — a hint item is an identifier followed by `,` or `)`, a schema
-  // column is an identifier followed by a type.
+  // (NOLOCK)`, OPENJSON's schema followed by its own alias:
+  // `OPENJSON(@j) WITH (a INT '$.a') AS j`, or TABLESAMPLE. The schema and
+  // TABLESAMPLE sit here, after `relation` has reduced, rather than inside
+  // `relation` next to the invocation: `relation` is prec.right, so an
+  // alternative inside it wins the `WITH (` outright and a table hint
+  // after an un-aliased function call (`FROM dbo.f(1) WITH (NOLOCK)`) is
+  // read as a column list with an empty type. From this state the two are
+  // an ordinary LR(1) choice — a hint item is an identifier followed by
+  // `,` or `)`, a schema column is an identifier followed by a type.
   _relation_with_hint: $ => seq(
     $.relation,
+    // TABLESAMPLE precedes a table hint and is independent of it — `FROM
+    // t TABLESAMPLE (10 PERCENT) WITH (NOLOCK)` is valid — so it is its
+    // own optional slot ahead of the table_hint/openjson_schema choice,
+    // not one more alternative inside that choice's mutual exclusion.
+    optional($.tablesample_clause),
     optional(choice(
       $.table_hint,
       seq(
@@ -328,6 +407,28 @@ export default {
     field('type', $._type),
     optional(field('path', $.literal)),
     optional(seq($.keyword_as, $.keyword_json)),
+  ),
+
+  // TABLESAMPLE [SYSTEM] (n [PERCENT | ROWS]) [REPEATABLE (seed)]
+  //
+  // TABLESAMPLE collides with an AS-less table alias the same way the
+  // join hints (`join_hint`, above) do: `FROM t tablesample` reads
+  // TABLESAMPLE as this clause rather than as the table's alias, and
+  // there is no later token that can change that, unlike the FOR
+  // SYSTEM_TIME/PERIOD FOR SYSTEM_TIME collisions this file otherwise
+  // resolves with an atomic token — TABLESAMPLE genuinely is a single
+  // word here, and this clause's own first alternative already needs to
+  // be exactly that word. `FROM t AS tablesample TABLESAMPLE (...)` is
+  // the workaround: after an explicit AS, only `identifier` is a valid
+  // symbol, so the word lexes as a plain alias there.
+  tablesample_clause: $ => seq(
+    $.keyword_tablesample,
+    optional($.keyword_system),
+    wrapped_in_parenthesis(seq(
+      $._expression,
+      optional(choice($.keyword_percent, $.keyword_rows)),
+    )),
+    optional(seq($.keyword_repeatable, wrapped_in_parenthesis($._expression))),
   ),
 
   values: $ => seq(

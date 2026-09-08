@@ -27,6 +27,11 @@ export default {
     )
   ),
 
+  // AT TIME ZONE, as a `binary_expression` operator — the same treatment
+  // `distinct_from`/`not_distinct_from` (also multi-keyword) already get
+  // in the operator map below, rather than a separate expression rule.
+  at_time_zone: $ => seq($.keyword_at, $.keyword_time, $.keyword_zone),
+
   // TRIM([LEADING | TRAILING | BOTH] [characters FROM] string) — the
   // 2022 form puts a FROM keyword inside the argument list, so TRIM is its
   // own node rather than an invocation. A plain TRIM(x) is this node too:
@@ -287,6 +292,11 @@ export default {
       // `is (not distinct from)` with a unary `not`
       [$.distinct_from, 'binary_is'],
       [$.not_distinct_from, 'binary_is'],
+      // AT TIME ZONE — same precedence family as COLLATE, the closest
+      // existing analogue (a postfix modifier over an expression). Left
+      // associative, so it chains: `d AT TIME ZONE 'UTC' AT TIME ZONE
+      // 'Eastern Standard Time'`.
+      [$.at_time_zone, 'binary_is'],
     ].map(([operator, precedence]) =>
       prec.left(precedence, seq(
         field('left', $._expression),

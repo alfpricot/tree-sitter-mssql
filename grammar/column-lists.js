@@ -24,9 +24,30 @@ export default {
 
   // ( column | constraint [, ...] ) — T-SQL allows a table-level constraint
   // anywhere in the list, between columns as well as at the end.
+  //
+  // `column_definitions` is shared by CREATE TABLE, ALTER TABLE ... ADD,
+  // CREATE TYPE ... AS TABLE, and every table variable declaration
+  // (DECLARE @t TABLE, a multi-statement TVF's RETURNS @t TABLE), so
+  // `period_for_system_time` is syntactically reachable in the latter two
+  // even though only a durable base table can be system-versioned.
+  // Deliberate, per the same over-acceptance reasoning `relation`'s own
+  // comment states above.
   column_definitions: $ => paren_list(
-    choice($.column_definition, $.constraint),
+    choice($.column_definition, $.constraint, $.period_for_system_time),
     true,
+  ),
+
+  // PERIOD FOR SYSTEM_TIME (start_column, end_column) — declares which two
+  // columns hold a system-versioned temporal table's row validity period.
+  // A separate rule from `constraint` rather than one more of its
+  // alternatives: unlike every other table-level constraint, this one
+  // never takes an optional `CONSTRAINT name` prefix. Uses the atomic
+  // `keyword_period_for_system_time` token, not three separate keywords —
+  // see that token's comment in keywords.js for why a bare `keyword_period`
+  // here would break an ordinary column literally named `period`.
+  period_for_system_time: $ => seq(
+    $.keyword_period_for_system_time,
+    paren_list($.identifier, true),
   ),
 
   // name type [COLLATE name] [constraint ...]

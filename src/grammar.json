@@ -1549,6 +1549,86 @@
       "type": "PATTERN",
       "value": "[mM][aA][xX]"
     },
+    "keyword_for_system_time": {
+      "type": "TOKEN",
+      "content": {
+        "type": "SEQ",
+        "members": [
+          {
+            "type": "PATTERN",
+            "value": "[fF][oO][rR]"
+          },
+          {
+            "type": "PATTERN",
+            "value": "\\s+"
+          },
+          {
+            "type": "PATTERN",
+            "value": "[sS][yY][sS][tT][eE][mM][__][tT][iI][mM][eE]"
+          }
+        ]
+      }
+    },
+    "keyword_period_for_system_time": {
+      "type": "TOKEN",
+      "content": {
+        "type": "SEQ",
+        "members": [
+          {
+            "type": "PATTERN",
+            "value": "[pP][eE][rR][iI][oO][dD]"
+          },
+          {
+            "type": "PATTERN",
+            "value": "\\s+"
+          },
+          {
+            "type": "PATTERN",
+            "value": "[fF][oO][rR]"
+          },
+          {
+            "type": "PATTERN",
+            "value": "\\s+"
+          },
+          {
+            "type": "PATTERN",
+            "value": "[sS][yY][sS][tT][eE][mM][__][tT][iI][mM][eE]"
+          }
+        ]
+      }
+    },
+    "keyword_contained": {
+      "type": "PATTERN",
+      "value": "[cC][oO][nN][tT][aA][iI][nN][eE][dD]"
+    },
+    "keyword_zone": {
+      "type": "PATTERN",
+      "value": "[zZ][oO][nN][eE]"
+    },
+    "keyword_tablesample": {
+      "type": "PATTERN",
+      "value": "[tT][aA][bB][lL][eE][sS][aA][mM][pP][lL][eE]"
+    },
+    "keyword_system": {
+      "type": "PATTERN",
+      "value": "[sS][yY][sS][tT][eE][mM]"
+    },
+    "keyword_changetable": {
+      "type": "PATTERN",
+      "value": "[cC][hH][aA][nN][gG][eE][tT][aA][bB][lL][eE]"
+    },
+    "keyword_changes": {
+      "type": "PATTERN",
+      "value": "[cC][hH][aA][nN][gG][eE][sS]"
+    },
+    "keyword_version": {
+      "type": "PATTERN",
+      "value": "[vV][eE][rR][sS][iI][oO][nN]"
+    },
+    "keyword_opendatasource": {
+      "type": "PATTERN",
+      "value": "[oO][pP][eE][nN][dD][aA][tT][aA][sS][oO][uU][rR][cC][eE]"
+    },
     "is_not": {
       "type": "PREC_LEFT",
       "value": 0,
@@ -2880,6 +2960,10 @@
                 {
                   "type": "SYMBOL",
                   "name": "constraint"
+                },
+                {
+                  "type": "SYMBOL",
+                  "name": "period_for_system_time"
                 }
               ]
             },
@@ -2902,6 +2986,10 @@
                       {
                         "type": "SYMBOL",
                         "name": "constraint"
+                      },
+                      {
+                        "type": "SYMBOL",
+                        "name": "period_for_system_time"
                       }
                     ]
                   }
@@ -2913,6 +3001,53 @@
         {
           "type": "STRING",
           "value": ")"
+        }
+      ]
+    },
+    "period_for_system_time": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "SYMBOL",
+          "name": "keyword_period_for_system_time"
+        },
+        {
+          "type": "SEQ",
+          "members": [
+            {
+              "type": "STRING",
+              "value": "("
+            },
+            {
+              "type": "SEQ",
+              "members": [
+                {
+                  "type": "SYMBOL",
+                  "name": "identifier"
+                },
+                {
+                  "type": "REPEAT",
+                  "content": {
+                    "type": "SEQ",
+                    "members": [
+                      {
+                        "type": "STRING",
+                        "value": ","
+                      },
+                      {
+                        "type": "SYMBOL",
+                        "name": "identifier"
+                      }
+                    ]
+                  }
+                }
+              ]
+            },
+            {
+              "type": "STRING",
+              "value": ")"
+            }
+          ]
         }
       ]
     },
@@ -4311,6 +4446,23 @@
           }
         ]
       }
+    },
+    "at_time_zone": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "SYMBOL",
+          "name": "keyword_at"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "keyword_time"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "keyword_zone"
+        }
+      ]
     },
     "trim": {
       "type": "SEQ",
@@ -6319,6 +6471,39 @@
                 "content": {
                   "type": "SYMBOL",
                   "name": "not_distinct_from"
+                }
+              },
+              {
+                "type": "FIELD",
+                "name": "right",
+                "content": {
+                  "type": "SYMBOL",
+                  "name": "_expression"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "PREC_LEFT",
+          "value": "binary_is",
+          "content": {
+            "type": "SEQ",
+            "members": [
+              {
+                "type": "FIELD",
+                "name": "left",
+                "content": {
+                  "type": "SYMBOL",
+                  "name": "_expression"
+                }
+              },
+              {
+                "type": "FIELD",
+                "name": "operator",
+                "content": {
+                  "type": "SYMBOL",
+                  "name": "at_time_zone"
                 }
               },
               {
@@ -14570,6 +14755,10 @@
                           {
                             "type": "SYMBOL",
                             "name": "constraint"
+                          },
+                          {
+                            "type": "SYMBOL",
+                            "name": "period_for_system_time"
                           }
                         ]
                       },
@@ -14592,6 +14781,10 @@
                                 {
                                   "type": "SYMBOL",
                                   "name": "constraint"
+                                },
+                                {
+                                  "type": "SYMBOL",
+                                  "name": "period_for_system_time"
                                 }
                               ]
                             }
@@ -19459,6 +19652,26 @@
                     "value": ")"
                   }
                 ]
+              },
+              {
+                "type": "SYMBOL",
+                "name": "opendatasource_reference"
+              },
+              {
+                "type": "SYMBOL",
+                "name": "changetable"
+              }
+            ]
+          },
+          {
+            "type": "CHOICE",
+            "members": [
+              {
+                "type": "SYMBOL",
+                "name": "for_system_time_clause"
+              },
+              {
+                "type": "BLANK"
               }
             ]
           },
@@ -19516,12 +19729,296 @@
         ]
       }
     },
+    "for_system_time_clause": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "SYMBOL",
+          "name": "keyword_for_system_time"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "system_time_qualifier"
+        }
+      ]
+    },
+    "system_time_qualifier": {
+      "type": "CHOICE",
+      "members": [
+        {
+          "type": "SEQ",
+          "members": [
+            {
+              "type": "SYMBOL",
+              "name": "keyword_as"
+            },
+            {
+              "type": "SYMBOL",
+              "name": "keyword_of"
+            },
+            {
+              "type": "SYMBOL",
+              "name": "_expression"
+            }
+          ]
+        },
+        {
+          "type": "SEQ",
+          "members": [
+            {
+              "type": "SYMBOL",
+              "name": "keyword_from"
+            },
+            {
+              "type": "SYMBOL",
+              "name": "_expression"
+            },
+            {
+              "type": "SYMBOL",
+              "name": "keyword_to"
+            },
+            {
+              "type": "SYMBOL",
+              "name": "_expression"
+            }
+          ]
+        },
+        {
+          "type": "SEQ",
+          "members": [
+            {
+              "type": "SYMBOL",
+              "name": "keyword_between"
+            },
+            {
+              "type": "SYMBOL",
+              "name": "_expression"
+            },
+            {
+              "type": "SYMBOL",
+              "name": "keyword_and"
+            },
+            {
+              "type": "SYMBOL",
+              "name": "_expression"
+            }
+          ]
+        },
+        {
+          "type": "SEQ",
+          "members": [
+            {
+              "type": "SYMBOL",
+              "name": "keyword_contained"
+            },
+            {
+              "type": "SYMBOL",
+              "name": "keyword_in"
+            },
+            {
+              "type": "SEQ",
+              "members": [
+                {
+                  "type": "STRING",
+                  "value": "("
+                },
+                {
+                  "type": "SEQ",
+                  "members": [
+                    {
+                      "type": "SYMBOL",
+                      "name": "_expression"
+                    },
+                    {
+                      "type": "STRING",
+                      "value": ","
+                    },
+                    {
+                      "type": "SYMBOL",
+                      "name": "_expression"
+                    }
+                  ]
+                },
+                {
+                  "type": "STRING",
+                  "value": ")"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "SYMBOL",
+          "name": "keyword_all"
+        }
+      ]
+    },
+    "opendatasource_reference": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "SYMBOL",
+          "name": "keyword_opendatasource"
+        },
+        {
+          "type": "SEQ",
+          "members": [
+            {
+              "type": "STRING",
+              "value": "("
+            },
+            {
+              "type": "SEQ",
+              "members": [
+                {
+                  "type": "SYMBOL",
+                  "name": "_expression"
+                },
+                {
+                  "type": "STRING",
+                  "value": ","
+                },
+                {
+                  "type": "SYMBOL",
+                  "name": "_expression"
+                }
+              ]
+            },
+            {
+              "type": "STRING",
+              "value": ")"
+            }
+          ]
+        },
+        {
+          "type": "STRING",
+          "value": "."
+        },
+        {
+          "type": "FIELD",
+          "name": "database",
+          "content": {
+            "type": "SYMBOL",
+            "name": "identifier"
+          }
+        },
+        {
+          "type": "STRING",
+          "value": "."
+        },
+        {
+          "type": "FIELD",
+          "name": "schema",
+          "content": {
+            "type": "SYMBOL",
+            "name": "identifier"
+          }
+        },
+        {
+          "type": "STRING",
+          "value": "."
+        },
+        {
+          "type": "FIELD",
+          "name": "name",
+          "content": {
+            "type": "SYMBOL",
+            "name": "identifier"
+          }
+        }
+      ]
+    },
+    "changetable": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "SYMBOL",
+          "name": "keyword_changetable"
+        },
+        {
+          "type": "SEQ",
+          "members": [
+            {
+              "type": "STRING",
+              "value": "("
+            },
+            {
+              "type": "SEQ",
+              "members": [
+                {
+                  "type": "CHOICE",
+                  "members": [
+                    {
+                      "type": "SYMBOL",
+                      "name": "keyword_changes"
+                    },
+                    {
+                      "type": "SYMBOL",
+                      "name": "keyword_version"
+                    }
+                  ]
+                },
+                {
+                  "type": "SYMBOL",
+                  "name": "object_reference"
+                },
+                {
+                  "type": "STRING",
+                  "value": ","
+                },
+                {
+                  "type": "SEQ",
+                  "members": [
+                    {
+                      "type": "SYMBOL",
+                      "name": "_expression"
+                    },
+                    {
+                      "type": "REPEAT",
+                      "content": {
+                        "type": "SEQ",
+                        "members": [
+                          {
+                            "type": "STRING",
+                            "value": ","
+                          },
+                          {
+                            "type": "SYMBOL",
+                            "name": "_expression"
+                          }
+                        ]
+                      }
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "STRING",
+              "value": ")"
+            }
+          ]
+        }
+      ]
+    },
     "_relation_with_hint": {
       "type": "SEQ",
       "members": [
         {
           "type": "SYMBOL",
           "name": "relation"
+        },
+        {
+          "type": "CHOICE",
+          "members": [
+            {
+              "type": "SYMBOL",
+              "name": "tablesample_clause"
+            },
+            {
+              "type": "BLANK"
+            }
+          ]
         },
         {
           "type": "CHOICE",
@@ -19680,6 +20177,104 @@
                 {
                   "type": "SYMBOL",
                   "name": "keyword_json"
+                }
+              ]
+            },
+            {
+              "type": "BLANK"
+            }
+          ]
+        }
+      ]
+    },
+    "tablesample_clause": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "SYMBOL",
+          "name": "keyword_tablesample"
+        },
+        {
+          "type": "CHOICE",
+          "members": [
+            {
+              "type": "SYMBOL",
+              "name": "keyword_system"
+            },
+            {
+              "type": "BLANK"
+            }
+          ]
+        },
+        {
+          "type": "SEQ",
+          "members": [
+            {
+              "type": "STRING",
+              "value": "("
+            },
+            {
+              "type": "SEQ",
+              "members": [
+                {
+                  "type": "SYMBOL",
+                  "name": "_expression"
+                },
+                {
+                  "type": "CHOICE",
+                  "members": [
+                    {
+                      "type": "CHOICE",
+                      "members": [
+                        {
+                          "type": "SYMBOL",
+                          "name": "keyword_percent"
+                        },
+                        {
+                          "type": "SYMBOL",
+                          "name": "keyword_rows"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "BLANK"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "STRING",
+              "value": ")"
+            }
+          ]
+        },
+        {
+          "type": "CHOICE",
+          "members": [
+            {
+              "type": "SEQ",
+              "members": [
+                {
+                  "type": "SYMBOL",
+                  "name": "keyword_repeatable"
+                },
+                {
+                  "type": "SEQ",
+                  "members": [
+                    {
+                      "type": "STRING",
+                      "value": "("
+                    },
+                    {
+                      "type": "SYMBOL",
+                      "name": "_expression"
+                    },
+                    {
+                      "type": "STRING",
+                      "value": ")"
+                    }
+                  ]
                 }
               ]
             },

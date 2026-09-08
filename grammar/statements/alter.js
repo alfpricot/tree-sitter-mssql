@@ -54,7 +54,7 @@ export default {
       seq(
         optional(seq($.keyword_with, choice($.keyword_check, $.keyword_nocheck))),
         $.keyword_add,
-        comma_list(choice($.column_definition, $.constraint), true),
+        comma_list(choice($.column_definition, $.constraint, $.period_for_system_time), true),
       ),
       seq(
         $.keyword_drop,
