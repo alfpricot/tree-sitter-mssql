@@ -76,7 +76,7 @@ handful of T-SQL shapes the grammar deliberately does not parse are listed in th
 | `dbcc_freeproccache.sql` | `DBCC FREEPROCCACHE` with a plan-handle literal, `WITH NO_INFOMSGS`, a resource-pool name |
 | `sequence.sql` | `CREATE SEQUENCE` with `START WITH`/`INCREMENT BY`/`AS type`/`MINVALUE`/`MAXVALUE`/`CYCLE`/`CACHE n`, `NEXT VALUE FOR` |
 | `sp_rename.sql` | `EXECUTE sp_rename` renaming a table, column, index, alias type, and constraints, plus the named-parameter (`@objname=`) form |
-| `partition_function_scheme.sql` | `CREATE PARTITION FUNCTION ... AS RANGE LEFT/RIGHT FOR VALUES`, `CREATE PARTITION SCHEME ... AS PARTITION ... TO (...)` incl. `ALL TO` |
+| `partition_function_scheme.sql` | `CREATE PARTITION FUNCTION ... AS RANGE LEFT/RIGHT FOR VALUES`, `CREATE PARTITION SCHEME ... AS PARTITION ... TO (...)` incl. `ALL TO`, `ALTER TABLE ... SWITCH [PARTITION n] TO table [PARTITION n]`, `$PARTITION.fn(col)` |
 | `columnstore_index.sql` | `CREATE CLUSTERED/NONCLUSTERED COLUMNSTORE INDEX`, `DROP_EXISTING`, a quoted index name, a `WHERE` filter |
 | `sql_variant_property.sql` | `sql_variant` column, `SQL_VARIANT_PROPERTY`, string-literal column aliases (`AS 'Base Type'`), statements with no separator at all |
 | `inline_tvf.sql` | `USE`, `IF OBJECT_ID(...) IS NOT NULL DROP FUNCTION`, inline table-valued function (`RETURNS TABLE AS RETURN (...)`) with a three-way `INNER JOIN` and `GROUP BY` |
@@ -152,6 +152,7 @@ handful of T-SQL shapes the grammar deliberately does not parse are listed in th
 | `at_time_zone.sql` | `AT TIME ZONE` (2016), incl. chained application and use in `WHERE` |
 | `tablesample.sql` | `TABLESAMPLE (n PERCENT \| ROWS)`, `TABLESAMPLE SYSTEM (...) REPEATABLE (seed)`, and combined with a table alias |
 | `opendatasource_changetable.sql` | `OPENDATASOURCE(...)` with a dotted object suffix, `CHANGETABLE(CHANGES ...)` joined against its source table, `CHANGETABLE(VERSION ...)` |
+| `graph_match.sql` | Graph tables (2017): `CREATE TABLE ... AS NODE`/`AS EDGE`, and `MATCH(...)` in `WHERE` with the `-()->`/`<-()-` arrow pattern, `SHORTEST_PATH(...)`, and a `\|`-alternated (polymorphic) edge pattern |
 
 ## Functions
 

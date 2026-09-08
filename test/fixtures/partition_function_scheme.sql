@@ -55,3 +55,9 @@ TO (test1fg,
 CREATE PARTITION SCHEME myRangePS1
 AS PARTITION myRangePF1
 ALL TO ([PRIMARY]);
+
+ALTER TABLE myPartitionedTable SWITCH PARTITION 1 TO myOtherTable;
+ALTER TABLE myPartitionedTable SWITCH PARTITION 1 TO myOtherTable PARTITION 2;
+ALTER TABLE myPartitionedTable SWITCH TO myOtherTable;
+
+SELECT $PARTITION.myRangePF1(col) FROM myPartitionedTable;

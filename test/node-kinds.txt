@@ -151,6 +151,11 @@ get_conversation_group_statement
 go_statement
 goto_statement
 grant_statement
+graph_hop
+graph_match_expr
+graph_match_predicate
+graph_path
+graph_shortest_path
 group_by
 grouping_sets
 having
@@ -324,6 +329,7 @@ keyword_login
 keyword_loop
 keyword_mark
 keyword_master
+keyword_match
 keyword_matched
 keyword_max
 keyword_maxvalue
@@ -428,6 +434,7 @@ keyword_session
 keyword_set
 keyword_sets
 keyword_setuser
+keyword_shortest_path
 keyword_smalldatetime
 keyword_smallint
 keyword_smallmoney
@@ -437,6 +444,7 @@ keyword_source
 keyword_sql_variant
 keyword_start
 keyword_statistics
+keyword_switch
 keyword_symmetric
 keyword_synonym
 keyword_system
