@@ -61,7 +61,8 @@ jobs:
                 ;;
               refs/heads/*)
                 branch="${ref#refs/heads/}"
-                if ! git ls-remote --exit-code --heads origin "$branch" >/dev/null 2>&1; then
+                branch_path=$(jq -nr --arg branch "$branch" '$branch | @uri')
+                if ! gh api "repos/${GITHUB_REPOSITORY}/git/ref/heads/${branch_path}" >/dev/null 2>&1; then
                   stale=true
                 fi
                 ;;

@@ -23,15 +23,14 @@ on:
     types: [closed]
     branches: [main]
 
-permissions:
-  contents: write
-  actions: write
-
 jobs:
   tag:
-    if: github.event.pull_request.merged == true && github.event.pull_request.head.ref == 'release-plz/release'
+    if: github.event.pull_request.merged == true && github.event.pull_request.head.ref == 'release-plz/release' && github.event.pull_request.user.login == 'github-actions[bot]'
     runs-on: ubuntu-latest
     timeout-minutes: 5
+    permissions:
+      contents: write
+      actions: write
     steps:
       - name: Checkout main
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
