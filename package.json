@@ -6,8 +6,8 @@
   "types": "bindings/node",
   "scripts": {
     "install": "node-gyp-build",
-    "prestart": "npx --yes --package=tree-sitter-cli@v0.26.3 -- tree-sitter build --wasm",
-    "start": "npx --yes --package=tree-sitter-cli@v0.26.3 -- tree-sitter playground",
+    "prestart": "npx --yes --package=tree-sitter-cli@0.27.0 -- tree-sitter build --wasm",
+    "start": "npx --yes --package=tree-sitter-cli@0.27.0 -- tree-sitter playground",
     "test": "node --test bindings/node/*_test.js"
   },
   "author": "M. Reifschneider",
@@ -16,17 +16,18 @@
   ],
   "license": "MIT",
   "dependencies": {
-    "node-addon-api": "^8.9.2",
-    "node-gyp-build": "^4.8.0"
+    "node-addon-api": "8.9.2",
+    "node-gyp-build": "4.8.4"
   },
   "devDependencies": {
-    "node-gyp": "^13.0.2"
+    "node-gyp": "13.0.2",
+    "tree-sitter": "0.25.1"
   },
   "peerDependencies": {
     "tree-sitter": "^0.25.0"
   },
   "peerDependenciesMeta": {
-    "tree_sitter": {
+    "tree-sitter": {
       "optional": true
     }
   },
@@ -61,7 +62,7 @@
     "NOTICE"
   ],
   "allowScripts": {
-    "tree-sitter-cli@0.26.3": true,
+    "tree-sitter-cli@0.27.0": true,
     "tree-sitter@0.25.1": true
   }
 }

@@ -460,6 +460,8 @@ ALTER TABLE my_table ALTER COLUMN val3 VARCHAR(255) NOT NULL;
 ALTER TABLE my_table ALTER COLUMN val3 nvarchar(50) COLLATE Latin1_General_CI_AS NULL;
 ALTER TABLE my_table ALTER COLUMN val3 ADD ROWGUIDCOL;
 ALTER TABLE my_table ALTER COLUMN val3 DROP NOT_FOR_REPLICATION;
+ALTER TABLE my_table ALTER COLUMN val3 ADD MASKED WITH (FUNCTION = 'default()');
+ALTER TABLE my_table ALTER COLUMN val3 DROP MASKED;
 
 --------------------------------------------------------------------------------
 
@@ -514,7 +516,35 @@ ALTER TABLE my_table ALTER COLUMN val3 DROP NOT_FOR_REPLICATION;
       (keyword_column)
       (identifier)
       (keyword_drop)
-      (identifier))))
+      (identifier)))
+  (statement
+    (alter_table
+      (keyword_alter)
+      (keyword_table)
+      (object_reference
+        (identifier))
+      (keyword_alter)
+      (keyword_column)
+      (identifier)
+      (keyword_add)
+      (masked_with
+        (keyword_masked)
+        (with_options
+          (keyword_with)
+          (option
+            (identifier)
+            (literal))))))
+  (statement
+    (alter_table
+      (keyword_alter)
+      (keyword_table)
+      (object_reference
+        (identifier))
+      (keyword_alter)
+      (keyword_column)
+      (identifier)
+      (keyword_drop)
+      (keyword_masked))))
 
 ================================================================================
 Alter table enable and disable triggers

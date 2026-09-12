@@ -26,6 +26,8 @@ export default {
     $.drop_certificate,
     $.drop_symmetric_key,
     $.drop_asymmetric_key,
+    $.drop_column_encryption_key,
+    $.drop_column_master_key,
     $.drop_security_policy,
     $.drop_xml_schema_collection,
   ),

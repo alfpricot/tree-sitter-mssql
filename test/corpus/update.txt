@@ -117,18 +117,18 @@ WHERE b.a = table_a.uid;
             (field
               (object_reference
                 (identifier))
-              (identifier))))
-        (where
-          (keyword_where)
-          (binary_expression
-            (field
-              (object_reference
-                (identifier))
+              (identifier)))))
+      (where
+        (keyword_where)
+        (binary_expression
+          (field
+            (object_reference
               (identifier))
-            (field
-              (object_reference
-                (identifier))
-              (identifier))))))))
+            (identifier))
+          (field
+            (object_reference
+              (identifier))
+            (identifier)))))))
 
 ================================================================================
 Update with a table hint
@@ -227,15 +227,15 @@ WHERE s.site = 'MAIN'
             (field
               (object_reference
                 (identifier))
-              (identifier))))
-        (where
-          (keyword_where)
-          (binary_expression
-            (field
-              (object_reference
-                (identifier))
+              (identifier)))))
+      (where
+        (keyword_where)
+        (binary_expression
+          (field
+            (object_reference
               (identifier))
-            (literal)))))))
+            (identifier))
+          (literal))))))
 
 ================================================================================
 Update a temp table through a derived table
@@ -309,12 +309,12 @@ INNER JOIN #prod_info ON #prod_info.product_cat = a.product_cat;
               (keyword_from)
               (relation
                 (object_reference
-                  (identifier)))
-              (group_by
-                (keyword_group)
-                (keyword_by)
-                (field
-                  (identifier)))))
+                  (identifier))))
+            (group_by
+              (keyword_group)
+              (keyword_by)
+              (field
+                (identifier))))
           (keyword_as)
           (identifier))
         (join
@@ -393,14 +393,14 @@ WHERE id = @id;
         (relation
           (object_reference
             (identifier)
-            (identifier)))
-        (where
-          (keyword_where)
-          (binary_expression
-            (field
-              (identifier))
-            (field
-              (identifier))))))))
+            (identifier))))
+      (where
+        (keyword_where)
+        (binary_expression
+          (field
+            (identifier))
+          (field
+            (identifier)))))))
 
 ================================================================================
 UPDATE with a bare .modify() call in the SET list
@@ -451,3 +451,44 @@ UPDATE JsonTable SET d.modify('$.a', 14859), name = 'x' WHERE id = 1;
           (field
             (identifier))
           (literal))))))
+
+================================================================================
+Update with OPTION
+================================================================================
+
+UPDATE dbo.t SET a = 1 FROM dbo.b WHERE b.id = 1 OPTION (RECOMPILE);
+
+--------------------------------------------------------------------------------
+
+(program
+  (statement
+    (update
+      (keyword_update)
+      (relation
+        (object_reference
+          (identifier)
+          (identifier)))
+      (keyword_set)
+      (assignment
+        (field
+          (identifier))
+        (assignment_operator)
+        (literal))
+      (from
+        (keyword_from)
+        (relation
+          (object_reference
+            (identifier)
+            (identifier))))
+      (where
+        (keyword_where)
+        (binary_expression
+          (field
+            (object_reference
+              (identifier))
+            (identifier))
+          (literal)))
+      (option_clause
+        (keyword_option)
+        (query_hint
+          (keyword_recompile))))))

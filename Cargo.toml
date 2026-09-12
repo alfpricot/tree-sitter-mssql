@@ -8,11 +8,11 @@ readme = "README.md"
 keywords = ["incremental", "parsing", "tree-sitter", "sql", "tsql"]
 categories = ["parsing", "text-editors"]
 repository = "https://github.com/meloncholic/tree-sitter-mssql.git"
-edition = "2021"
+edition = "2024"
 autoexamples = false
 
 build = "bindings/rust/build.rs"
-include = ["/LICENSE", "/NOTICE", "bindings/rust/*", "grammar*", "queries/*", "src/*"]
+include = ["/LICENSE", "/NOTICE", "/README.md", "/tree-sitter.json", "/bindings/rust/*", "/grammar.js", "/grammar/**", "/queries/*", "/src/**"]
 
 [lib]
 path = "bindings/rust/lib.rs"

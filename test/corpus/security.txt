@@ -1209,3 +1209,176 @@ ALTER SECURITY POLICY p ADD BLOCK PREDICATE dbo.fn(a) ON dbo.t AFTER UPDATE WITH
       (keyword_not)
       (keyword_for)
       (keyword_replication))))
+
+================================================================================
+Column encryption key: create, add/drop value, and drop
+================================================================================
+
+CREATE COLUMN ENCRYPTION KEY cek1
+WITH VALUES
+(
+  COLUMN_MASTER_KEY = cmk1,
+  ALGORITHM = 'RSA_OAEP',
+  ENCRYPTED_VALUE = 0x016E000001630075
+);
+
+ALTER COLUMN ENCRYPTION KEY cek1
+ADD VALUE (COLUMN_MASTER_KEY = cmk2, ALGORITHM = 'RSA_OAEP', ENCRYPTED_VALUE = 0x016E00000163);
+
+ALTER COLUMN ENCRYPTION KEY cek1
+DROP VALUE (COLUMN_MASTER_KEY = cmk1);
+
+DROP COLUMN ENCRYPTION KEY cek1;
+
+--------------------------------------------------------------------------------
+
+(program
+  (statement
+    (create_column_encryption_key
+      (keyword_create)
+      (keyword_column)
+      (keyword_encryption)
+      (keyword_key)
+      (identifier)
+      (keyword_with)
+      (keyword_values)
+      (encryption_key_value
+        (option
+          (identifier)
+          (identifier))
+        (option
+          (identifier)
+          (literal))
+        (option
+          (identifier)
+          (literal)))))
+  (statement
+    (alter_column_encryption_key
+      (keyword_alter)
+      (keyword_column)
+      (keyword_encryption)
+      (keyword_key)
+      (identifier)
+      (keyword_add)
+      (keyword_value)
+      (encryption_key_value
+        (option
+          (identifier)
+          (identifier))
+        (option
+          (identifier)
+          (literal))
+        (option
+          (identifier)
+          (literal)))))
+  (statement
+    (alter_column_encryption_key
+      (keyword_alter)
+      (keyword_column)
+      (keyword_encryption)
+      (keyword_key)
+      (identifier)
+      (keyword_drop)
+      (keyword_value)
+      (encryption_key_value
+        (option
+          (identifier)
+          (identifier)))))
+  (statement
+    (drop_column_encryption_key
+      (keyword_drop)
+      (keyword_column)
+      (keyword_encryption)
+      (keyword_key)
+      (identifier))))
+
+================================================================================
+Column master key: create and drop
+================================================================================
+
+CREATE COLUMN MASTER KEY cmk1
+WITH (
+  KEY_STORE_PROVIDER_NAME = 'MSSQL_CERTIFICATE_STORE',
+  KEY_PATH = 'CurrentUser/My/374A527AB4300142AD2AF0784B77A02F80A20A1B'
+);
+
+DROP COLUMN MASTER KEY cmk1;
+
+--------------------------------------------------------------------------------
+
+(program
+  (statement
+    (create_column_master_key
+      (keyword_create)
+      (keyword_column)
+      (keyword_master)
+      (keyword_key)
+      (identifier)
+      (with_options
+        (keyword_with)
+        (option
+          (identifier)
+          (literal))
+        (option
+          (identifier)
+          (literal)))))
+  (statement
+    (drop_column_master_key
+      (keyword_drop)
+      (keyword_column)
+      (keyword_master)
+      (keyword_key)
+      (identifier))))
+
+================================================================================
+Column-level GRANT, DENY and REVOKE
+================================================================================
+
+GRANT SELECT (a, b) ON dbo.t TO r;
+DENY UPDATE (a) ON dbo.t TO r;
+REVOKE SELECT (a, b) ON dbo.t FROM r;
+
+--------------------------------------------------------------------------------
+
+(program
+  (statement
+    (grant_statement
+      (keyword_grant)
+      (permission
+        (keyword_select)
+        (list
+          (identifier)
+          (identifier)))
+      (keyword_on)
+      (object_reference
+        (identifier)
+        (identifier))
+      (keyword_to)
+      (identifier)))
+  (statement
+    (grant_statement
+      (keyword_deny)
+      (permission
+        (keyword_update)
+        (list
+          (identifier)))
+      (keyword_on)
+      (object_reference
+        (identifier)
+        (identifier))
+      (keyword_to)
+      (identifier)))
+  (statement
+    (grant_statement
+      (keyword_revoke)
+      (permission
+        (keyword_select)
+        (list
+          (identifier)
+          (identifier)))
+      (keyword_on)
+      (object_reference
+        (identifier)
+        (identifier))
+      (keyword_from)
+      (identifier))))

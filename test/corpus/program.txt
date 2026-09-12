@@ -119,25 +119,25 @@ ALTER TABLE [dbo].[t] CHECK CONSTRAINT [CK_t]
               (relation
                 (object_reference
                   (identifier)
-                  (identifier)))
-              (where
-                (keyword_where)
+                  (identifier))))
+            (where
+              (keyword_where)
+              (binary_expression
                 (binary_expression
-                  (binary_expression
-                    (field
+                  (field
+                    (identifier))
+                  (invocation
+                    (object_reference
                       (identifier))
-                    (invocation
-                      (object_reference
-                        (identifier))
-                      (term
-                        (literal))))
-                  (keyword_and)
-                  (binary_expression
-                    (field
-                      (identifier))
-                    (keyword_in)
-                    (list
-                      (literal)))))))))
+                    (term
+                      (literal))))
+                (keyword_and)
+                (binary_expression
+                  (field
+                    (identifier))
+                  (keyword_in)
+                  (list
+                    (literal))))))))
       (block
         (keyword_begin)
         (statement
@@ -183,23 +183,23 @@ ALTER TABLE [dbo].[t] CHECK CONSTRAINT [CK_t]
               (relation
                 (object_reference
                   (identifier)
-                  (identifier)))
-              (where
-                (keyword_where)
+                  (identifier))))
+            (where
+              (keyword_where)
+              (binary_expression
                 (binary_expression
-                  (binary_expression
-                    (field
+                  (field
+                    (identifier))
+                  (invocation
+                    (object_reference
                       (identifier))
-                    (invocation
-                      (object_reference
-                        (identifier))
-                      (term
-                        (literal))))
-                  (keyword_and)
-                  (binary_expression
-                    (field
-                      (identifier))
-                    (literal))))))))
+                    (term
+                      (literal))))
+                (keyword_and)
+                (binary_expression
+                  (field
+                    (identifier))
+                  (literal)))))))
       (statement
         (create_index
           (keyword_create)
@@ -241,23 +241,23 @@ ALTER TABLE [dbo].[t] CHECK CONSTRAINT [CK_t]
               (relation
                 (object_reference
                   (identifier)
-                  (identifier)))
-              (where
-                (keyword_where)
+                  (identifier))))
+            (where
+              (keyword_where)
+              (binary_expression
                 (binary_expression
-                  (binary_expression
-                    (field
+                  (field
+                    (identifier))
+                  (invocation
+                    (object_reference
                       (identifier))
-                    (invocation
-                      (object_reference
-                        (identifier))
-                      (term
-                        (literal))))
-                  (keyword_and)
-                  (binary_expression
-                    (field
-                      (identifier))
-                    (literal))))))))
+                    (term
+                      (literal))))
+                (keyword_and)
+                (binary_expression
+                  (field
+                    (identifier))
+                  (literal)))))))
       (block
         (keyword_begin)
         (statement
@@ -294,17 +294,17 @@ ALTER TABLE [dbo].[t] CHECK CONSTRAINT [CK_t]
             (relation
               (object_reference
                 (identifier)
-                (identifier)))
-            (where
-              (keyword_where)
-              (binary_expression
-                (field
+                (identifier))))
+          (where
+            (keyword_where)
+            (binary_expression
+              (field
+                (identifier))
+              (invocation
+                (object_reference
                   (identifier))
-                (invocation
-                  (object_reference
-                    (identifier))
-                  (term
-                    (literal))))))))
+                (term
+                  (literal)))))))
       (statement
         (alter_table
           (keyword_alter)
@@ -370,26 +370,26 @@ RETURN 0
               (relation
                 (object_reference
                   (identifier)
-                  (identifier)))
-              (where
-                (keyword_where)
+                  (identifier))))
+            (where
+              (keyword_where)
+              (binary_expression
                 (binary_expression
-                  (binary_expression
-                    (field
+                  (field
+                    (identifier))
+                  (invocation
+                    (object_reference
                       (identifier))
-                    (invocation
-                      (object_reference
-                        (identifier))
-                      (term
-                        (literal))))
-                  (keyword_and)
-                  (binary_expression
-                    (field
-                      (identifier))
-                    (keyword_in)
-                    (list
-                      (literal)
-                      (literal)))))))))
+                    (term
+                      (literal))))
+                (keyword_and)
+                (binary_expression
+                  (field
+                    (identifier))
+                  (keyword_in)
+                  (list
+                    (literal)
+                    (literal))))))))
       (block
         (keyword_begin)
         (statement
@@ -651,17 +651,17 @@ EXEC sp_settriggerorder @triggername=N'[dbo].[trg]', @order=N'First', @stmttype=
               (relation
                 (object_reference
                   (identifier)
-                  (identifier)))
-              (where
-                (keyword_where)
-                (binary_expression
-                  (field
+                  (identifier))))
+            (where
+              (keyword_where)
+              (binary_expression
+                (field
+                  (identifier))
+                (invocation
+                  (object_reference
                     (identifier))
-                  (invocation
-                    (object_reference
-                      (identifier))
-                    (term
-                      (literal)))))))))
+                  (term
+                    (literal))))))))
       (statement
         (execute_statement
           (keyword_exec)

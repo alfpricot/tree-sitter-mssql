@@ -302,13 +302,13 @@ OPTION (MAXRECURSION 100)
             (keyword_from)
             (relation
               (object_reference
-                (identifier)))
-            (where
-              (keyword_where)
-              (binary_expression
-                (field
-                  (identifier))
-                (literal))))
+                (identifier))))
+          (where
+            (keyword_where)
+            (binary_expression
+              (field
+                (identifier))
+              (literal)))
           (keyword_union)
           (keyword_all)
           (select
@@ -343,18 +343,18 @@ OPTION (MAXRECURSION 100)
             (relation
               (object_reference
                 (identifier))
-              (identifier))
-            (where
-              (keyword_where)
-              (binary_expression
-                (field
-                  (object_reference
-                    (identifier))
+              (identifier)))
+          (where
+            (keyword_where)
+            (binary_expression
+              (field
+                (object_reference
                   (identifier))
-                (field
-                  (object_reference
-                    (identifier))
-                  (identifier))))))))
+                (identifier))
+              (field
+                (object_reference
+                  (identifier))
+                (identifier)))))))
     (select
       (keyword_select)
       (select_expression
@@ -374,12 +374,12 @@ OPTION (MAXRECURSION 100)
       (keyword_from)
       (relation
         (object_reference
-          (identifier)))
-      (option_clause
-        (keyword_option)
-        (query_hint
-          (identifier)
-          (literal))))))
+          (identifier))))
+    (option_clause
+      (keyword_option)
+      (query_hint
+        (identifier)
+        (literal)))))
 
 ================================================================================
 CTE before INSERT, UPDATE, DELETE and MERGE

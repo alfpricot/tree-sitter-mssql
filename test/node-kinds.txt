@@ -4,6 +4,7 @@ all_fields
 alter_asymmetric_key
 alter_authorization
 alter_certificate
+alter_column_encryption_key
 alter_database
 alter_event_session
 alter_function
@@ -54,6 +55,8 @@ covering_columns
 create_assembly
 create_asymmetric_key
 create_certificate
+create_column_encryption_key
+create_column_master_key
 create_contract
 create_database
 create_event_session
@@ -102,6 +105,8 @@ double
 drop_assembly
 drop_asymmetric_key
 drop_certificate
+drop_column_encryption_key
+drop_column_master_key
 drop_database
 drop_event_session
 drop_function
@@ -124,6 +129,8 @@ drop_view
 drop_xml_schema_collection
 else_clause
 enable_trigger_statement
+encrypted_with
+encryption_key_value
 encryption_mechanism
 end_conversation_statement
 event_session_event
@@ -171,6 +178,7 @@ json_key_value
 json_null_clause
 json_object
 json_wrapper_clause
+keyword_abort
 keyword_absent
 keyword_absolute
 keyword_action
@@ -258,6 +266,7 @@ keyword_double
 keyword_drop
 keyword_else
 keyword_enable
+keyword_encrypted
 keyword_encryption
 keyword_end
 keyword_event
@@ -328,6 +337,7 @@ keyword_log
 keyword_login
 keyword_loop
 keyword_mark
+keyword_masked
 keyword_master
 keyword_match
 keyword_matched
@@ -370,6 +380,7 @@ keyword_override
 keyword_owner
 keyword_parameters
 keyword_partition
+keyword_pause
 keyword_percent
 keyword_period_for_system_time
 keyword_persisted
@@ -405,6 +416,7 @@ keyword_reorganize
 keyword_repeatable
 keyword_replication
 keyword_restart
+keyword_resume
 keyword_return
 keyword_returning
 keyword_returns
@@ -494,6 +506,7 @@ keyword_waitfor
 keyword_when
 keyword_where
 keyword_while
+keyword_window
 keyword_with
 keyword_within
 keyword_without
@@ -508,10 +521,12 @@ label_statement
 list
 literal
 marginalia
+masked_with
 merge
 merge_when_clause
 method_call
 move_conversation_statement
+named_window
 nchar
 next_value_for
 not_distinct_from
@@ -603,6 +618,7 @@ waitfor_statement
 when_clause
 where
 while_statement
+window_clause
 window_frame
 window_function
 window_specification

@@ -161,14 +161,14 @@ SELECT * FROM #temp, ##global WHERE @var = @@SPID;
           (identifier)))
       (relation
         (object_reference
-          (identifier)))
-      (where
-        (keyword_where)
-        (binary_expression
-          (field
-            (identifier))
-          (field
-            (identifier)))))))
+          (identifier))))
+    (where
+      (keyword_where)
+      (binary_expression
+        (field
+          (identifier))
+        (field
+          (identifier))))))
 
 ================================================================================
 Bracketed identifiers with special characters

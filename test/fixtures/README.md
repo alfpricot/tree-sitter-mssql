@@ -89,7 +89,7 @@ handful of T-SQL shapes the grammar deliberately does not parse are listed in th
 | `update_target_table_variable.sql` | `UPDATE @T SET ...` / `UPDATE #T SET ...` with no `FROM`, no `WHERE` |
 | `table_hint_bare_nolock.sql` | Bare `NOLOCK` table hint vs. `WITH (NOLOCK)` |
 | `execute_as_context_switch.sql` | `EXECUTE AS USER = '...'` context switch |
-| `alter_index_rebuild_reorganize.sql` | `ALTER INDEX ALL ON ... REBUILD` / `REORGANIZE` |
+| `alter_index_rebuild_reorganize.sql` | `ALTER INDEX ALL ON ... REBUILD` / `REORGANIZE` / `RESUME [WITH (...)]` / `PAUSE` / `ABORT` |
 | `set_option_values.sql` | `SET OFFSETS FROM ON`, `SET ROWCOUNT n` (`SET` options taking a non-boolean value) |
 | `alter_database_set_options.sql` | `ALTER DATABASE ... SET PAGE_VERIFY TORN_PAGE_DETECTION` |
 | `grant_deny_revoke_all.sql` | `GRANT`/`DENY`/`REVOKE ALL ON ... TO PUBLIC` |

@@ -92,18 +92,18 @@ OUTER APPLY (SELECT TOP 1 detail FROM logs WHERE logs.emp_id = e.id) AS d
             (keyword_from)
             (relation
               (object_reference
-                (identifier)))
-            (where
-              (keyword_where)
-              (binary_expression
-                (field
-                  (object_reference
-                    (identifier))
+                (identifier))))
+          (where
+            (keyword_where)
+            (binary_expression
+              (field
+                (object_reference
                   (identifier))
-                (field
-                  (object_reference
-                    (identifier))
-                  (identifier))))))
+                (identifier))
+              (field
+                (object_reference
+                  (identifier))
+                (identifier)))))
         (keyword_as)
         (identifier)))))
 

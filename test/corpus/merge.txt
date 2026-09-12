@@ -517,10 +517,10 @@ SELECT ProductID, NewQty
             (column
               (identifier))
             (column
-              (identifier))))
-        (where
-          (keyword_where)
-          (binary_expression
-            (field
-              (identifier))
-            (literal)))))))
+              (identifier)))))
+      (where
+        (keyword_where)
+        (binary_expression
+          (field
+            (identifier))
+          (literal))))))

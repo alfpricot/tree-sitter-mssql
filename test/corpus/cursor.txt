@@ -37,14 +37,14 @@ DEALLOCATE item_cursor
         (relation
           (object_reference
             (identifier)
-            (identifier)))
-        (where
-          (keyword_where)
-          (binary_expression
-            (field
-              (identifier))
-            (field
-              (identifier)))))))
+            (identifier))))
+      (where
+        (keyword_where)
+        (binary_expression
+          (field
+            (identifier))
+          (field
+            (identifier))))))
   (statement
     (open_cursor_statement
       (keyword_open)

@@ -33,6 +33,9 @@ concurrency:
   group: verify-${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
+env:
+  TREE_SITTER_CLI_VERSION: '0.27.0'
+
 jobs:
   pr-title:
     name: PR title
@@ -72,6 +75,8 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 0
 
       - name: Cache Gitleaks
         id: cache-gitleaks
@@ -97,8 +102,19 @@ jobs:
           tar -xzf "$tmp/$asset" -C "$tmp" gitleaks
           install -m 0755 "$tmp/gitleaks" "$HOME/.local/bin/gitleaks"
 
-      - name: Run Gitleaks
-        run: $HOME/.local/bin/gitleaks detect --source . --exit-code 1 --report-format json --report-path gitleaks-report.json
+      - name: Scan the working tree with Gitleaks
+        run: $HOME/.local/bin/gitleaks detect --no-git --source . --exit-code 1 --report-format json --report-path gitleaks-report.json
+
+      - name: Scan Git history with Gitleaks
+        run: $HOME/.local/bin/gitleaks detect --source . --exit-code 1 --report-format json --report-path gitleaks-history-report.json
+
+      - name: Upload Gitleaks report on failure
+        if: failure()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: gitleaks-report
+          path: gitleaks-report.json
+          if-no-files-found: ignore
 
   verify:
     name: Grammar, Rust build/test
@@ -125,7 +141,7 @@ jobs:
         uses: Swatinem/rust-cache@6323deb102c322ba6fcbdcafc7e3dddab59af2b6 # v2.9.2
 
       - name: Regenerate the parser from grammar.js
-        run: npx --yes --package=tree-sitter-cli@0.26.3 -- tree-sitter generate
+        run: npx --yes --package=tree-sitter-cli@${{ env.TREE_SITTER_CLI_VERSION }} -- tree-sitter generate
 
       - name: Fail if the generated parser is out of date
         run: git diff --exit-code -- src/parser.c src/grammar.json src/node-types.json
@@ -136,13 +152,35 @@ jobs:
           node test/generate-node-kinds.mjs
           git diff --exit-code -- test/node-kinds.txt
 
+      - name: Verify publishable package contents
+        run: |
+          set -euo pipefail
+          cargo package --list --allow-dirty > cargo-package-files.txt
+          grep -Fx 'src/parser.c' cargo-package-files.txt
+          grep -Fx 'src/scanner.c' cargo-package-files.txt
+          grep -Fx 'queries/highlights.scm' cargo-package-files.txt
+          ! grep -Eq '(^|/)(\.git|\.worktrees|node_modules|target)/' cargo-package-files.txt
+
+          npm pack --dry-run --json > npm-package.json
+          node -e '
+            const packageInfo = JSON.parse(require("fs").readFileSync("npm-package.json", "utf8"));
+            const pack = Array.isArray(packageInfo) ? packageInfo[0] : packageInfo["tree-sitter-mssql"];
+            const files = pack.files.map(({path}) => path);
+            for (const required of ["src/parser.c", "src/scanner.c", "queries/highlights.scm"]) {
+              if (!files.includes(required)) throw new Error(`npm package is missing ${required}`);
+            }
+            if (files.some(path => /(^|\/)(?:\.git|\.worktrees|node_modules|target)\//.test(path))) {
+              throw new Error("npm package contains workspace-only files");
+            }
+          '
+
       - name: Run corpus and highlight tests
-        run: npx --yes --package=tree-sitter-cli@0.26.3 -- tree-sitter test
+        run: npx --yes --package=tree-sitter-cli@${{ env.TREE_SITTER_CLI_VERSION }} -- tree-sitter test
 
       - name: Parse every fixture and fail on ERROR/MISSING or zero-width nodes
         run: |
           set -euo pipefail
-          if ! combined=$(npx --yes --package=tree-sitter-cli@0.26.3 -- tree-sitter parse test/fixtures/*.sql 2>&1); then
+          if ! combined=$(npx --yes --package=tree-sitter-cli@${{ env.TREE_SITTER_CLI_VERSION }} -- tree-sitter parse test/fixtures/*.sql 2>&1); then
             combined_failed=1
           else
             combined_failed=0
@@ -155,7 +193,7 @@ jobs:
           echo "::warning::Combined fixture parse found a problem — re-parsing each fixture individually to identify it."
           fail=0
           for f in test/fixtures/*.sql; do
-            if ! output=$(npx --yes --package=tree-sitter-cli@0.26.3 -- tree-sitter parse "$f" 2>&1); then
+            if ! output=$(npx --yes --package=tree-sitter-cli@${{ env.TREE_SITTER_CLI_VERSION }} -- tree-sitter parse "$f" 2>&1); then
               parse_failed=1
             else
               parse_failed=0
@@ -285,10 +323,10 @@ jobs:
           echo '::error::The full verify suite runs when this draft is marked ready for review.'
           exit 1
 
-      - name: Fail if any job failed or was cancelled
+      - name: Fail if any job failed, was cancelled, or was unexpectedly skipped
         if: always()
         run: |
-          if [[ "${{ contains(needs.*.result, 'failure') || contains(needs.*.result, 'cancelled') }}" == "true" ]]; then
-            echo '::error::One or more required jobs failed or were cancelled.'
+          if [[ "${{ contains(needs.*.result, 'failure') || contains(needs.*.result, 'cancelled') || (github.event_name == 'pull_request' && contains(needs.*.result, 'skipped')) }}" == "true" ]]; then
+            echo '::error::One or more required jobs failed, were cancelled, or were skipped.'
             exit 1
           fi

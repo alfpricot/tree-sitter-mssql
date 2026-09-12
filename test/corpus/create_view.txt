@@ -183,21 +183,21 @@ DROP VIEW IF EXISTS my_database.my_schema.my_view, dbo.other_view;
         (relation
           (object_reference
             (identifier)
-            (identifier)))
-        (where
-          (keyword_where)
-          (binary_expression
-            (field
-              (identifier))
-            (cast
-              (keyword_cast)
-              (invocation
-                (object_reference
-                  (identifier)))
-              (keyword_as)
-              (nvarchar
-                (keyword_nvarchar)
-                (literal))))))))
+            (identifier))))
+      (where
+        (keyword_where)
+        (binary_expression
+          (field
+            (identifier))
+          (cast
+            (keyword_cast)
+            (invocation
+              (object_reference
+                (identifier)))
+            (keyword_as)
+            (nvarchar
+              (keyword_nvarchar)
+              (literal)))))))
   (statement
     (drop_view
       (keyword_drop)
