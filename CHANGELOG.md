@@ -7,6 +7,23 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.1.6](https://github.com/meloncholic/tree-sitter-mssql/compare/v0.1.5...v0.1.6) - 2026-09-12
+
+### Added
+
+- *(grammar)* add column security, column-level GRANT, and resumable index DDL ([#13](https://github.com/meloncholic/tree-sitter-mssql/pull/13))
+
+### Fixed
+
+- *(node)* correct binding package contract ([#16](https://github.com/meloncholic/tree-sitter-mssql/pull/16))
+
+### Other
+
+- *(release)* verify package contents before publishing ([#15](https://github.com/meloncholic/tree-sitter-mssql/pull/15))
+- *(tooling)* adopt Rust 2024 ([#14](https://github.com/meloncholic/tree-sitter-mssql/pull/14))
+- *(grammar)* move select trailing clauses off FROM, add named windows
+- *(deps)* bump cargo-bins/cargo-binstall from 1.22.0 to 1.23.0 in the github-actions group across 1 directory ([#1](https://github.com/meloncholic/tree-sitter-mssql/pull/1))
+
 ## [0.1.5](https://github.com/meloncholic/tree-sitter-mssql/compare/v0.1.4...v0.1.5) - 2026-09-08
 
 ### Added
