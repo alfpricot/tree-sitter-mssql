@@ -35,6 +35,7 @@ assignment
 assignment_operator
 at_time_zone
 backup_statement
+batch
 begin_dialog_statement
 begin_transaction_statement
 between_expression

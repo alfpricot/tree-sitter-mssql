@@ -80,22 +80,34 @@ export default grammar({
   word: $ => $._identifier,
 
   rules: {
-    // A script: statements and blocks, each optionally terminated by `;` or
-    // a `GO` batch separator, plus bare `GO` lines. The separator is
-    // optional because T-SQL does not require one between statements and
-    // SMO/SSMS-scripted objects mostly omit it; every T-SQL statement
-    // starts with a keyword the previous statement cannot continue with,
-    // which is what makes this unambiguous.
-    program: $ => repeat(
-      choice(
-        seq(
-          choice($.statement, $.block),
-          optional(choice(';', $.go_statement)),
+    // A script is a sequence of batches — real T-SQL semantics, since `GO`
+    // is a client-tool separator that sends everything before it to the
+    // server as one unit before starting the next (see `go_statement`
+    // below). Grouping by batch, rather than leaving `go_statement` a flat
+    // sibling of `statement`, is what lets a consumer iterate a script's
+    // batches directly instead of re-deriving them by scanning for
+    // `go_statement` and slicing.
+    program: $ => repeat($.batch),
+
+    // Each statement/block may be terminated by `;`; only the batch's last
+    // one may instead (or additionally) be closed by `GO`, which is why the
+    // trailing `go_statement` sits outside the `repeat1` rather than beside
+    // `;` on every item — `;` doesn't end a batch, `GO` always does. A bare
+    // `GO` with nothing before it (consecutive `GO`s, or a script that
+    // opens with one) is the second alternative, since `repeat1` cannot
+    // itself be empty.
+    batch: $ => choice(
+      prec.right(seq(
+        repeat1(
+          choice(
+            seq(choice($.statement, $.block), optional(';')),
+            $.sqlcmd_setvar,
+            $.sqlcmd_include,
+          ),
         ),
-        $.go_statement,
-        $.sqlcmd_setvar,
-        $.sqlcmd_include,
-      ),
+        optional($.go_statement),
+      )),
+      $.go_statement,
     ),
 
     // T-SQL batch separator. Not a T-SQL keyword at all — it's a command

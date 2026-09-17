@@ -2758,6 +2758,37 @@
     }
   },
   {
+    "type": "batch",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": true,
+      "types": [
+        {
+          "type": "block",
+          "named": true
+        },
+        {
+          "type": "go_statement",
+          "named": true
+        },
+        {
+          "type": "sqlcmd_include",
+          "named": true
+        },
+        {
+          "type": "sqlcmd_setvar",
+          "named": true
+        },
+        {
+          "type": "statement",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
     "type": "begin_dialog_statement",
     "named": true,
     "fields": {
@@ -14560,23 +14591,7 @@
       "required": false,
       "types": [
         {
-          "type": "block",
-          "named": true
-        },
-        {
-          "type": "go_statement",
-          "named": true
-        },
-        {
-          "type": "sqlcmd_include",
-          "named": true
-        },
-        {
-          "type": "sqlcmd_setvar",
-          "named": true
-        },
-        {
-          "type": "statement",
+          "type": "batch",
           "named": true
         }
       ]

@@ -6,39 +6,71 @@
     "program": {
       "type": "REPEAT",
       "content": {
-        "type": "CHOICE",
-        "members": [
-          {
+        "type": "SYMBOL",
+        "name": "batch"
+      }
+    },
+    "batch": {
+      "type": "CHOICE",
+      "members": [
+        {
+          "type": "PREC_RIGHT",
+          "value": 0,
+          "content": {
             "type": "SEQ",
             "members": [
               {
-                "type": "CHOICE",
-                "members": [
-                  {
-                    "type": "SYMBOL",
-                    "name": "statement"
-                  },
-                  {
-                    "type": "SYMBOL",
-                    "name": "block"
-                  }
-                ]
+                "type": "REPEAT1",
+                "content": {
+                  "type": "CHOICE",
+                  "members": [
+                    {
+                      "type": "SEQ",
+                      "members": [
+                        {
+                          "type": "CHOICE",
+                          "members": [
+                            {
+                              "type": "SYMBOL",
+                              "name": "statement"
+                            },
+                            {
+                              "type": "SYMBOL",
+                              "name": "block"
+                            }
+                          ]
+                        },
+                        {
+                          "type": "CHOICE",
+                          "members": [
+                            {
+                              "type": "STRING",
+                              "value": ";"
+                            },
+                            {
+                              "type": "BLANK"
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "type": "SYMBOL",
+                      "name": "sqlcmd_setvar"
+                    },
+                    {
+                      "type": "SYMBOL",
+                      "name": "sqlcmd_include"
+                    }
+                  ]
+                }
               },
               {
                 "type": "CHOICE",
                 "members": [
                   {
-                    "type": "CHOICE",
-                    "members": [
-                      {
-                        "type": "STRING",
-                        "value": ";"
-                      },
-                      {
-                        "type": "SYMBOL",
-                        "name": "go_statement"
-                      }
-                    ]
+                    "type": "SYMBOL",
+                    "name": "go_statement"
                   },
                   {
                     "type": "BLANK"
@@ -46,21 +78,13 @@
                 ]
               }
             ]
-          },
-          {
-            "type": "SYMBOL",
-            "name": "go_statement"
-          },
-          {
-            "type": "SYMBOL",
-            "name": "sqlcmd_setvar"
-          },
-          {
-            "type": "SYMBOL",
-            "name": "sqlcmd_include"
           }
-        ]
-      }
+        },
+        {
+          "type": "SYMBOL",
+          "name": "go_statement"
+        }
+      ]
     },
     "go_statement": {
       "type": "SEQ",

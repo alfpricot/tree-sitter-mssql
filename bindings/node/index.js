@@ -15,6 +15,7 @@ try {
 
 const queries = [
   ["HIGHLIGHTS_QUERY", `${root}/queries/highlights.scm`],
+  ["INDENTS_QUERY", `${root}/queries/indents.scm`],
   ["INJECTIONS_QUERY", `${root}/queries/injections.scm`],
   ["LOCALS_QUERY", `${root}/queries/locals.scm`],
   ["TAGS_QUERY", `${root}/queries/tags.scm`],
