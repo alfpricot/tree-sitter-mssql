@@ -11,9 +11,8 @@ SET col = foo + 1, col2 = col1, ts = GETDATE();
   (statement
     (update
       (keyword_update)
-      (relation
-        (object_reference
-          (identifier)))
+      (object_reference
+        (identifier))
       (keyword_set)
       (assignment
         (field
@@ -51,9 +50,8 @@ WHERE b = a.uid;
   (statement
     (update
       (keyword_update)
-      (relation
-        (object_reference
-          (identifier)))
+      (object_reference
+        (identifier))
       (keyword_set)
       (assignment
         (field
@@ -86,9 +84,8 @@ WHERE b.a = table_a.uid;
   (statement
     (update
       (keyword_update)
-      (relation
-        (object_reference
-          (identifier)))
+      (object_reference
+        (identifier))
       (keyword_set)
       (assignment
         (field
@@ -142,10 +139,9 @@ UPDATE dbo.t WITH (ROWLOCK) SET a = 1, b = b + 1 WHERE id = @id
   (statement
     (update
       (keyword_update)
-      (relation
-        (object_reference
-          (identifier)
-          (identifier)))
+      (object_reference
+        (identifier)
+        (identifier))
       (table_hint
         (keyword_with)
         (table_hint_item
@@ -187,9 +183,8 @@ WHERE s.site = 'MAIN'
   (statement
     (update
       (keyword_update)
-      (relation
-        (object_reference
-          (identifier)))
+      (object_reference
+        (identifier))
       (keyword_set)
       (assignment
         (field
@@ -253,9 +248,8 @@ INNER JOIN #prod_info ON #prod_info.product_cat = a.product_cat;
   (statement
     (update
       (keyword_update)
-      (relation
-        (object_reference
-          (identifier)))
+      (object_reference
+        (identifier))
       (keyword_set)
       (assignment
         (field
@@ -352,9 +346,8 @@ WHERE id = @id;
       (top_clause
         (keyword_top)
         (literal))
-      (relation
-        (object_reference
-          (identifier)))
+      (object_reference
+        (identifier))
       (keyword_set)
       (assignment
         (field
@@ -415,9 +408,8 @@ UPDATE JsonTable SET d.modify('$.a', 14859), name = 'x' WHERE id = 1;
   (statement
     (update
       (keyword_update)
-      (relation
-        (object_reference
-          (identifier)))
+      (object_reference
+        (identifier))
       (keyword_set)
       (invocation
         (object_reference
@@ -428,9 +420,8 @@ UPDATE JsonTable SET d.modify('$.a', 14859), name = 'x' WHERE id = 1;
   (statement
     (update
       (keyword_update)
-      (relation
-        (object_reference
-          (identifier)))
+      (object_reference
+        (identifier))
       (keyword_set)
       (invocation
         (object_reference
@@ -464,10 +455,9 @@ UPDATE dbo.t SET a = 1 FROM dbo.b WHERE b.id = 1 OPTION (RECOMPILE);
   (statement
     (update
       (keyword_update)
-      (relation
-        (object_reference
-          (identifier)
-          (identifier)))
+      (object_reference
+        (identifier)
+        (identifier))
       (keyword_set)
       (assignment
         (field
@@ -492,3 +482,30 @@ UPDATE dbo.t SET a = 1 FROM dbo.b WHERE b.id = 1 OPTION (RECOMPILE);
         (keyword_option)
         (query_hint
           (keyword_recompile))))))
+
+================================================================================
+Update through a linked-server rowset function target (ARCH-6)
+================================================================================
+
+UPDATE OPENQUERY(lnk, 'SELECT a FROM t') SET a = 1;
+
+--------------------------------------------------------------------------------
+
+(program
+  (statement
+    (update
+      (keyword_update)
+      (invocation
+        (object_reference
+          (identifier))
+        (term
+          (field
+            (identifier)))
+        (term
+          (literal)))
+      (keyword_set)
+      (assignment
+        (field
+          (identifier))
+        (assignment_operator)
+        (literal)))))

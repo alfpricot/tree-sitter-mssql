@@ -353,3 +353,28 @@ INSERT INTO log_table DEFAULT VALUES;
         (identifier))
       (keyword_default)
       (keyword_values))))
+
+================================================================================
+Insert with a column named after a deprecated table hint (ARCH-6)
+================================================================================
+
+INSERT INTO t (nolock, id) VALUES (1, 2);
+
+--------------------------------------------------------------------------------
+
+(program
+  (statement
+    (insert
+      (keyword_insert)
+      (keyword_into)
+      (object_reference
+        (identifier))
+      (list
+        (column
+          (identifier))
+        (column
+          (identifier)))
+      (keyword_values)
+      (list
+        (literal)
+        (literal)))))

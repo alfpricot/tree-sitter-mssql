@@ -151,6 +151,7 @@ ALTER DATABASE sales SET QUERY_STORE = ON (OPERATION_MODE = READ_WRITE);
 ALTER DATABASE sales MODIFY NAME = sales_archive;
 ALTER DATABASE sales COLLATE Latin1_General_BIN;
 ALTER DATABASE SCOPED CONFIGURATION SET MAXDOP = 4;
+ALTER DATABASE SCOPED CONFIGURATION FOR SECONDARY SET MAXDOP = 4;
 DROP DATABASE IF EXISTS hollywood;
 
 --------------------------------------------------------------------------------
@@ -242,8 +243,20 @@ DROP DATABASE IF EXISTS hollywood;
     (alter_database
       (keyword_alter)
       (keyword_database)
-      (identifier)
-      (identifier)
+      (keyword_scoped)
+      (keyword_configuration)
+      (keyword_set)
+      (option
+        (identifier)
+        (literal))))
+  (statement
+    (alter_database
+      (keyword_alter)
+      (keyword_database)
+      (keyword_scoped)
+      (keyword_configuration)
+      (keyword_for)
+      (keyword_secondary)
       (keyword_set)
       (option
         (identifier)

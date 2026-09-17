@@ -1,4 +1,4 @@
-import { optional_parenthesis, paren_list, comma_list } from "../helpers.js";
+import { optional_parenthesis, paren_list, comma_list, write_target } from "../helpers.js";
 
 // T-SQL MERGE:
 //
@@ -15,8 +15,7 @@ export default {
     $.keyword_merge,
     optional($.top_clause),
     optional($.keyword_into),
-    $.object_reference,
-    optional($.table_hint),
+    write_target($),
     optional($._alias),
     $.keyword_using,
     choice(

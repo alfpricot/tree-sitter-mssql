@@ -353,8 +353,44 @@ CREATE TABLE [dbo].[my_table](
       (on_filegroup
         (keyword_on)
         (identifier))
-      (identifier)
-      (identifier))))
+      (table_data_placement
+        (identifier)
+        (identifier)))))
+
+================================================================================
+Create table with TEXTIMAGE_ON and FILESTREAM_ON together (ARCH-7)
+================================================================================
+
+CREATE TABLE dbo.t (a int, b varbinary(max)) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY] FILESTREAM_ON fsgroup;
+
+--------------------------------------------------------------------------------
+
+(program
+  (statement
+    (create_table
+      (keyword_create)
+      (keyword_table)
+      (object_reference
+        (identifier)
+        (identifier))
+      (column_definitions
+        (column_definition
+          (identifier)
+          (keyword_int))
+        (column_definition
+          (identifier)
+          (varbinary
+            (keyword_varbinary)
+            (keyword_max))))
+      (on_filegroup
+        (keyword_on)
+        (identifier))
+      (table_data_placement
+        (identifier)
+        (identifier))
+      (table_data_placement
+        (identifier)
+        (identifier)))))
 
 ================================================================================
 Create table with IDENTITY, COLLATE, DEFAULT and computed columns

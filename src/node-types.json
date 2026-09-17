@@ -455,7 +455,18 @@
   {
     "type": "alter_database",
     "named": true,
-    "fields": {},
+    "fields": {
+      "name": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "identifier",
+            "named": true
+          }
+        ]
+      }
+    },
     "children": {
       "multiple": true,
       "required": true,
@@ -473,7 +484,15 @@
           "named": true
         },
         {
+          "type": "keyword_configuration",
+          "named": true
+        },
+        {
           "type": "keyword_database",
+          "named": true
+        },
+        {
+          "type": "keyword_for",
           "named": true
         },
         {
@@ -482,6 +501,14 @@
         },
         {
           "type": "keyword_rollback",
+          "named": true
+        },
+        {
+          "type": "keyword_scoped",
+          "named": true
+        },
+        {
+          "type": "keyword_secondary",
           "named": true
         },
         {
@@ -6569,10 +6596,6 @@
           "named": true
         },
         {
-          "type": "identifier",
-          "named": true
-        },
-        {
           "type": "keyword_create",
           "named": true
         },
@@ -6590,6 +6613,10 @@
         },
         {
           "type": "on_filegroup",
+          "named": true
+        },
+        {
+          "type": "table_data_placement",
           "named": true
         },
         {
@@ -7682,6 +7709,10 @@
           "named": true
         },
         {
+          "type": "invocation",
+          "named": true
+        },
+        {
           "type": "keyword_delete",
           "named": true
         },
@@ -7691,6 +7722,10 @@
         },
         {
           "type": "object_reference",
+          "named": true
+        },
+        {
+          "type": "opendatasource_reference",
           "named": true
         },
         {
@@ -16612,6 +16647,32 @@
     }
   },
   {
+    "type": "table_data_placement",
+    "named": true,
+    "fields": {
+      "filegroup": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "identifier",
+            "named": true
+          }
+        ]
+      },
+      "option": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "identifier",
+            "named": true
+          }
+        ]
+      }
+    }
+  },
+  {
     "type": "table_hint",
     "named": true,
     "fields": {},
@@ -17676,18 +17737,7 @@
   {
     "type": "update",
     "named": true,
-    "fields": {
-      "alias": {
-        "multiple": false,
-        "required": false,
-        "types": [
-          {
-            "type": "identifier",
-            "named": true
-          }
-        ]
-      }
-    },
+    "fields": {},
     "children": {
       "multiple": true,
       "required": true,
@@ -17705,10 +17755,6 @@
           "named": true
         },
         {
-          "type": "keyword_as",
-          "named": true
-        },
-        {
           "type": "keyword_set",
           "named": true
         },
@@ -17717,11 +17763,11 @@
           "named": true
         },
         {
-          "type": "list",
+          "type": "object_reference",
           "named": true
         },
         {
-          "type": "openjson_schema",
+          "type": "opendatasource_reference",
           "named": true
         },
         {
@@ -17733,15 +17779,7 @@
           "named": true
         },
         {
-          "type": "relation",
-          "named": true
-        },
-        {
           "type": "table_hint",
-          "named": true
-        },
-        {
-          "type": "tablesample_clause",
           "named": true
         },
         {
@@ -19365,6 +19403,10 @@
     "named": true
   },
   {
+    "type": "keyword_configuration",
+    "named": true
+  },
+  {
     "type": "keyword_constraint",
     "named": true
   },
@@ -20158,6 +20200,14 @@
   },
   {
     "type": "keyword_scheme",
+    "named": true
+  },
+  {
+    "type": "keyword_scoped",
+    "named": true
+  },
+  {
+    "type": "keyword_secondary",
     "named": true
   },
   {

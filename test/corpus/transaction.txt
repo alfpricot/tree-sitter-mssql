@@ -58,9 +58,8 @@ COMMIT TRAN outer_tx;
   (statement
     (update
       (keyword_update)
-      (relation
-        (object_reference
-          (identifier)))
+      (object_reference
+        (identifier))
       (keyword_set)
       (assignment
         (field
@@ -107,9 +106,8 @@ END CATCH
         (statement
           (update
             (keyword_update)
-            (relation
-              (object_reference
-                (identifier)))
+            (object_reference
+              (identifier))
             (keyword_set)
             (assignment
               (field

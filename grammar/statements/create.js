@@ -79,22 +79,31 @@ export default {
     $._expression,
   ),
 
-  // CREATE [EXTERNAL] TABLE name ( column | constraint [, ...] ) [ON filegroup] [TEXTIMAGE_ON filegroup] [WITH (options)]
+  // CREATE [EXTERNAL] TABLE name ( column | constraint [, ...] )
+  //   [ON filegroup] [TEXTIMAGE_ON filegroup] [FILESTREAM_ON filegroup] [WITH (options)]
   // An external table's required WITH (DATA_SOURCE = ..., ...) is the same
-  // option list.
+  // option list. The four trailing clauses are each optional and appear at
+  // most once, in this fixed order, per SQL Server's own syntax reference —
+  // not an unbounded repeat of arbitrary clause kinds. TEXTIMAGE_ON and
+  // FILESTREAM_ON are independent (a table with both a large-value column
+  // and a FILESTREAM column needs both), so each gets its own slot rather
+  // than sharing one `table_data_placement` between them.
   create_table: $ => prec.right(seq(
     $.keyword_create,
     optional($.keyword_external),
     $.keyword_table,
     $.object_reference,
     $.column_definitions,
-    repeat(choice(
-      $.on_filegroup,
-      $.with_options,
-      // TEXTIMAGE_ON [PRIMARY], FILESTREAM_ON fg
-      seq($.identifier, $.identifier),
-    )),
+    optional($.on_filegroup),
+    optional($.table_data_placement),
+    optional($.table_data_placement),
+    optional($.with_options),
   )),
+
+  // TEXTIMAGE_ON filegroup | FILESTREAM_ON filegroup — where the filegroup
+  // name can also be the literal keyword DEFAULT, hence a bare identifier
+  // rather than an enumerated set.
+  table_data_placement: $ => seq(field('option', $.identifier), field('filegroup', $.identifier)),
 
   // CREATE [OR ALTER] VIEW name [(columns)] [WITH option [, ...]] AS select [WITH CHECK OPTION]
   create_view: $ => seq(

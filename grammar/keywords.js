@@ -142,6 +142,10 @@ export default {
   keyword_catch: _ => make_keyword("catch"),
   keyword_break: _ => make_keyword("break"),
   keyword_continue: _ => make_keyword("continue"),
+  // ALTER DATABASE SCOPED CONFIGURATION [FOR SECONDARY] SET option.
+  keyword_scoped: _ => make_keyword("scoped"),
+  keyword_configuration: _ => make_keyword("configuration"),
+  keyword_secondary: _ => make_keyword("secondary"),
   keyword_goto: _ => make_keyword("goto"),
   keyword_return: _ => make_keyword("return"),
   keyword_throw: _ => make_keyword("throw"),

@@ -311,10 +311,9 @@ DEALLOCATE cur;
   (statement
     (update
       (keyword_update)
-      (relation
-        (object_reference
-          (identifier)
-          (identifier)))
+      (object_reference
+        (identifier)
+        (identifier))
       (keyword_set)
       (assignment
         (field

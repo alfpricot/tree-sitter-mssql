@@ -20,7 +20,8 @@ selections for your perusal
 
 (program
   (ERROR
-    (identifier)))
+    (identifier)
+    (keyword_for)))
 
 ==================
 ^inserted_at
@@ -171,8 +172,8 @@ CREATE SECURITY POLICY p DROP FILTER PREDICATE ON t;
     (keyword_create)
     (keyword_security)
     (keyword_policy)
-    (identifier)
-    (keyword_drop)
+    (object_reference
+      name: (identifier))
     (keyword_filter)
     (keyword_predicate)
     (keyword_on)))
@@ -339,5 +340,60 @@ CREATE SYMMETRIC KEY k WITH ALGORITHM = AES_256 PASSWORD = 'p';
         (option
           name: (identifier)
           value: (identifier)))))
+  (ERROR
+    (identifier)))
+
+==================
+TABLESAMPLE is not a valid UPDATE target modifier (ARCH-6)
+==================
+
+UPDATE t TABLESAMPLE (10 PERCENT) SET a = 1;
+
+---
+
+(program
+  (statement
+    (update
+      (keyword_update)
+      (invocation
+        (object_reference
+          name: (identifier))
+        (ERROR)
+        parameter: (term
+          value: (literal)
+          alias: (identifier)))
+      (keyword_set)
+      (assignment
+        left: (field
+          name: (identifier))
+        (assignment_operator)
+        right: (literal)))))
+
+==================
+CREATE TABLE's trailing clauses stop after two TEXTIMAGE_ON/FILESTREAM_ON pairs (ARCH-7)
+==================
+
+CREATE TABLE dbo.t (a int) foo bar baz qux quux corge
+
+---
+
+(program
+  (statement
+    (create_table
+      (keyword_create)
+      (keyword_table)
+      (object_reference
+        schema: (identifier)
+        name: (identifier))
+      (column_definitions
+        (column_definition
+          name: (identifier)
+          type: (keyword_int)))
+      (table_data_placement
+        option: (identifier)
+        filegroup: (identifier))
+      (table_data_placement
+        option: (identifier)
+        filegroup: (identifier))))
   (ERROR
     (identifier)))

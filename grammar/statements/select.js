@@ -336,17 +336,18 @@ export default {
     ),
   ),
 
-  // `relation`/`_relation_with_hint` are also reused for an UPDATE/DELETE
-  // target (see update.js/delete.js), so every alternative added here —
-  // `opendatasource_reference`, `changetable`, `for_system_time_clause`,
-  // `tablesample_clause` — is also syntactically reachable there even
-  // though SQL Server only accepts them as a read-side row source, never
-  // as a write target. Deliberate: this grammar already accepts a wider
-  // surface than SQL Server itself in several places (`option`,
-  // `query_hint`, the bare-identifier tail of `_column_constraint`) on the
-  // reasoning that a linter consuming this tree can reject what SQL Server
-  // would, and a narrower grammar can only ever reject a valid query, never
-  // accept an invalid one silently in the other direction.
+  // `relation`/`_relation_with_hint` are reused across every read-side row
+  // source (`from`, `join`, `cross_join`) — INSERT/UPDATE/DELETE/MERGE's
+  // write target is a narrower `write_target()` (helpers.js) that
+  // deliberately does not reach `relation`, since SQL Server only accepts
+  // `changetable`, `for_system_time_clause` and `tablesample_clause` as a
+  // read-side row source, never as a write target. This grammar does still
+  // accept a wider surface than SQL Server itself in several other places
+  // (`option`, `query_hint`, the bare-identifier tail of
+  // `_column_constraint`) on the reasoning that a linter consuming this
+  // tree can reject what SQL Server would, and a narrower grammar can only
+  // ever reject a valid query, never accept an invalid one silently in the
+  // other direction — but the write target is not one of those places.
   relation: $ => prec.right(
     seq(
       choice(

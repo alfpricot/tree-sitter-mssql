@@ -131,25 +131,45 @@ export default {
   )),
 
   // ALTER DATABASE name { SET option [, ...] [WITH termination] | MODIFY NAME = name | COLLATE name }
-  // ALTER DATABASE SCOPED CONFIGURATION SET option = value
   // Options are identifiers with an optional value: RECOVERY SIMPLE,
   // READ_ONLY, AUTO_UPDATE_STATISTICS ON, COMPATIBILITY_LEVEL = 150.
-  alter_database: $ => prec.right(seq(
-    $.keyword_alter,
-    $.keyword_database,
-    $.identifier,
-    optional($.identifier),
-    choice(
-      seq(
-        $.keyword_set,
-        comma_list($.option, true),
-        optional(seq($.keyword_with, choice(
-          seq($.keyword_rollback, $.identifier),
-          $.identifier,
-        ))),
+  // ALTER DATABASE SCOPED CONFIGURATION [FOR SECONDARY] SET option is its
+  // own top-level alternative, distinct from `ALTER DATABASE <name>` —
+  // there is no database name in this form, so folding it into the same
+  // shape previously mis-captured SCOPED as the name and CONFIGURATION as
+  // an unexplained second identifier.
+  //
+  // `keyword_scoped` is valid right in the database-name slot, so a
+  // database literally named `scoped` collides the same way `bulk`/
+  // `tablesample`/`window` do elsewhere in this grammar: `ALTER DATABASE
+  // scoped SET ...` commits to this branch and errors; `ALTER DATABASE
+  // [scoped] SET ...` is the workaround.
+  alter_database: $ => prec.right(choice(
+    seq(
+      $.keyword_alter,
+      $.keyword_database,
+      field('name', $.identifier),
+      choice(
+        seq(
+          $.keyword_set,
+          comma_list($.option, true),
+          optional(seq($.keyword_with, choice(
+            seq($.keyword_rollback, $.identifier),
+            $.identifier,
+          ))),
+        ),
+        seq($.keyword_modify, $.option),
+        seq($.keyword_collate, $.identifier),
       ),
-      seq($.keyword_modify, $.option),
-      seq($.keyword_collate, $.identifier),
+    ),
+    seq(
+      $.keyword_alter,
+      $.keyword_database,
+      $.keyword_scoped,
+      $.keyword_configuration,
+      optional(seq($.keyword_for, $.keyword_secondary)),
+      $.keyword_set,
+      $.option,
     ),
   )),
 

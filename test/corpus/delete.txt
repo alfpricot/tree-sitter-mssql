@@ -233,6 +233,25 @@ WHERE logged < @cutoff;
             (identifier)))))))
 
 ================================================================================
+Delete with the deprecated bare table hint (ARCH-6)
+================================================================================
+
+DELETE FROM t (NOLOCK);
+
+--------------------------------------------------------------------------------
+
+(program
+  (statement
+    (delete
+      (keyword_delete)
+      (keyword_from)
+      (object_reference
+        (identifier))
+      (table_hint
+        (table_hint_item
+          (identifier))))))
+
+================================================================================
 Delete with OPTION
 ================================================================================
 
@@ -258,6 +277,28 @@ DELETE FROM dbo.t WHERE id = 1 OPTION (RECOMPILE);
         (keyword_option)
         (query_hint
           (keyword_recompile))))))
+
+================================================================================
+Delete through a linked-server rowset function target (ARCH-6)
+================================================================================
+
+DELETE FROM OPENQUERY(lnk, 'SELECT a FROM t');
+
+--------------------------------------------------------------------------------
+
+(program
+  (statement
+    (delete
+      (keyword_delete)
+      (keyword_from)
+      (invocation
+        (object_reference
+          (identifier))
+        (term
+          (field
+            (identifier)))
+        (term
+          (literal))))))
 
 ================================================================================
 Truncate table

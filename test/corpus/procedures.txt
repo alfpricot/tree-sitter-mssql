@@ -236,9 +236,8 @@ RETURN;
         (statement
           (update
             (keyword_update)
-            (relation
-              (object_reference
-                (identifier)))
+            (object_reference
+              (identifier))
             (keyword_set)
             (assignment
               (field

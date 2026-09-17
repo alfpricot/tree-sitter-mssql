@@ -1,4 +1,4 @@
-import { comma_list, paren_list } from "../helpers.js";
+import { comma_list, paren_list, write_target } from "../helpers.js";
 
 // T-SQL INSERT:
 //
@@ -12,8 +12,7 @@ export default {
     $.keyword_insert,
     optional($.top_clause),
     optional($.keyword_into),
-    $.object_reference,
-    optional($.table_hint),
+    write_target($, { allowBareHint: false }),
     optional(alias($._column_list, $.list)),
     optional($.output_clause),
     $._insert_source,

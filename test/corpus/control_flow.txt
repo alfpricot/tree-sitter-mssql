@@ -419,10 +419,9 @@ END
         (statement
           (update
             (keyword_update)
-            (relation
-              (object_reference
-                (identifier)
-                (identifier)))
+            (object_reference
+              (identifier)
+              (identifier))
             (keyword_set)
             (assignment
               (field
@@ -474,9 +473,8 @@ END CATCH
         (statement
           (update
             (keyword_update)
-            (relation
-              (object_reference
-                (identifier)))
+            (object_reference
+              (identifier))
             (keyword_set)
             (assignment
               (field

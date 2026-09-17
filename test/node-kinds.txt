@@ -234,6 +234,7 @@ keyword_column
 keyword_columnstore
 keyword_commit
 keyword_committed
+keyword_configuration
 keyword_constraint
 keyword_contained
 keyword_continue
@@ -435,6 +436,8 @@ keyword_save
 keyword_schema
 keyword_schemabinding
 keyword_scheme
+keyword_scoped
+keyword_secondary
 keyword_security
 keyword_select
 keyword_self
@@ -590,6 +593,7 @@ sqlcmd_setvar
 statement
 subquery
 system_time_qualifier
+table_data_placement
 table_hint
 table_hint_item
 table_var_declaration

@@ -456,9 +456,8 @@ WHEN NOT MATCHED THEN INSERT (id) VALUES (src.id);
               (identifier))))))
     (update
       (keyword_update)
-      (relation
-        (object_reference
-          (identifier)))
+      (object_reference
+        (identifier))
       (keyword_set)
       (assignment
         (field
