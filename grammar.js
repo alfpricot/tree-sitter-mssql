@@ -31,14 +31,22 @@ export default grammar({
     // `x BETWEEN a AND b` vs. `x BETWEEN (a AND b)`.
     [$.between_expression, $.binary_expression],
     // A `(` after a DBCC command may open its argument list or start the
-    // next statement; a `WITH` after RECONFIGURE, RAISERROR or an
-    // unterminated CREATE MESSAGE TYPE's VALIDATION clause may be its
-    // option list (or WITH SCHEMA COLLECTION suffix) or the next
-    // statement's CTE.
+    // next statement; a `WITH` after RECONFIGURE, RAISERROR, an
+    // unterminated CREATE MESSAGE TYPE's VALIDATION clause, TRUNCATE
+    // TABLE, ALTER QUEUE's REBUILD/REORGANIZE, ALTER ASSEMBLY, ALTER
+    // FULLTEXT CATALOG's REBUILD, ALTER FULLTEXT INDEX's SET/ADD/DROP, or
+    // ALTER ROUTE may be its own option list (or WITH SCHEMA COLLECTION
+    // suffix) or the next statement's CTE.
     [$.dbcc_statement],
     [$.reconfigure_statement],
     [$.raiserror_statement],
     [$.create_message_type],
+    [$.truncate_statement],
+    [$.alter_queue],
+    [$.alter_assembly],
+    [$.alter_fulltext_catalog],
+    [$.alter_fulltext_index],
+    [$.alter_route],
     // `OUTPUT a, b INTO t` — where the term list ends.
     [$.output_clause],
     // `FROM t WITH` — a table hint or the next statement's CTE.

@@ -172,6 +172,7 @@ export default {
     $.keyword_drop,
     $.keyword_event,
     $.keyword_session,
+    optional($._if_exists),
     field('name', $.identifier),
     $.keyword_on,
     $.keyword_server,

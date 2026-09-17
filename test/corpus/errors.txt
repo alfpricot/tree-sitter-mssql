@@ -544,3 +544,133 @@ MERGE INTO t USING s ON t.id = s.id WHEN NOT MATCHED BY TARGET THEN DELETE;
     (keyword_by)
     (keyword_target)
     (keyword_then)))
+
+==================
+CLOSE master is a cursor-name/keyword collision (TEST-3)
+==================
+
+CLOSE master;
+
+---
+
+(program
+  (statement
+    (close_key_statement
+      (keyword_close)
+      (keyword_master)
+      (MISSING keyword_key))))
+
+==================
+FROM t bulk is a documented alias/keyword collision (TEST-3)
+==================
+
+SELECT * FROM t bulk;
+
+---
+
+(program
+  (statement
+    (select
+      (keyword_select)
+      (select_expression
+        (term
+          (all_fields))))
+    (from
+      (keyword_from)
+      (relation
+        (object_reference
+          (identifier)))))
+  (ERROR
+    (keyword_bulk)))
+
+==================
+FROM t tablesample is a documented alias/keyword collision (TEST-3)
+==================
+
+SELECT * FROM t tablesample;
+
+---
+
+(program
+  (statement
+    (select
+      (keyword_select)
+      (select_expression
+        (term
+          (all_fields))))
+    (from
+      (keyword_from)
+      (relation
+        (object_reference
+          (identifier)))))
+  (ERROR
+    (keyword_tablesample)))
+
+==================
+FROM t window is a documented alias/keyword collision (TEST-3)
+==================
+
+SELECT * FROM t window;
+
+---
+
+(program
+  (statement
+    (select
+      (keyword_select)
+      (select_expression
+        (term
+          (all_fields))))
+    (from
+      (keyword_from)
+      (relation
+        (object_reference
+          (identifier)))))
+  (ERROR
+    (keyword_window)))
+
+==================
+SELECT match FROM t is a documented column/keyword collision (TEST-3)
+==================
+
+SELECT match FROM t;
+
+---
+
+(program
+  (statement
+    (select
+      (keyword_select)
+      (ERROR
+        (keyword_match))
+      (select_expression
+        (term
+          value: (field
+            name: (identifier))
+          alias: (identifier))))))
+
+==================
+ALTER PARTITION SCHEME's optional trailing filegroup swallows a following label
+==================
+
+ALTER PARTITION SCHEME ps NEXT USED mylabel: SELECT 1;
+
+---
+
+(program
+  (statement
+    (alter_partition_scheme
+      (keyword_alter)
+      (keyword_partition)
+      (keyword_scheme)
+      (identifier)
+      (keyword_next)
+      (keyword_used)
+      (identifier)))
+  (ERROR)
+  (statement
+    (select
+      (keyword_select)
+      (select_expression
+        (term
+          value: (literal))))))

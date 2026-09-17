@@ -514,6 +514,244 @@ ALTER TABLE t SWITCH TO u;
         (identifier)))))
 
 ================================================================================
+TRUNCATE TABLE with a partition list
+================================================================================
+
+TRUNCATE TABLE dbo.t WITH (PARTITIONS (1, 3 TO 5));
+
+--------------------------------------------------------------------------------
+
+(program
+  (statement
+    (truncate_statement
+      (keyword_truncate)
+      (keyword_table)
+      (object_reference
+        schema: (identifier)
+        name: (identifier))
+      (keyword_with)
+      (keyword_partitions)
+      (truncate_partition_range
+        low: (literal))
+      (truncate_partition_range
+        low: (literal)
+        (keyword_to)
+        high: (literal)))))
+
+================================================================================
+ALTER QUEUE
+================================================================================
+
+ALTER QUEUE dbo.OrderQueue WITH STATUS = OFF;
+ALTER QUEUE dbo.OrderQueue REBUILD;
+ALTER QUEUE dbo.OrderQueue REORGANIZE WITH LOB_COMPACTION = ON;
+
+--------------------------------------------------------------------------------
+
+(program
+  (statement
+    (alter_queue
+      (keyword_alter)
+      (keyword_queue)
+      (object_reference
+        schema: (identifier)
+        name: (identifier))
+      (with_clause
+        (keyword_with)
+        (option
+          name: (identifier)
+          value: (keyword_off)))))
+  (statement
+    (alter_queue
+      (keyword_alter)
+      (keyword_queue)
+      (object_reference
+        schema: (identifier)
+        name: (identifier))
+      (keyword_rebuild)))
+  (statement
+    (alter_queue
+      (keyword_alter)
+      (keyword_queue)
+      (object_reference
+        schema: (identifier)
+        name: (identifier))
+      (keyword_reorganize)
+      (with_clause
+        (keyword_with)
+        (option
+          name: (identifier)
+          value: (keyword_on))))))
+
+================================================================================
+ALTER ASSEMBLY
+================================================================================
+
+ALTER ASSEMBLY MyAssembly FROM 'C:\new.dll' WITH PERMISSION_SET = SAFE;
+ALTER ASSEMBLY MyAssembly DROP FILE ALL ADD FILE FROM 'C:\src.cs' AS src;
+
+--------------------------------------------------------------------------------
+
+(program
+  (statement
+    (alter_assembly
+      (keyword_alter)
+      (keyword_assembly)
+      (identifier)
+      (keyword_from)
+      (literal)
+      (with_clause
+        (keyword_with)
+        (option
+          name: (identifier)
+          value: (identifier)))))
+  (statement
+    (alter_assembly
+      (keyword_alter)
+      (keyword_assembly)
+      (identifier)
+      (keyword_drop)
+      (keyword_file)
+      (keyword_all)
+      (keyword_add)
+      (keyword_file)
+      (keyword_from)
+      (literal)
+      (keyword_as)
+      (identifier))))
+
+================================================================================
+ALTER FULLTEXT CATALOG
+================================================================================
+
+ALTER FULLTEXT CATALOG cat REBUILD WITH ACCENT_SENSITIVITY = OFF;
+ALTER FULLTEXT CATALOG cat AS DEFAULT;
+
+--------------------------------------------------------------------------------
+
+(program
+  (statement
+    (alter_fulltext_catalog
+      (keyword_alter)
+      (keyword_fulltext)
+      (keyword_catalog)
+      (identifier)
+      (keyword_rebuild)
+      (with_clause
+        (keyword_with)
+        (option
+          name: (identifier)
+          value: (keyword_off)))))
+  (statement
+    (alter_fulltext_catalog
+      (keyword_alter)
+      (keyword_fulltext)
+      (keyword_catalog)
+      (identifier)
+      (keyword_as)
+      (keyword_default))))
+
+================================================================================
+ALTER FULLTEXT INDEX
+================================================================================
+
+ALTER FULLTEXT INDEX ON dbo.Documents ENABLE;
+ALTER FULLTEXT INDEX ON dbo.Documents SET STOPLIST SYSTEM;
+ALTER FULLTEXT INDEX ON dbo.Documents STOP POPULATION;
+
+--------------------------------------------------------------------------------
+
+(program
+  (statement
+    (alter_fulltext_index
+      (keyword_alter)
+      (keyword_fulltext)
+      (keyword_index)
+      (keyword_on)
+      (object_reference
+        schema: (identifier)
+        name: (identifier))
+      (keyword_enable)))
+  (statement
+    (alter_fulltext_index
+      (keyword_alter)
+      (keyword_fulltext)
+      (keyword_index)
+      (keyword_on)
+      (object_reference
+        schema: (identifier)
+        name: (identifier))
+      (keyword_set)
+      (identifier)
+      (identifier)))
+  (statement
+    (alter_fulltext_index
+      (keyword_alter)
+      (keyword_fulltext)
+      (keyword_index)
+      (keyword_on)
+      (object_reference
+        schema: (identifier)
+        name: (identifier))
+      (keyword_stop)
+      (identifier))))
+
+================================================================================
+ALTER PARTITION FUNCTION and ALTER PARTITION SCHEME
+================================================================================
+
+ALTER PARTITION FUNCTION pf() SPLIT RANGE (100);
+ALTER PARTITION SCHEME ps NEXT USED fg;
+
+--------------------------------------------------------------------------------
+
+(program
+  (statement
+    (alter_partition_function
+      (keyword_alter)
+      (keyword_partition)
+      (keyword_function)
+      (identifier)
+      (keyword_split)
+      (keyword_range)
+      (literal)))
+  (statement
+    (alter_partition_scheme
+      (keyword_alter)
+      (keyword_partition)
+      (keyword_scheme)
+      (identifier)
+      (keyword_next)
+      (keyword_used)
+      (identifier))))
+
+================================================================================
+ALTER ROUTE
+================================================================================
+
+ALTER ROUTE r WITH ADDRESS = N'TCP://host:1234';
+ALTER ROUTE r;
+
+--------------------------------------------------------------------------------
+
+(program
+  (statement
+    (alter_route
+      (keyword_alter)
+      (keyword_route)
+      (identifier)
+      (with_clause
+        (keyword_with)
+        (option
+          name: (identifier)
+          value: (literal)))))
+  (statement
+    (alter_route
+      (keyword_alter)
+      (keyword_route)
+      (identifier))))
+
+================================================================================
 $PARTITION function
 ================================================================================
 

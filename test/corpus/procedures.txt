@@ -894,3 +894,34 @@ GO
                   (identifier)))))))))
   (go_statement
     (keyword_go)))
+
+================================================================================
+CREATE PROCEDURE WITH EXECUTE AS SELF (TEST-2)
+================================================================================
+
+CREATE PROCEDURE p WITH EXECUTE AS SELF AS SELECT 1;
+
+--------------------------------------------------------------------------------
+
+(program
+  (statement
+    (create_procedure
+      (keyword_create)
+      (keyword_procedure)
+      (object_reference
+        (identifier))
+      (procedure_options
+        (keyword_with)
+        (procedure_option
+          (execute_as_clause
+            (keyword_execute)
+            (keyword_as)
+            (keyword_self))))
+      (procedure_body
+        (keyword_as)
+        (statement
+          (select
+            (keyword_select)
+            (select_expression
+              (term
+                (literal)))))))))

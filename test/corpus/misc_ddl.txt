@@ -145,6 +145,8 @@ CREATE DATABASE hollywood
 CREATE DATABASE sales COLLATE Latin1_General_CI_AS;
 ALTER DATABASE sales SET RECOVERY SIMPLE;
 ALTER DATABASE sales SET READ_ONLY WITH ROLLBACK IMMEDIATE;
+ALTER DATABASE sales SET SINGLE_USER WITH ROLLBACK AFTER 60 SECONDS;
+ALTER DATABASE sales SET SINGLE_USER WITH ROLLBACK AFTER 60;
 ALTER DATABASE sales SET SINGLE_USER WITH NO_WAIT;
 ALTER DATABASE sales SET COMPATIBILITY_LEVEL = 150, AUTO_UPDATE_STATISTICS ON;
 ALTER DATABASE sales SET QUERY_STORE = ON (OPERATION_MODE = READ_WRITE);
@@ -173,19 +175,19 @@ DROP DATABASE IF EXISTS hollywood;
     (alter_database
       (keyword_alter)
       (keyword_database)
-      (identifier)
+      name: (identifier)
       (keyword_set)
       (option
-        (identifier)
-        (identifier))))
+        name: (identifier)
+        value: (identifier))))
   (statement
     (alter_database
       (keyword_alter)
       (keyword_database)
-      (identifier)
+      name: (identifier)
       (keyword_set)
       (option
-        (identifier))
+        name: (identifier))
       (keyword_with)
       (keyword_rollback)
       (identifier)))
@@ -193,50 +195,75 @@ DROP DATABASE IF EXISTS hollywood;
     (alter_database
       (keyword_alter)
       (keyword_database)
-      (identifier)
+      name: (identifier)
       (keyword_set)
       (option
-        (identifier))
+        name: (identifier))
+      (keyword_with)
+      (keyword_rollback)
+      (keyword_after)
+      seconds: (literal)
+      (keyword_seconds)))
+  (statement
+    (alter_database
+      (keyword_alter)
+      (keyword_database)
+      name: (identifier)
+      (keyword_set)
+      (option
+        name: (identifier))
+      (keyword_with)
+      (keyword_rollback)
+      (keyword_after)
+      seconds: (literal)))
+  (statement
+    (alter_database
+      (keyword_alter)
+      (keyword_database)
+      name: (identifier)
+      (keyword_set)
+      (option
+        name: (identifier))
       (keyword_with)
       (identifier)))
   (statement
     (alter_database
       (keyword_alter)
       (keyword_database)
-      (identifier)
+      name: (identifier)
       (keyword_set)
       (option
-        (identifier)
-        (literal))
+        name: (identifier)
+        value: (literal))
       (option
-        (identifier)
-        (keyword_on))))
+        name: (identifier)
+        value: (keyword_on))))
   (statement
     (alter_database
       (keyword_alter)
       (keyword_database)
-      (identifier)
+      name: (identifier)
       (keyword_set)
       (option
-        (identifier)
-        (keyword_on)
-        (option
-          (identifier)
-          (identifier)))))
+        name: (identifier)
+        value: (keyword_on)
+        value: (option
+          name: (identifier)
+          value: (identifier)))))
   (statement
     (alter_database
       (keyword_alter)
       (keyword_database)
-      (identifier)
+      name: (identifier)
       (keyword_modify)
       (option
-        (identifier)
-        (identifier))))
+        name: (identifier)
+        value: (identifier))))
   (statement
     (alter_database
       (keyword_alter)
       (keyword_database)
-      (identifier)
+      name: (identifier)
       (keyword_collate)
       (identifier)))
   (statement
@@ -247,8 +274,8 @@ DROP DATABASE IF EXISTS hollywood;
       (keyword_configuration)
       (keyword_set)
       (option
-        (identifier)
-        (literal))))
+        name: (identifier)
+        value: (literal))))
   (statement
     (alter_database
       (keyword_alter)
@@ -259,8 +286,8 @@ DROP DATABASE IF EXISTS hollywood;
       (keyword_secondary)
       (keyword_set)
       (option
-        (identifier)
-        (literal))))
+        name: (identifier)
+        value: (literal))))
   (statement
     (drop_database
       (keyword_drop)

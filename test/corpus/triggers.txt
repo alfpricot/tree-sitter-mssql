@@ -653,3 +653,36 @@ DROP TRIGGER IF EXISTS trg_logon ON ALL SERVER;
       (keyword_on)
       (keyword_all)
       (keyword_server))))
+
+================================================================================
+CREATE TRIGGER WITH APPEND (TEST-2)
+================================================================================
+
+CREATE TRIGGER trg_append ON dbo.t FOR INSERT WITH APPEND AS SELECT 1;
+
+--------------------------------------------------------------------------------
+
+(program
+  (statement
+    (create_trigger
+      (keyword_create)
+      (keyword_trigger)
+      (object_reference
+        (identifier))
+      (keyword_on)
+      (object_reference
+        (identifier)
+        (identifier))
+      (keyword_for)
+      (trigger_event
+        (keyword_insert))
+      (keyword_with)
+      (keyword_append)
+      (procedure_body
+        (keyword_as)
+        (statement
+          (select
+            (keyword_select)
+            (select_expression
+              (term
+                (literal)))))))))

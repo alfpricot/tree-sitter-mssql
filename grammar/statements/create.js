@@ -448,6 +448,10 @@ export default {
   ),
 
   // CREATE MESSAGE TYPE name [AUTHORIZATION owner] [VALIDATION = value ...]   (Service Broker)
+  // No ALTER MESSAGE TYPE exists in real SQL Server — a message type is
+  // immutable once created, unlike QUEUE/ASSEMBLY/FULLTEXT CATALOG/
+  // FULLTEXT INDEX/PARTITION FUNCTION/PARTITION SCHEME/ROUTE, which all
+  // have a real ALTER form in alter.js.
   // VALIDATION's values (NONE, EMPTY, WELL_FORMED_XML, VALID_XML [WITH SCHEMA COLLECTION name])
   // are identifiers for the same reason DDL option values are throughout this grammar. VALID_XML
   // can itself be followed by WITH SCHEMA COLLECTION naming an XML schema collection, which needs

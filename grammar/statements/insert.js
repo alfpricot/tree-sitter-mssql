@@ -25,10 +25,15 @@ export default {
   // here would occupy the same position as `write_target`'s own table
   // hint above, giving the grammar two competing readings of a post-target
   // `WITH`.
+  // OPTION is only added here for the VALUES/DEFAULT VALUES forms — the
+  // SELECT/set-operation branch already carries its own trailing OPTION
+  // clause, and adding a second one after it would let a single statement
+  // carry two sibling OPTION clauses where SQL Server permits only one.
   _insert_source: $ => choice(
     seq(
       $.keyword_values,
       comma_list($.list, true),
+      optional($.option_clause),
     ),
     optional_parenthesis(
       choice(
@@ -37,7 +42,7 @@ export default {
       ),
     ),
     $.execute_statement,
-    seq($.keyword_default, $.keyword_values),
+    seq($.keyword_default, $.keyword_values, optional($.option_clause)),
   ),
 
   // OUTPUT term [, ...] [INTO table [(columns)]] — on INSERT, UPDATE, DELETE

@@ -543,6 +543,7 @@ Execute as and revert
 EXECUTE AS USER = 'app_user';
 EXECUTE AS LOGIN = @login WITH NO REVERT;
 EXEC AS CALLER;
+EXEC AS SELF;
 REVERT;
 REVERT WITH COOKIE = @cookie;
 
@@ -570,6 +571,11 @@ REVERT WITH COOKIE = @cookie;
       (keyword_exec)
       (keyword_as)
       (keyword_caller)))
+  (statement
+    (execute_as_statement
+      (keyword_exec)
+      (keyword_as)
+      (keyword_self)))
   (statement
     (revert_statement
       (keyword_revert)))

@@ -726,7 +726,8 @@ SET CONTEXT_INFO @L_Context
 SET STATISTICS IO ON
 SET TRANSACTION ISOLATION LEVEL READ UNCOMMITTED;
 SET TRANSACTION ISOLATION LEVEL SNAPSHOT;
-SET TRANSACTION ISOLATION LEVEL REPEATABLE READ
+SET TRANSACTION ISOLATION LEVEL REPEATABLE READ;
+SET TRANSACTION ISOLATION LEVEL SERIALIZABLE;
 
 --------------------------------------------------------------------------------
 
@@ -872,4 +873,11 @@ SET TRANSACTION ISOLATION LEVEL REPEATABLE READ
       (keyword_isolation)
       (keyword_level)
       (keyword_repeatable)
-      (keyword_read))))
+      (keyword_read)))
+  (statement
+    (set_statement
+      (keyword_set)
+      (keyword_transaction)
+      (keyword_isolation)
+      (keyword_level)
+      (keyword_serializable))))

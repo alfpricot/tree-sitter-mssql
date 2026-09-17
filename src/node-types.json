@@ -256,6 +256,61 @@
     }
   },
   {
+    "type": "alter_assembly",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": true,
+      "types": [
+        {
+          "type": "identifier",
+          "named": true
+        },
+        {
+          "type": "keyword_add",
+          "named": true
+        },
+        {
+          "type": "keyword_all",
+          "named": true
+        },
+        {
+          "type": "keyword_alter",
+          "named": true
+        },
+        {
+          "type": "keyword_as",
+          "named": true
+        },
+        {
+          "type": "keyword_assembly",
+          "named": true
+        },
+        {
+          "type": "keyword_drop",
+          "named": true
+        },
+        {
+          "type": "keyword_file",
+          "named": true
+        },
+        {
+          "type": "keyword_from",
+          "named": true
+        },
+        {
+          "type": "literal",
+          "named": true
+        },
+        {
+          "type": "with_clause",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
     "type": "alter_asymmetric_key",
     "named": true,
     "fields": {
@@ -465,6 +520,16 @@
             "named": true
           }
         ]
+      },
+      "seconds": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "literal",
+            "named": true
+          }
+        ]
       }
     },
     "children": {
@@ -473,6 +538,10 @@
       "types": [
         {
           "type": "identifier",
+          "named": true
+        },
+        {
+          "type": "keyword_after",
           "named": true
         },
         {
@@ -509,6 +578,10 @@
         },
         {
           "type": "keyword_secondary",
+          "named": true
+        },
+        {
+          "type": "keyword_seconds",
           "named": true
         },
         {
@@ -595,6 +668,124 @@
         },
         {
           "type": "with_options",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "alter_fulltext_catalog",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": true,
+      "types": [
+        {
+          "type": "identifier",
+          "named": true
+        },
+        {
+          "type": "keyword_alter",
+          "named": true
+        },
+        {
+          "type": "keyword_as",
+          "named": true
+        },
+        {
+          "type": "keyword_catalog",
+          "named": true
+        },
+        {
+          "type": "keyword_default",
+          "named": true
+        },
+        {
+          "type": "keyword_fulltext",
+          "named": true
+        },
+        {
+          "type": "keyword_rebuild",
+          "named": true
+        },
+        {
+          "type": "keyword_reorganize",
+          "named": true
+        },
+        {
+          "type": "with_clause",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "alter_fulltext_index",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": true,
+      "types": [
+        {
+          "type": "fulltext_index_column",
+          "named": true
+        },
+        {
+          "type": "identifier",
+          "named": true
+        },
+        {
+          "type": "keyword_add",
+          "named": true
+        },
+        {
+          "type": "keyword_alter",
+          "named": true
+        },
+        {
+          "type": "keyword_disable",
+          "named": true
+        },
+        {
+          "type": "keyword_drop",
+          "named": true
+        },
+        {
+          "type": "keyword_enable",
+          "named": true
+        },
+        {
+          "type": "keyword_fulltext",
+          "named": true
+        },
+        {
+          "type": "keyword_index",
+          "named": true
+        },
+        {
+          "type": "keyword_on",
+          "named": true
+        },
+        {
+          "type": "keyword_set",
+          "named": true
+        },
+        {
+          "type": "keyword_start",
+          "named": true
+        },
+        {
+          "type": "keyword_stop",
+          "named": true
+        },
+        {
+          "type": "object_reference",
+          "named": true
+        },
+        {
+          "type": "with_clause",
           "named": true
         }
       ]
@@ -960,6 +1151,164 @@
     }
   },
   {
+    "type": "alter_partition_function",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": true,
+      "types": [
+        {
+          "type": "ai_generate_embeddings",
+          "named": true
+        },
+        {
+          "type": "between_expression",
+          "named": true
+        },
+        {
+          "type": "binary_expression",
+          "named": true
+        },
+        {
+          "type": "case",
+          "named": true
+        },
+        {
+          "type": "cast",
+          "named": true
+        },
+        {
+          "type": "exists",
+          "named": true
+        },
+        {
+          "type": "field",
+          "named": true
+        },
+        {
+          "type": "graph_match_predicate",
+          "named": true
+        },
+        {
+          "type": "identifier",
+          "named": true
+        },
+        {
+          "type": "invocation",
+          "named": true
+        },
+        {
+          "type": "json_array",
+          "named": true
+        },
+        {
+          "type": "json_object",
+          "named": true
+        },
+        {
+          "type": "keyword_alter",
+          "named": true
+        },
+        {
+          "type": "keyword_function",
+          "named": true
+        },
+        {
+          "type": "keyword_merge",
+          "named": true
+        },
+        {
+          "type": "keyword_partition",
+          "named": true
+        },
+        {
+          "type": "keyword_range",
+          "named": true
+        },
+        {
+          "type": "keyword_split",
+          "named": true
+        },
+        {
+          "type": "list",
+          "named": true
+        },
+        {
+          "type": "literal",
+          "named": true
+        },
+        {
+          "type": "method_call",
+          "named": true
+        },
+        {
+          "type": "next_value_for",
+          "named": true
+        },
+        {
+          "type": "odbc_function_escape",
+          "named": true
+        },
+        {
+          "type": "parenthesized_expression",
+          "named": true
+        },
+        {
+          "type": "subquery",
+          "named": true
+        },
+        {
+          "type": "trim",
+          "named": true
+        },
+        {
+          "type": "unary_expression",
+          "named": true
+        },
+        {
+          "type": "window_function",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "alter_partition_scheme",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": true,
+      "types": [
+        {
+          "type": "identifier",
+          "named": true
+        },
+        {
+          "type": "keyword_alter",
+          "named": true
+        },
+        {
+          "type": "keyword_next",
+          "named": true
+        },
+        {
+          "type": "keyword_partition",
+          "named": true
+        },
+        {
+          "type": "keyword_scheme",
+          "named": true
+        },
+        {
+          "type": "keyword_used",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
     "type": "alter_procedure",
     "named": true,
     "fields": {
@@ -1018,6 +1367,45 @@
     }
   },
   {
+    "type": "alter_queue",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": true,
+      "types": [
+        {
+          "type": "keyword_alter",
+          "named": true
+        },
+        {
+          "type": "keyword_queue",
+          "named": true
+        },
+        {
+          "type": "keyword_rebuild",
+          "named": true
+        },
+        {
+          "type": "keyword_reorganize",
+          "named": true
+        },
+        {
+          "type": "object_reference",
+          "named": true
+        },
+        {
+          "type": "with_clause",
+          "named": true
+        },
+        {
+          "type": "with_options",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
     "type": "alter_role",
     "named": true,
     "fields": {},
@@ -1051,6 +1439,33 @@
         },
         {
           "type": "keyword_server",
+          "named": true
+        },
+        {
+          "type": "with_clause",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "alter_route",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": true,
+      "types": [
+        {
+          "type": "identifier",
+          "named": true
+        },
+        {
+          "type": "keyword_alter",
+          "named": true
+        },
+        {
+          "type": "keyword_route",
           "named": true
         },
         {
@@ -1702,6 +2117,10 @@
         },
         {
           "type": "keyword_partition",
+          "named": true
+        },
+        {
+          "type": "keyword_period_for_system_time",
           "named": true
         },
         {
@@ -8059,6 +8478,14 @@
         },
         {
           "type": "keyword_event",
+          "named": true
+        },
+        {
+          "type": "keyword_exists",
+          "named": true
+        },
+        {
+          "type": "keyword_if",
           "named": true
         },
         {
@@ -15837,6 +16264,10 @@
       "required": false,
       "types": [
         {
+          "type": "alter_assembly",
+          "named": true
+        },
+        {
           "type": "alter_asymmetric_key",
           "named": true
         },
@@ -15861,6 +16292,14 @@
           "named": true
         },
         {
+          "type": "alter_fulltext_catalog",
+          "named": true
+        },
+        {
+          "type": "alter_fulltext_index",
+          "named": true
+        },
+        {
           "type": "alter_function",
           "named": true
         },
@@ -15877,11 +16316,27 @@
           "named": true
         },
         {
+          "type": "alter_partition_function",
+          "named": true
+        },
+        {
+          "type": "alter_partition_scheme",
+          "named": true
+        },
+        {
           "type": "alter_procedure",
           "named": true
         },
         {
+          "type": "alter_queue",
+          "named": true
+        },
+        {
           "type": "alter_role",
+          "named": true
+        },
+        {
+          "type": "alter_route",
           "named": true
         },
         {
@@ -17493,6 +17948,42 @@
     }
   },
   {
+    "type": "truncate_partition_range",
+    "named": true,
+    "fields": {
+      "high": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "literal",
+            "named": true
+          }
+        ]
+      },
+      "low": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "literal",
+            "named": true
+          }
+        ]
+      }
+    },
+    "children": {
+      "multiple": false,
+      "required": false,
+      "types": [
+        {
+          "type": "keyword_to",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
     "type": "truncate_statement",
     "named": true,
     "fields": {},
@@ -17500,6 +17991,10 @@
       "multiple": true,
       "required": true,
       "types": [
+        {
+          "type": "keyword_partitions",
+          "named": true
+        },
         {
           "type": "keyword_table",
           "named": true
@@ -17509,7 +18004,15 @@
           "named": true
         },
         {
+          "type": "keyword_with",
+          "named": true
+        },
+        {
           "type": "object_reference",
+          "named": true
+        },
+        {
+          "type": "truncate_partition_range",
           "named": true
         }
       ]
@@ -19994,6 +20497,10 @@
     "named": true
   },
   {
+    "type": "keyword_partitions",
+    "named": true
+  },
+  {
     "type": "keyword_pause",
     "named": true
   },
@@ -20214,6 +20721,10 @@
     "named": true
   },
   {
+    "type": "keyword_seconds",
+    "named": true
+  },
+  {
     "type": "keyword_security",
     "named": true
   },
@@ -20294,6 +20805,10 @@
     "named": true
   },
   {
+    "type": "keyword_split",
+    "named": true
+  },
+  {
     "type": "keyword_sql_variant",
     "named": true
   },
@@ -20303,6 +20818,10 @@
   },
   {
     "type": "keyword_statistics",
+    "named": true
+  },
+  {
+    "type": "keyword_stop",
     "named": true
   },
   {
@@ -20451,6 +20970,10 @@
   },
   {
     "type": "keyword_use",
+    "named": true
+  },
+  {
+    "type": "keyword_used",
     "named": true
   },
   {

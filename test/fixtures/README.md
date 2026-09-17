@@ -220,3 +220,4 @@ decided against:
 | `WRITETEXT BULK ...`, `BACKUP ... MIRROR TO`, `KILL STATS JOB`/`KILL QUERY NOTIFICATION` | Rare sub-forms of deprecated or console statements, not modeled |
 | `EXEC p 1 + 2`, `EXEC p @a = 1, 2` | Rejected here because SQL Server rejects them: a procedure argument is a constant, a variable or `DEFAULT`, and a positional argument cannot follow a named one (Msg 119) |
 | `(SELECT TOP 1 a FROM t ORDER BY a) UNION ALL (SELECT TOP 1 b FROM u ORDER BY b)` — a parenthesized union branch with its own `ORDER BY` alongside `TOP`/`OFFSET`/`FETCH` | Not modeled either way; not a new gap from the `query_specification` split — this already failed to parse before that rule existed |
+| `ALTER MESSAGE TYPE` | Service Broker message types have no `ALTER` statement in real SQL Server — only `CREATE`/`DROP` — so this is deliberately absent, unlike the other six object kinds `CREATE MESSAGE TYPE`'s siblings gained an `ALTER` for |
