@@ -1167,28 +1167,30 @@ FROM (
       (relation
         (subquery
           (set_operation
-            (select
-              (keyword_select)
-              (select_expression
-                (term
-                  (all_fields))))
-            (from
-              (keyword_from)
-              (relation
-                (object_reference
-                  (identifier))))
+            (query_specification
+              (select
+                (keyword_select)
+                (select_expression
+                  (term
+                    (all_fields))))
+              (from
+                (keyword_from)
+                (relation
+                  (object_reference
+                    (identifier)))))
             (keyword_union)
             (keyword_all)
-            (select
-              (keyword_select)
-              (select_expression
-                (term
-                  (all_fields))))
-            (from
-              (keyword_from)
-              (relation
-                (object_reference
-                  (identifier))))))
+            (query_specification
+              (select
+                (keyword_select)
+                (select_expression
+                  (term
+                    (all_fields))))
+              (from
+                (keyword_from)
+                (relation
+                  (object_reference
+                    (identifier)))))))
         (identifier)))))
 
 ================================================================================
@@ -1205,91 +1207,99 @@ SELECT a FROM one EXCEPT SELECT b FROM two;
 (program
   (statement
     (set_operation
-      (select
-        (keyword_select)
-        (select_expression
-          (term
-            (literal))))
+      (query_specification
+        (select
+          (keyword_select)
+          (select_expression
+            (term
+              (literal)))))
       (keyword_union)
       (keyword_all)
-      (select
-        (keyword_select)
-        (select_expression
-          (term
-            (literal))))))
+      (query_specification
+        (select
+          (keyword_select)
+          (select_expression
+            (term
+              (literal)))))))
   (statement
     (set_operation
-      (select
-        (keyword_select)
-        (select_expression
-          (term
-            (all_fields))))
-      (from
-        (keyword_from)
-        (relation
-          (object_reference
-            (identifier))))
+      (query_specification
+        (select
+          (keyword_select)
+          (select_expression
+            (term
+              (all_fields))))
+        (from
+          (keyword_from)
+          (relation
+            (object_reference
+              (identifier)))))
       (keyword_union)
-      (select
-        (keyword_select)
-        (select_expression
-          (term
-            (all_fields))))
-      (from
-        (keyword_from)
-        (relation
-          (object_reference
-            (identifier))))))
+      (query_specification
+        (select
+          (keyword_select)
+          (select_expression
+            (term
+              (all_fields))))
+        (from
+          (keyword_from)
+          (relation
+            (object_reference
+              (identifier)))))))
   (statement
     (set_operation
-      (select
-        (keyword_select)
-        (select_expression
-          (term
-            (field
+      (query_specification
+        (select
+          (keyword_select)
+          (select_expression
+            (term
+              (field
+                (identifier)))))
+        (from
+          (keyword_from)
+          (relation
+            (object_reference
               (identifier)))))
-      (from
-        (keyword_from)
-        (relation
-          (object_reference
-            (identifier))))
       (keyword_intersect)
-      (select
-        (keyword_select)
-        (select_expression
-          (term
-            (field
-              (identifier)))))
-      (from
-        (keyword_from)
-        (relation
-          (object_reference
-            (identifier))))))
+      (query_specification
+        (select
+          (keyword_select)
+          (select_expression
+            (term
+              (field
+                (identifier)))))
+        (from
+          (keyword_from)
+          (relation
+            (object_reference
+              (identifier)))))))
   (statement
     (set_operation
-      (select
-        (keyword_select)
-        (select_expression
-          (term
-            (field
+      (query_specification
+        (select
+          (keyword_select)
+          (select_expression
+            (term
+              (field
+                (identifier)))))
+        (from
+          (keyword_from)
+          (relation
+            (object_reference
               (identifier)))))
-      (from
-        (keyword_from)
-        (relation
-          (object_reference
-            (identifier))))
       (keyword_except)
-      (select
-        (keyword_select)
-        (select_expression
-          (term
-            (field
-              (identifier)))))
-      (from
-        (keyword_from)
-        (relation
-          (object_reference
-            (identifier)))))))
+      (query_specification
+        (select
+          (keyword_select)
+          (select_expression
+            (term
+              (field
+                (identifier)))))
+        (from
+          (keyword_from)
+          (relation
+            (object_reference
+              (identifier))))))))
 
 ================================================================================
 A union's own ORDER BY sorts the whole result, not the last branch
@@ -1302,29 +1312,31 @@ SELECT a FROM t UNION SELECT b FROM u ORDER BY 1;
 (program
   (statement
     (set_operation
-      (select
-        (keyword_select)
-        (select_expression
-          (term
-            (field
+      (query_specification
+        (select
+          (keyword_select)
+          (select_expression
+            (term
+              (field
+                (identifier)))))
+        (from
+          (keyword_from)
+          (relation
+            (object_reference
               (identifier)))))
-      (from
-        (keyword_from)
-        (relation
-          (object_reference
-            (identifier))))
       (keyword_union)
-      (select
-        (keyword_select)
-        (select_expression
-          (term
-            (field
+      (query_specification
+        (select
+          (keyword_select)
+          (select_expression
+            (term
+              (field
+                (identifier)))))
+        (from
+          (keyword_from)
+          (relation
+            (object_reference
               (identifier)))))
-      (from
-        (keyword_from)
-        (relation
-          (object_reference
-            (identifier))))
       (order_by
         (keyword_order)
         (keyword_by)

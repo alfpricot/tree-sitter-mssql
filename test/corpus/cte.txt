@@ -236,27 +236,29 @@ UNION
             (object_reference
               (identifier))))))
     (set_operation
-      (select
-        (keyword_select)
-        (select_expression
-          (term
-            (all_fields))))
-      (from
-        (keyword_from)
-        (relation
-          (object_reference
-            (identifier))))
+      (query_specification
+        (select
+          (keyword_select)
+          (select_expression
+            (term
+              (all_fields))))
+        (from
+          (keyword_from)
+          (relation
+            (object_reference
+              (identifier)))))
       (keyword_union)
-      (select
-        (keyword_select)
-        (select_expression
-          (term
-            (all_fields))))
-      (from
-        (keyword_from)
-        (relation
-          (object_reference
-            (identifier)))))))
+      (query_specification
+        (select
+          (keyword_select)
+          (select_expression
+            (term
+              (all_fields))))
+        (from
+          (keyword_from)
+          (relation
+            (object_reference
+              (identifier))))))))
 
 ================================================================================
 Recursive CTE
@@ -286,75 +288,77 @@ OPTION (MAXRECURSION 100)
       (keyword_as)
       (statement
         (set_operation
-          (select
-            (keyword_select)
-            (select_expression
-              (term
+          (query_specification
+            (select
+              (keyword_select)
+              (select_expression
+                (term
+                  (field
+                    (identifier)))
+                (term
+                  (field
+                    (identifier)))
+                (term
+                  (field
+                    (identifier)))))
+            (from
+              (keyword_from)
+              (relation
+                (object_reference
+                  (identifier))))
+            (where
+              (keyword_where)
+              (binary_expression
                 (field
-                  (identifier)))
-              (term
-                (field
-                  (identifier)))
-              (term
-                (field
-                  (identifier)))))
-          (from
-            (keyword_from)
-            (relation
-              (object_reference
-                (identifier))))
-          (where
-            (keyword_where)
-            (binary_expression
-              (field
-                (identifier))
-              (literal)))
+                  (identifier))
+                (literal))))
           (keyword_union)
           (keyword_all)
-          (select
-            (keyword_select)
-            (select_expression
-              (term
-                (field
-                  (object_reference
-                    (identifier))
-                  (identifier)))
-              (term
-                (field
-                  (object_reference
-                    (identifier))
-                  (identifier)))
-              (term
-                (binary_expression
+          (query_specification
+            (select
+              (keyword_select)
+              (select_expression
+                (term
                   (field
                     (object_reference
                       (identifier))
-                    (identifier))
+                    (identifier)))
+                (term
                   (field
                     (object_reference
                       (identifier))
-                    (identifier))))))
-          (from
-            (keyword_from)
-            (relation
-              (object_reference
-                (identifier))
-              (identifier))
-            (relation
-              (object_reference
-                (identifier))
-              (identifier)))
-          (where
-            (keyword_where)
-            (binary_expression
-              (field
+                    (identifier)))
+                (term
+                  (binary_expression
+                    (field
+                      (object_reference
+                        (identifier))
+                      (identifier))
+                    (field
+                      (object_reference
+                        (identifier))
+                      (identifier))))))
+            (from
+              (keyword_from)
+              (relation
                 (object_reference
                   (identifier))
                 (identifier))
-              (field
+              (relation
                 (object_reference
                   (identifier))
-                (identifier)))))))
+                (identifier)))
+            (where
+              (keyword_where)
+              (binary_expression
+                (field
+                  (object_reference
+                    (identifier))
+                  (identifier))
+                (field
+                  (object_reference
+                    (identifier))
+                  (identifier))))))))
     (select
       (keyword_select)
       (select_expression

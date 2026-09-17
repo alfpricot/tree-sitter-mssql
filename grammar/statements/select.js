@@ -1,17 +1,46 @@
 import { aliased_with_columns, comma_list, optional_parenthesis, paren_list, paren_pair, wrapped_in_parenthesis } from "../helpers.js";
 
-// ORDER BY/OFFSET FETCH/OPTION/FOR — the clauses that trail a single query
-// specification and, duplicated verbatim, also trail a whole set_operation
-// (see the comments on each below). A plain function rather than a shared
-// named rule, matching event_session_body() in create.js: every segment
-// here is optional, and a named rule that can match the empty string is
-// rejected by tree-sitter unless it is the grammar's start rule.
+// ORDER BY/OFFSET FETCH/OPTION/FOR — the clauses that trail an *outermost*
+// query only: a lone `_select_statement`, or a whole `set_operation`. They
+// never trail an individual `query_specification` branch of a union — that
+// is the ARCH-4 defect this file's `set_operation`/`query_specification`
+// split exists to close, so don't attach a future trailing clause to
+// `query_specification` on the strength of this comment. A plain function
+// rather than a shared named rule, matching event_session_body() in
+// create.js: every segment here is optional, and a named rule that can
+// match the empty string is rejected by tree-sitter unless it is the
+// grammar's start rule.
 function trailing_sort_and_hint_clauses($) {
   return seq(
     optional($.order_by),
     optional($.offset_fetch),
     optional($.option_clause),
     optional($.for_clause),
+  );
+}
+
+// The SELECT/INTO/FROM/WHERE/GROUP BY/HAVING/WINDOW body shared by a lone
+// query and each branch of a set_operation — everything except the
+// trailing sort/hint clauses, which scope to the outermost position only
+// (see `query_specification` and `_select_statement` below).
+function query_specification_body($) {
+  return seq(
+    $.select,
+    optional(
+      seq(
+        $.keyword_into,
+        $.object_reference,
+      ),
+    ),
+    optional(
+      seq(
+        $.from,
+        optional($.where),
+        optional($.group_by),
+        optional($.having),
+      ),
+    ),
+    optional($.window_clause),
   );
 }
 
@@ -49,12 +78,26 @@ export default {
   ),
 
   // A union's own ORDER BY/OFFSET FETCH/OPTION sort and hint the combined
-  // result, not the last branch — attaching them here (rather than letting
-  // them fall inside the last branch's own _select_statement) is what makes
+  // result, not the last branch — attaching them only here (never on an
+  // individual `query_specification` branch) is what makes
   // `SELECT a FROM t UNION SELECT b FROM u ORDER BY 1` describe a query with
   // one sort over the whole union instead of a sort scoped to branch two.
+  // SQL Server rejects an unparenthesized non-final branch carrying its own
+  // trailing clause outright (`SELECT a FROM t ORDER BY 1 UNION SELECT b
+  // FROM u` errors, pinned in errors.txt), so `query_specification` — not
+  // the trailing-clause-bearing `_select_statement` — is what every branch
+  // composes from. A *parenthesized* branch's own trailing clause
+  // (`(SELECT TOP 1 a FROM t ORDER BY a) UNION ALL (SELECT TOP 1 b FROM u
+  // ORDER BY b)`, valid when TOP or OFFSET/FETCH is present) is not modeled
+  // either way — it already failed to parse before this rule existed, and
+  // this change does not resolve or worsen that gap; see
+  // test/fixtures/README.md's "Not parsed on purpose" section.
+  // `query_specification`'s shared body also does not yet distinguish a
+  // first branch from a later one, so `SELECT ... INTO` is still (wrongly)
+  // reachable on every branch, not just the first — a pre-existing
+  // over-acceptance this split does not introduce or close.
   set_operation: $ => prec.right(seq(
-    $._select_statement,
+    $.query_specification,
     repeat1(
       seq(
         field(
@@ -65,42 +108,41 @@ export default {
             $.keyword_intersect,
           ),
         ),
-        $._select_statement,
+        $.query_specification,
       ),
     ),
     trailing_sort_and_hint_clauses($),
   )),
 
+  // One branch of a set_operation — a real named node so a consumer can
+  // tell where one branch ends and the next begins, instead of every
+  // branch's children splicing directly into `set_operation` as a flat
+  // sibling list with no boundary (the same root cause AGENTS.md already
+  // records for `alias()` on an inline helper call: a tree-visible
+  // boundary has to be a real named rule). WHERE/GROUP BY/HAVING are
+  // nested under FROM (real T-SQL rejects all three on a FROM-less
+  // SELECT), not independently optional the way the sort/hint clauses are
+  // — a bare `SELECT 1 WHERE 1=1` must still error.
+  //
+  // A lone (non-union) query does NOT reach this rule — `_select_statement`
+  // below composes `query_specification_body($)` directly rather than
+  // through `$.query_specification`, so `SELECT a FROM t;` alone produces
+  // no `query_specification` node at all. A consumer matching on this node
+  // kind — now in test/node-kinds.txt — sees union branches only.
+  query_specification: $ => optional_parenthesis(query_specification_body($)),
+
   // SELECT ... [INTO new_table] [FROM ... [WHERE ...] [GROUP BY ...]
   // [HAVING ...]] [WINDOW ...] [ORDER BY ...] [OFFSET ... FETCH ...]
   // [OPTION (...)] [FOR XML ... | FOR JSON ... | FOR UPDATE]
   //
-  // WHERE/GROUP BY/HAVING are nested under FROM (real T-SQL rejects all
-  // three on a FROM-less SELECT), not independently optional the way the
-  // sort/hint clauses are — a bare `SELECT 1 WHERE 1=1` must still error.
-  // WHERE/GROUP BY/HAVING sit here rather than on `set_operation` — they
-  // scope to one query_specification, never to a union as a whole. The
-  // sort/hint clauses are duplicated on `set_operation` for the same reason
-  // in reverse: as a lone statement's own trailing clauses here, and again
-  // on `set_operation` for when this is the last branch of a union.
+  // = `query_specification` + trailing sort/hint clauses. The clauses sit
+  // here rather than on `query_specification` itself for the same reason
+  // they're duplicated on `set_operation` above: they scope to the
+  // outermost position of a lone query, never to a `query_specification`
+  // that is (or might become) one branch of a union.
   _select_statement: $ => optional_parenthesis(
     seq(
-      $.select,
-      optional(
-        seq(
-          $.keyword_into,
-          $.object_reference,
-        ),
-      ),
-      optional(
-        seq(
-          $.from,
-          optional($.where),
-          optional($.group_by),
-          optional($.having),
-        ),
-      ),
-      optional($.window_clause),
+      query_specification_body($),
       trailing_sort_and_hint_clauses($),
     ),
   ),

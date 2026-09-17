@@ -140,17 +140,19 @@ INSERT INTO some_table (field)
         (column
           (identifier)))
       (set_operation
-        (select
-          (keyword_select)
-          (select_expression
-            (term
-              (literal))))
+        (query_specification
+          (select
+            (keyword_select)
+            (select_expression
+              (term
+                (literal)))))
         (keyword_union)
-        (select
-          (keyword_select)
-          (select_expression
-            (term
-              (literal))))))))
+        (query_specification
+          (select
+            (keyword_select)
+            (select_expression
+              (term
+                (literal)))))))))
 
 ================================================================================
 Insert into a table variable and a temp table

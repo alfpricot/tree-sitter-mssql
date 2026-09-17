@@ -1,4 +1,4 @@
-import { comma_list, paren_list, write_target } from "../helpers.js";
+import { comma_list, paren_list, optional_parenthesis, write_target } from "../helpers.js";
 
 // T-SQL INSERT:
 //
@@ -18,12 +18,24 @@ export default {
     $._insert_source,
   ),
 
+  // The SELECT/set-operation alternative goes straight to that choice
+  // rather than through `_dml_read`, which also offers a leading CTE.
+  // SQL Server requires a CTE *before* INSERT, not after the target
+  // (`_dml_write` already provides that at index.js) — a CTE reachable
+  // here would occupy the same position as `write_target`'s own table
+  // hint above, giving the grammar two competing readings of a post-target
+  // `WITH`.
   _insert_source: $ => choice(
     seq(
       $.keyword_values,
       comma_list($.list, true),
     ),
-    $._dml_read,
+    optional_parenthesis(
+      choice(
+        $._select_statement,
+        $.set_operation,
+      ),
+    ),
     $.execute_statement,
     seq($.keyword_default, $.keyword_values),
   ),

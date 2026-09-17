@@ -569,6 +569,7 @@ procedure_option
 procedure_options
 program
 query_hint
+query_specification
 raiserror_statement
 readtext_statement
 receive_statement

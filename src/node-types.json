@@ -10962,10 +10962,6 @@
       "required": true,
       "types": [
         {
-          "type": "cte",
-          "named": true
-        },
-        {
           "type": "execute_statement",
           "named": true
         },
@@ -10999,10 +10995,6 @@
         },
         {
           "type": "keyword_values",
-          "named": true
-        },
-        {
-          "type": "keyword_with",
           "named": true
         },
         {
@@ -11051,10 +11043,6 @@
         },
         {
           "type": "window_clause",
-          "named": true
-        },
-        {
-          "type": "xmlnamespaces",
           "named": true
         }
       ]
@@ -14207,6 +14195,49 @@
     }
   },
   {
+    "type": "query_specification",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": true,
+      "types": [
+        {
+          "type": "from",
+          "named": true
+        },
+        {
+          "type": "group_by",
+          "named": true
+        },
+        {
+          "type": "having",
+          "named": true
+        },
+        {
+          "type": "keyword_into",
+          "named": true
+        },
+        {
+          "type": "object_reference",
+          "named": true
+        },
+        {
+          "type": "select",
+          "named": true
+        },
+        {
+          "type": "where",
+          "named": true
+        },
+        {
+          "type": "window_clause",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
     "type": "raiserror_statement",
     "named": true,
     "fields": {},
@@ -15556,26 +15587,6 @@
           "named": true
         },
         {
-          "type": "from",
-          "named": true
-        },
-        {
-          "type": "group_by",
-          "named": true
-        },
-        {
-          "type": "having",
-          "named": true
-        },
-        {
-          "type": "keyword_into",
-          "named": true
-        },
-        {
-          "type": "object_reference",
-          "named": true
-        },
-        {
           "type": "offset_fetch",
           "named": true
         },
@@ -15588,15 +15599,7 @@
           "named": true
         },
         {
-          "type": "select",
-          "named": true
-        },
-        {
-          "type": "where",
-          "named": true
-        },
-        {
-          "type": "window_clause",
+          "type": "query_specification",
           "named": true
         }
       ]
