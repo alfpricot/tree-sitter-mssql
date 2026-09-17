@@ -55,16 +55,15 @@ export default grammar({
       'binary_is',
       'unary_not',
       'unary_sign',
-      'binary_exp',
       'binary_times',
       'binary_plus',
       'unary_other',
-      'binary_other',
       'binary_in',
       'binary_compare',
       'binary_relation',
       'pattern_matching',
       'between',
+      'logical_not',
       'clause_connective',
       'clause_disjunctive',
     ],
@@ -105,11 +104,13 @@ export default grammar({
     //   :setvar DatabaseName "MyDatabase"
     // The value is an object reference rather than an identifier so a
     // schema-qualified name (`:setvar TableName sys.objects`) is one value.
-    sqlcmd_setvar: $ => seq(
+    // The value is optional: `:setvar MyVar` with no value is sqlcmd's
+    // documented way to remove a scripting variable.
+    sqlcmd_setvar: $ => prec.right(seq(
       ':setvar',
       field('name', $.identifier),
-      field('value', choice($.object_reference, $.literal)),
-    ),
+      optional(field('value', choice($.object_reference, $.literal))),
+    )),
 
     // :r path/to/script.sql — inlines another script file. The path can
     // contain characters (`.`, `/`, `\`) that are not valid identifier

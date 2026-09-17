@@ -29,11 +29,26 @@ export default {
     choice($.keyword_procedure, $.keyword_proc),
     $.object_reference,
     optional(seq(';', field('number', alias($._natural_number, $.literal)))),
-    optional($.function_arguments),
+    optional($._procedure_arguments),
     optional($.procedure_options),
     optional(seq($.keyword_for, $.keyword_replication)),
     $.procedure_body,
   ),
+
+  // Unlike a function, a procedure also accepts the bare comma-separated
+  // spelling with no enclosing parentheses. The bare form is aliased to the
+  // same `function_arguments` node the parenthesized form produces, so a
+  // procedure's parameter list is one uniform shape regardless of spelling
+  // — the same reasoning `key_encryptor` applies to CREATE SYMMETRIC KEY's
+  // encryptor list. Aliasing a hidden named rule rather than the inline
+  // `comma_list(...)` call directly, since aliasing an inline helper call
+  // renames each token individually instead of wrapping the group.
+  _procedure_arguments: $ => choice(
+    $.function_arguments,
+    alias($._bare_function_arguments, $.function_arguments),
+  ),
+
+  _bare_function_arguments: $ => comma_list($.function_argument, true),
 
   procedure_options: $ => seq(
     $.keyword_with,

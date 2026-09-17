@@ -23,7 +23,7 @@ export default {
       $.keyword_with,
       choice(
         seq($.xmlnamespaces, repeat(seq(',', $.cte))),
-        seq($.cte, repeat(seq(',', $.cte))),
+        comma_list($.cte, true),
       ),
   ),
 
@@ -127,15 +127,7 @@ export default {
     optional(seq($.keyword_with, $.keyword_ties)),
   ),
 
-  select_expression: $ => seq(
-    $.term,
-    repeat(
-      seq(
-        ',',
-        $.term,
-      ),
-    ),
-  ),
+  select_expression: $ => comma_list($.term, true),
 
   term: $ => seq(
     field(
@@ -145,7 +137,7 @@ export default {
         $._expression,
       ),
     ),
-    optional($._alias),
+    optional($._column_alias),
   ),
 
   all_fields: $ => seq(
@@ -263,10 +255,20 @@ export default {
     $.window_specification,
   ),
 
+  // A table alias — `relation`, `apply_join`, `pivot_clause`,
+  // `unpivot_clause` and `merge` all reach this. SQL Server rejects a
+  // string literal here (only a `term`'s column alias accepts one — see
+  // `_column_alias` below).
   _alias: $ => seq(
     optional($.keyword_as),
-    // T-SQL also permits a single-quoted string literal in the alias position,
-    // e.g. SUM(x) 'TotalX' or SUM(x) AS 'TotalX', alongside a plain identifier.
+    field('alias', $.identifier),
+  ),
+
+  // A select-list column alias — the one alias position where a
+  // single-quoted string literal is also accepted, e.g. SUM(x) 'TotalX' or
+  // SUM(x) AS 'TotalX', alongside a plain identifier.
+  _column_alias: $ => seq(
+    optional($.keyword_as),
     field('alias', choice($.identifier, alias($._single_quote_string, $.literal))),
   ),
 

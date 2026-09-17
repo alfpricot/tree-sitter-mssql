@@ -743,7 +743,7 @@ CREATE CLUSTERED COLUMNSTORE INDEX cci ON Sales.OrderLines ORDER (SHIPDATE, PROD
     (create_index
       (keyword_create)
       (keyword_clustered)
-      (identifier)
+      (keyword_columnstore)
       (keyword_index)
       (identifier)
       (keyword_on)

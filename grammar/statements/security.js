@@ -22,6 +22,19 @@ export default {
     seq($.keyword_service, $.keyword_master, $.keyword_key),
   ),
 
+  // A continuation element of a CREATE SYMMETRIC KEY encryptor list (after
+  // the mandatory head element — see `create_symmetric_key` below, which
+  // aliases the head directly rather than through this rule). SQL Server
+  // allows a continuation element to omit the `[ENCRYPTION | DECRYPTION]
+  // BY` prefix, implicitly repeating the head's; the head itself may not
+  // omit it. Both forms alias to `key_encryptor` so every element of the
+  // list is the same node kind, unlike splicing a bare `_encryptor`
+  // directly into the parent as a loose sibling.
+  _key_encryptor_continuation: $ => choice(
+    alias($.encryption_mechanism, $.key_encryptor),
+    alias($._encryptor, $.key_encryptor),
+  ),
+
   // WITH PRIVATE KEY ( FILE = 'path' | BINARY = 0x..., { ENCRYPTION | DECRYPTION } BY PASSWORD = 'x' [, ...] )
   private_key_clause: $ => seq(
     $.keyword_with,
@@ -156,8 +169,8 @@ export default {
     optional(seq($.keyword_from, $.keyword_provider, $.identifier)),
     optional($.with_clause),
     optional(seq(
-      $.encryption_mechanism,
-      repeat(seq(',', choice($.encryption_mechanism, $._encryptor))),
+      alias($.encryption_mechanism, $.key_encryptor),
+      repeat(seq(',', $._key_encryptor_continuation)),
     )),
   )),
 

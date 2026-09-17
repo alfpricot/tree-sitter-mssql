@@ -106,3 +106,22 @@ SELECT * FROM $(TableName);
       (relation
         (object_reference
           (identifier))))))
+
+================================================================================
+setvar with no value removes the scripting variable (ARCH-14)
+================================================================================
+
+:setvar MyVar
+SELECT 1;
+
+--------------------------------------------------------------------------------
+
+(program
+  (sqlcmd_setvar
+    (identifier))
+  (statement
+    (select
+      (keyword_select)
+      (select_expression
+        (term
+          (literal))))))

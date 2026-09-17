@@ -178,6 +178,7 @@ json_key_value
 json_null_clause
 json_object
 json_wrapper_clause
+key_encryptor
 keyword_abort
 keyword_absent
 keyword_absolute
@@ -230,6 +231,7 @@ keyword_clustered
 keyword_collate
 keyword_collection
 keyword_column
+keyword_columnstore
 keyword_commit
 keyword_committed
 keyword_constraint
@@ -507,6 +509,7 @@ keyword_when
 keyword_where
 keyword_while
 keyword_window
+keyword_windows
 keyword_with
 keyword_within
 keyword_without

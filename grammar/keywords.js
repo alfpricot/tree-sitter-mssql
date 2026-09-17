@@ -305,6 +305,8 @@ export default {
   keyword_master: _ => make_keyword("master"),
   keyword_symmetric: _ => make_keyword("symmetric"),
   keyword_asymmetric: _ => make_keyword("asymmetric"),
+  // CREATE LOGIN ... FROM WINDOWS.
+  keyword_windows: _ => make_keyword("windows"),
   keyword_keys: _ => make_keyword("keys"),
   keyword_certificate: _ => make_keyword("certificate"),
   keyword_decryption: _ => make_keyword("decryption"),
@@ -356,6 +358,7 @@ export default {
   keyword_nocheck: _ => make_keyword("nocheck"),
   keyword_clustered: _ => make_keyword("clustered"),
   keyword_nonclustered: _ => make_keyword("nonclustered"),
+  keyword_columnstore: _ => make_keyword("columnstore"),
   keyword_include: _ => make_keyword("include"),
   keyword_identity: _ => make_keyword("identity"),
   keyword_persisted: _ => make_keyword("persisted"),

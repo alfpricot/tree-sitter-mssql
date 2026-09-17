@@ -44,12 +44,11 @@ export default {
     optional($.keyword_readonly),
   ),
 
-  // Functions require the parenthesized list (and allow it empty);
-  // procedures also accept the bare comma-separated spelling.
-  function_arguments: $ => choice(
-    paren_list($.function_argument, false),
-    comma_list($.function_argument, true),
-  ),
+  // Functions require the parenthesized list (and allow it empty).
+  // Procedures also accept the bare comma-separated spelling — see
+  // `procedure_arguments` in create-procedure.js, which is the only other
+  // consumer of `function_argument`.
+  function_arguments: $ => paren_list($.function_argument, false),
 
   function_options: $ => seq(
     $.keyword_with,

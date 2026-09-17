@@ -43,6 +43,42 @@ SELECT 1 AS one,
           (identifier))))))
 
 ================================================================================
+A single-quoted string literal is a valid column alias (ARCH-11)
+================================================================================
+
+SELECT SUM(x) 'TotalX', SUM(y) AS 'TotalY' FROM t;
+
+--------------------------------------------------------------------------------
+
+(program
+  (statement
+    (select
+      (keyword_select)
+      (select_expression
+        (term
+          (invocation
+            (object_reference
+              (identifier))
+            (term
+              (field
+                (identifier))))
+          (literal))
+        (term
+          (invocation
+            (object_reference
+              (identifier))
+            (term
+              (field
+                (identifier))))
+          (keyword_as)
+          (literal))))
+    (from
+      (keyword_from)
+      (relation
+        (object_reference
+          (identifier))))))
+
+================================================================================
 Select star and qualified star
 ================================================================================
 
@@ -125,7 +161,7 @@ SELECT @id, @@VERSION, @@ROWCOUNT FROM my_table;
 Select with fields that look like keywords
 ================================================================================
 
-SELECT t.name, t.type, t.value, t.status, t.source, t.target, t.level, t.key
+SELECT t.name, t.type, t.value, t.status, t.source, t.target, t.level, t.key, t.windows, t.columnstore
 FROM join_something_on AS where_this_like_that;
 
 --------------------------------------------------------------------------------
@@ -135,6 +171,16 @@ FROM join_something_on AS where_this_like_that;
     (select
       (keyword_select)
       (select_expression
+        (term
+          (field
+            (object_reference
+              (identifier))
+            (identifier)))
+        (term
+          (field
+            (object_reference
+              (identifier))
+            (identifier)))
         (term
           (field
             (object_reference
@@ -2350,6 +2396,59 @@ SELECT * FROM dbo.f(1) WITH (INDEX = ix);
         (table_hint_item
           (keyword_index)
           (identifier))))))
+
+================================================================================
+WINDOWS and COLUMNSTORE are free everywhere except right after CREATE LOGIN/the index-kind slot (ARCH-12)
+================================================================================
+
+SELECT windows, columnstore FROM t;
+SELECT * FROM dbo.t windows;
+SELECT * FROM dbo.t columnstore;
+
+--------------------------------------------------------------------------------
+
+(program
+  (statement
+    (select
+      (keyword_select)
+      (select_expression
+        (term
+          (field
+            (identifier)))
+        (term
+          (field
+            (identifier)))))
+    (from
+      (keyword_from)
+      (relation
+        (object_reference
+          (identifier)))))
+  (statement
+    (select
+      (keyword_select)
+      (select_expression
+        (term
+          (all_fields))))
+    (from
+      (keyword_from)
+      (relation
+        (object_reference
+          (identifier)
+          (identifier))
+        (identifier))))
+  (statement
+    (select
+      (keyword_select)
+      (select_expression
+        (term
+          (all_fields))))
+    (from
+      (keyword_from)
+      (relation
+        (object_reference
+          (identifier)
+          (identifier))
+        (identifier)))))
 
 ================================================================================
 FOR SYSTEM_TIME AS OF

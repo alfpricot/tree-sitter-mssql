@@ -127,12 +127,15 @@ export default {
 
   // CREATE [UNIQUE] [CLUSTERED | NONCLUSTERED] [COLUMNSTORE] INDEX name ON table [(column [ASC | DESC] [, ...])]
   //   [ORDER (columns)] [INCLUDE (columns)] [WHERE predicate] [WITH (options)] [ON filegroup]
-  // ORDER (...) is the ordered clustered columnstore form (2022).
+  // ORDER (...) is the ordered clustered columnstore form (2022). COLUMNSTORE
+  // is typed since it's the common case; a bare identifier fallback keeps
+  // other single-word storage modifiers (e.g. SPATIAL) parsing the way they
+  // did before this slot was typed.
   create_index: $ => prec.right(seq(
     $.keyword_create,
     optional($.keyword_unique),
     optional($._index_kind),
-    optional($.identifier),
+    optional(field('storage', choice($.keyword_columnstore, $.identifier))),
     $.keyword_index,
     field('name', $.identifier),
     $.keyword_on,
@@ -276,16 +279,22 @@ export default {
     optional($.with_clause),
   )),
 
-  // CREATE LOGIN name { FROM WINDOWS | FROM CERTIFICATE name | FROM ASYMMETRIC KEY name } [WITH option [, ...]]
+  // CREATE LOGIN name { FROM WINDOWS | FROM CERTIFICATE name | FROM ASYMMETRIC KEY name | FROM EXTERNAL PROVIDER } [WITH option [, ...]]
   // CREATE LOGIN name WITH PASSWORD = 'password' [, option ...]
+  // FROM EXTERNAL PROVIDER is the Microsoft Entra login form on Azure SQL
+  // Database, Azure SQL Managed Instance and SQL Server 2022+.
   create_login: $ => prec.right(seq(
     $.keyword_create,
     $.keyword_login,
-    $.identifier,
+    field('name', $.identifier),
     optional(seq(
       $.keyword_from,
-      $.identifier,
-      optional(choice($.identifier, seq($.keyword_key, $.identifier))),
+      choice(
+        $.keyword_windows,
+        seq($.keyword_certificate, field('source', $.identifier)),
+        seq($.keyword_asymmetric, $.keyword_key, field('source', $.identifier)),
+        seq($.keyword_external, $.keyword_provider),
+      ),
     )),
     optional($.with_clause),
   )),

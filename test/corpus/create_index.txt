@@ -202,7 +202,7 @@ CREATE NONCLUSTERED COLUMNSTORE INDEX ncci ON dbo.facts (a, b);
     (create_index
       (keyword_create)
       (keyword_clustered)
-      (identifier)
+      (keyword_columnstore)
       (keyword_index)
       (identifier)
       (keyword_on)
@@ -213,7 +213,7 @@ CREATE NONCLUSTERED COLUMNSTORE INDEX ncci ON dbo.facts (a, b);
     (create_index
       (keyword_create)
       (keyword_nonclustered)
-      (identifier)
+      (keyword_columnstore)
       (keyword_index)
       (identifier)
       (keyword_on)
@@ -225,6 +225,29 @@ CREATE NONCLUSTERED COLUMNSTORE INDEX ncci ON dbo.facts (a, b);
           (identifier))
         (column
           (identifier))))))
+
+================================================================================
+Create spatial index falls back to an untyped storage identifier (ARCH-12)
+================================================================================
+
+CREATE SPATIAL INDEX si ON dbo.t (geom);
+
+--------------------------------------------------------------------------------
+
+(program
+  (statement
+    (create_index
+      (keyword_create)
+      storage: (identifier)
+      (keyword_index)
+      name: (identifier)
+      (keyword_on)
+      (object_reference
+        schema: (identifier)
+        name: (identifier))
+      (ordered_columns
+        (column
+          name: (identifier))))))
 
 ================================================================================
 Alter index

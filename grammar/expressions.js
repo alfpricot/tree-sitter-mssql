@@ -1,4 +1,4 @@
-import { optional_parenthesis, paren_list, comma_list, wrapped_in_parenthesis } from "./helpers.js";
+import { optional_parenthesis, paren_list, comma_list, wrapped_in_parenthesis, IDENTIFIER_START, IDENTIFIER_CONTINUE } from "./helpers.js";
 
 export default {
 
@@ -303,7 +303,9 @@ export default {
     wrapped_in_parenthesis($._expression)
   ),
 
-  // Bitwise operators. `^` (exclusive or) is on the binary_exp level.
+  // Bitwise operators. SQL Server groups `~` above `* / %`, and `+ - & ^ |`
+  // as one left-associative level below that — so `^` and `op_other` (`|`,
+  // `&`) share `binary_plus` with `+`/`-` rather than sitting above `*`.
   op_other: $ => token(
     choice(
       '|',
@@ -318,7 +320,7 @@ export default {
       ['*', 'binary_times'],
       ['/', 'binary_times'],
       ['%', 'binary_times'],
-      ['^', 'binary_exp'],
+      ['^', 'binary_plus'],
       ['=', 'binary_relation'],
       ['<', 'binary_relation'],
       ['<=', 'binary_relation'],
@@ -328,7 +330,7 @@ export default {
       ['<>', 'binary_relation'],
       ['!<', 'binary_relation'],
       ['!>', 'binary_relation'],
-      [$.op_other, 'binary_other'],
+      [$.op_other, 'binary_plus'],
       [$.keyword_is, 'binary_is'],
       [$.is_not, 'binary_is'],
       [$.keyword_collate, 'binary_is'],
@@ -373,8 +375,16 @@ export default {
   ),
 
   unary_expression: $ => choice(
+    // `keyword_not` sits at `logical_not`, below every comparison level, so
+    // `NOT a = b` negates the whole comparison rather than just `a`.
+    // `ANY`/`SOME`/`ALL` stay at the high `unary_not` level — they bind to
+    // a subquery immediately after a comparison operator (`a = ANY (...)`),
+    // and moving them down would break that.
+    prec.left('logical_not', seq(
+      field('operator', $.keyword_not),
+      field('operand', $._expression)
+    )),
     ...[
-      [$.keyword_not, 'unary_not'],
       [$.keyword_any, 'unary_not'],
       [$.keyword_some, 'unary_not'],
       [$.keyword_all, 'unary_not'],
@@ -460,10 +470,10 @@ export default {
   ),
   // A regular identifier: letters, digits, `_`, `#` and `$` after the first
   // character, per SQL Server's identifier rules (`addr##1` is legal).
-  _identifier: _ => /[A-Za-z_À-ſ][0-9A-Za-z_#$À-ſ]*/,
-  _tsql_parameter: _ => /@[A-Za-z_À-ſ][0-9A-Za-z_#$À-ſ]*/,
+  _identifier: _ => new RegExp(`[${IDENTIFIER_START}][${IDENTIFIER_CONTINUE}]*`),
+  _tsql_parameter: _ => new RegExp(`@[${IDENTIFIER_START}][${IDENTIFIER_CONTINUE}]*`),
   _tsql_system_variable: _ => /@@[A-Za-z_][0-9A-Za-z_]*/,
-  _temporary_table: _ => /#{1,2}[A-Za-z_À-ſ][0-9A-Za-z_#$À-ſ]*/,
+  _temporary_table: _ => new RegExp(`#{1,2}[${IDENTIFIER_START}][${IDENTIFIER_CONTINUE}]*`),
   _bracketed_identifier: _ => /\[([^\]]|\]\])+\]/,
   // "quoted identifier" — a string only when QUOTED_IDENTIFIER is OFF,
   // which the grammar does not track. A double quote inside is doubled to

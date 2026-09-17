@@ -206,6 +206,7 @@ CREATE LOGIN [CORP\svc_task] FROM WINDOWS WITH DEFAULT_DATABASE=[master], DEFAUL
 CREATE LOGIN app_login WITH PASSWORD = 'p@ss' MUST_CHANGE, CHECK_EXPIRATION = ON, CHECK_POLICY = OFF;
 CREATE LOGIN cert_login FROM CERTIFICATE my_cert;
 CREATE LOGIN key_login FROM ASYMMETRIC KEY my_key;
+CREATE LOGIN [alice@contoso.com] FROM EXTERNAL PROVIDER;
 
 --------------------------------------------------------------------------------
 
@@ -216,7 +217,7 @@ CREATE LOGIN key_login FROM ASYMMETRIC KEY my_key;
       (keyword_login)
       (identifier)
       (keyword_from)
-      (identifier)
+      (keyword_windows)
       (with_clause
         (keyword_with)
         (option
@@ -248,7 +249,7 @@ CREATE LOGIN key_login FROM ASYMMETRIC KEY my_key;
       (keyword_login)
       (identifier)
       (keyword_from)
-      (identifier)
+      (keyword_certificate)
       (identifier)))
   (statement
     (create_login
@@ -256,9 +257,17 @@ CREATE LOGIN key_login FROM ASYMMETRIC KEY my_key;
       (keyword_login)
       (identifier)
       (keyword_from)
-      (identifier)
+      (keyword_asymmetric)
       (keyword_key)
-      (identifier))))
+      (identifier)))
+  (statement
+    (create_login
+      (keyword_create)
+      (keyword_login)
+      (identifier)
+      (keyword_from)
+      (keyword_external)
+      (keyword_provider))))
 
 ================================================================================
 Alter user and alter login
@@ -814,7 +823,7 @@ DROP ASYMMETRIC KEY a1;
         (option
           (identifier)
           (identifier)))
-      (encryption_mechanism
+      (key_encryptor
         (keyword_encryption)
         (keyword_by)
         (keyword_certificate)
@@ -849,17 +858,19 @@ DROP ASYMMETRIC KEY a1;
         (option
           (identifier)
           (identifier)))
-      (encryption_mechanism
+      (key_encryptor
         (keyword_encryption)
         (keyword_by)
         (keyword_certificate)
         (identifier))
-      (option
-        (identifier)
-        (literal))
-      (keyword_asymmetric)
-      (keyword_key)
-      (identifier)))
+      (key_encryptor
+        (option
+          (identifier)
+          (literal)))
+      (key_encryptor
+        (keyword_asymmetric)
+        (keyword_key)
+        (identifier))))
   (statement
     (alter_symmetric_key
       (keyword_alter)

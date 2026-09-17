@@ -20,8 +20,7 @@ selections for your perusal
 
 (program
   (ERROR
-    (identifier)
-    (keyword_for)))
+    (identifier)))
 
 ==================
 ^inserted_at
@@ -249,5 +248,96 @@ SELECT 1 GROUP BY 1;
         (term
           (literal)
           (identifier)))))
+  (ERROR
+    (identifier)
+    (literal)))
+
+==================
+A string literal is not a valid table alias (ARCH-11)
+==================
+
+SELECT * FROM dbo.t 'x';
+
+---
+
+(program
+  (statement
+    (select
+      (keyword_select)
+      (select_expression
+        (term
+          (all_fields))))
+    (from
+      (keyword_from)
+      (relation
+        (object_reference
+          (identifier)
+          (identifier)))))
+  (ERROR))
+
+==================
+A string literal is not a valid table alias after AS either (ARCH-11)
+==================
+
+SELECT * FROM dbo.t AS 'x';
+
+---
+
+(program
+  (statement
+    (select
+      (keyword_select)
+      (select_expression
+        (term
+          (all_fields))))
+    (from
+      (keyword_from)
+      (relation
+        (object_reference
+          (identifier)
+          (identifier)))))
+  (ERROR
+    (keyword_as)))
+
+==================
+The multiplication sign is a math symbol, not a letter, and is not a valid identifier (ARCH-15)
+==================
+
+SELECT × FROM t;
+
+---
+
+(program
+  (statement
+    (select
+      (keyword_select)
+      (ERROR
+        (UNEXPECTED 215)
+        (keyword_from))
+      (select_expression
+        (term
+          (field
+            (identifier)))))))
+
+==================
+The head element of a CREATE SYMMETRIC KEY encryptor list requires ENCRYPTION BY (ARCH-13)
+==================
+
+CREATE SYMMETRIC KEY k WITH ALGORITHM = AES_256 PASSWORD = 'p';
+
+---
+
+(program
+  (statement
+    (create_symmetric_key
+      (keyword_create)
+      (keyword_symmetric)
+      (keyword_key)
+      name: (identifier)
+      (with_clause
+        (keyword_with)
+        (option
+          name: (identifier)
+          value: (identifier)))))
   (ERROR
     (identifier)))

@@ -1297,3 +1297,115 @@ SELECT d AT TIME ZONE 'UTC' AT TIME ZONE 'Eastern Standard Time' FROM t;
       (relation
         (object_reference
           (identifier))))))
+
+================================================================================
+NOT binds looser than comparison, LIKE and BETWEEN (ARCH-1)
+================================================================================
+
+SELECT * FROM t WHERE NOT a = b;
+
+--------------------------------------------------------------------------------
+
+(program
+  (statement
+    (select
+      (keyword_select)
+      (select_expression
+        (term
+          (all_fields))))
+    (from
+      (keyword_from)
+      (relation
+        (object_reference
+          (identifier))))
+    (where
+      (keyword_where)
+      (unary_expression
+        (keyword_not)
+        (binary_expression
+          (field
+            (identifier))
+          (field
+            (identifier)))))))
+
+================================================================================
+NOT a LIKE 'x' (ARCH-1)
+================================================================================
+
+SELECT * FROM t WHERE NOT a LIKE 'x';
+
+--------------------------------------------------------------------------------
+
+(program
+  (statement
+    (select
+      (keyword_select)
+      (select_expression
+        (term
+          (all_fields))))
+    (from
+      (keyword_from)
+      (relation
+        (object_reference
+          (identifier))))
+    (where
+      (keyword_where)
+      (unary_expression
+        (keyword_not)
+        (binary_expression
+          (field
+            (identifier))
+          (keyword_like)
+          (literal))))))
+
+================================================================================
+NOT a BETWEEN 1 AND 2 (ARCH-1)
+================================================================================
+
+SELECT * FROM t WHERE NOT a BETWEEN 1 AND 2;
+
+--------------------------------------------------------------------------------
+
+(program
+  (statement
+    (select
+      (keyword_select)
+      (select_expression
+        (term
+          (all_fields))))
+    (from
+      (keyword_from)
+      (relation
+        (object_reference
+          (identifier))))
+    (where
+      (keyword_where)
+      (unary_expression
+        (keyword_not)
+        (between_expression
+          (field
+            (identifier))
+          (keyword_between)
+          (literal)
+          (keyword_and)
+          (literal))))))
+
+================================================================================
+^ groups with + - & | rather than above * (ARCH-2)
+================================================================================
+
+SELECT 1 ^ 2 * 3;
+
+--------------------------------------------------------------------------------
+
+(program
+  (statement
+    (select
+      (keyword_select)
+      (select_expression
+        (term
+          (binary_expression
+            (literal)
+            (binary_expression
+              (literal)
+              (literal))))))))

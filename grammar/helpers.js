@@ -55,3 +55,11 @@ export function aliased_with_columns($) {
     ),
   );
 }
+
+// The Unicode ranges SQL Server accepts as "a letter" in an identifier,
+// shared by `_identifier`, `_tsql_parameter` and `_temporary_table` so a
+// future change to the class only has to be made once. Deliberately
+// excludes U+00D7 `×` and U+00F7 `÷` — both fall inside a naive `À-ſ` span
+// but are Unicode `Sm` (math symbol), not letters.
+export const IDENTIFIER_START = "A-Za-z_À-ÖØ-öø-ſ";
+export const IDENTIFIER_CONTINUE = "0-9A-Za-z_#$À-ÖØ-öø-ſ";

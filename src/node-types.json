@@ -2085,10 +2085,6 @@
           {
             "type": "identifier",
             "named": true
-          },
-          {
-            "type": "literal",
-            "named": true
           }
         ]
       }
@@ -5656,6 +5652,20 @@
             "named": true
           }
         ]
+      },
+      "storage": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "identifier",
+            "named": true
+          },
+          {
+            "type": "keyword_columnstore",
+            "named": true
+          }
+        ]
       }
     },
     "children": {
@@ -5724,17 +5734,46 @@
   {
     "type": "create_login",
     "named": true,
-    "fields": {},
+    "fields": {
+      "name": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "identifier",
+            "named": true
+          }
+        ]
+      },
+      "source": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "identifier",
+            "named": true
+          }
+        ]
+      }
+    },
     "children": {
       "multiple": true,
       "required": true,
       "types": [
         {
-          "type": "identifier",
+          "type": "keyword_asymmetric",
+          "named": true
+        },
+        {
+          "type": "keyword_certificate",
           "named": true
         },
         {
           "type": "keyword_create",
+          "named": true
+        },
+        {
+          "type": "keyword_external",
           "named": true
         },
         {
@@ -5747,6 +5786,14 @@
         },
         {
           "type": "keyword_login",
+          "named": true
+        },
+        {
+          "type": "keyword_provider",
+          "named": true
+        },
+        {
+          "type": "keyword_windows",
           "named": true
         },
         {
@@ -6444,23 +6491,15 @@
       "required": true,
       "types": [
         {
-          "type": "encryption_mechanism",
-          "named": true
-        },
-        {
           "type": "identifier",
           "named": true
         },
         {
-          "type": "keyword_asymmetric",
+          "type": "key_encryptor",
           "named": true
         },
         {
           "type": "keyword_authorization",
-          "named": true
-        },
-        {
-          "type": "keyword_certificate",
           "named": true
         },
         {
@@ -6476,23 +6515,11 @@
           "named": true
         },
         {
-          "type": "keyword_master",
-          "named": true
-        },
-        {
           "type": "keyword_provider",
           "named": true
         },
         {
-          "type": "keyword_service",
-          "named": true
-        },
-        {
           "type": "keyword_symmetric",
-          "named": true
-        },
-        {
-          "type": "option",
           "named": true
         },
         {
@@ -7155,10 +7182,6 @@
         "types": [
           {
             "type": "identifier",
-            "named": true
-          },
-          {
-            "type": "literal",
             "named": true
           }
         ]
@@ -9657,10 +9680,6 @@
           {
             "type": "identifier",
             "named": true
-          },
-          {
-            "type": "literal",
-            "named": true
           }
         ]
       }
@@ -11090,10 +11109,6 @@
           {
             "type": "identifier",
             "named": true
-          },
-          {
-            "type": "literal",
-            "named": true
           }
         ]
       },
@@ -11649,6 +11664,61 @@
     }
   },
   {
+    "type": "key_encryptor",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": true,
+      "types": [
+        {
+          "type": "identifier",
+          "named": true
+        },
+        {
+          "type": "keyword_asymmetric",
+          "named": true
+        },
+        {
+          "type": "keyword_by",
+          "named": true
+        },
+        {
+          "type": "keyword_certificate",
+          "named": true
+        },
+        {
+          "type": "keyword_decryption",
+          "named": true
+        },
+        {
+          "type": "keyword_encryption",
+          "named": true
+        },
+        {
+          "type": "keyword_key",
+          "named": true
+        },
+        {
+          "type": "keyword_master",
+          "named": true
+        },
+        {
+          "type": "keyword_service",
+          "named": true
+        },
+        {
+          "type": "keyword_symmetric",
+          "named": true
+        },
+        {
+          "type": "option",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
     "type": "keyword_char",
     "named": true,
     "fields": {}
@@ -11867,10 +11937,6 @@
         "types": [
           {
             "type": "identifier",
-            "named": true
-          },
-          {
-            "type": "literal",
             "named": true
           }
         ]
@@ -13800,10 +13866,6 @@
           {
             "type": "identifier",
             "named": true
-          },
-          {
-            "type": "literal",
-            "named": true
           }
         ]
       }
@@ -14383,10 +14445,6 @@
         "types": [
           {
             "type": "identifier",
-            "named": true
-          },
-          {
-            "type": "literal",
             "named": true
           }
         ]
@@ -15718,7 +15776,7 @@
       },
       "value": {
         "multiple": false,
-        "required": true,
+        "required": false,
         "types": [
           {
             "type": "literal",
@@ -17584,10 +17642,6 @@
           {
             "type": "identifier",
             "named": true
-          },
-          {
-            "type": "literal",
-            "named": true
           }
         ]
       }
@@ -17629,10 +17683,6 @@
         "types": [
           {
             "type": "identifier",
-            "named": true
-          },
-          {
-            "type": "literal",
             "named": true
           }
         ]
@@ -19303,6 +19353,10 @@
     "named": true
   },
   {
+    "type": "keyword_columnstore",
+    "named": true
+  },
+  {
     "type": "keyword_commit",
     "named": true
   },
@@ -20396,6 +20450,10 @@
   },
   {
     "type": "keyword_window",
+    "named": true
+  },
+  {
+    "type": "keyword_windows",
     "named": true
   },
   {
