@@ -1,0 +1,98 @@
+# =============================================================================
+#  tree-sitter-mssql · GitHub Actions
+# -----------------------------------------------------------------------------
+#  File                gala-release.yml
+#  Workflow name       Gala release
+#  Type                Entrypoint (runs in this repo only)
+#  Triggers            push (main branch)
+#                      workflow_dispatch
+#  Purpose             Cuts the release when a promotion lands on main. gala
+#                      (configured in .gala.toml) reads the Conventional
+#                      Commits since the last v* tag, bumps the Cargo.toml
+#                      version, writes the CHANGELOG.md entry, commits it,
+#                      tags it, pushes the commit and tag atomically, and
+#                      fast-forwards dev to the release commit. It does not
+#                      publish or create the GitHub Release: this workflow
+#                      then dispatches release.yml with the new tag, and that
+#                      workflow publishes crates.io, npm and GitHub Packages
+#                      and creates the GitHub Release.
+#
+#                      The pushes go over the RELEASE_DEPLOY_KEY deploy key,
+#                      not GITHUB_TOKEN: the rulesets require a pull request
+#                      for main and dev and restrict creating v* tags, and the
+#                      deploy key is the ruleset bypass actor for those
+#                      pushes. The release commit body carries gala's skip-ci
+#                      marker, which keeps it from re-running this workflow
+#                      and may also suppress release.yml's tag-push trigger,
+#                      so release.yml is dispatched explicitly instead of
+#                      relying on that event. A promotion that releases
+#                      nothing leaves HEAD untagged and dispatches nothing.
+# =============================================================================
+
+name: Gala release
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+concurrency:
+  group: gala-release
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+env:
+  GALA_VERSION: 'v0.2.0'
+
+jobs:
+  release:
+    if: github.ref == 'refs/heads/main'
+    # Job-level elevation: dispatching release.yml needs actions: write. The
+    # git pushes authenticate with the deploy key, not this token.
+    permissions:
+      contents: read
+      actions: write
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout (gala reads tags and history)
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 0
+          # origin becomes an SSH remote authenticated by the deploy key, so
+          # gala's atomic push and dev sync use the ruleset bypass.
+          ssh-key: ${{ secrets.RELEASE_DEPLOY_KEY }}
+      - name: Configure git identity
+        # gala makes the release commit with the runner's git; without an
+        # identity git refuses to commit at all.
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+      - name: Set up Go
+        uses: actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e # v7.0.0
+        with:
+          # gala v0.2.0 requires Go 1.27.3 or newer.
+          go-version: '1.27.3'
+          cache: false
+      - name: Install Rust toolchain
+        # gala's cargo manager runs cargo to refresh the lockfile.
+        uses: dtolnay/rust-toolchain@4360b52568e2003a75bf9bc1d59f33a8e3fc893c # v1.97.0
+      - name: Install gala
+        run: go install "github.com/alfpricot/gala/cmd/gala@${GALA_VERSION}"
+      - name: Release
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        run: gala release
+      - name: Find the tag this run created
+        id: tag
+        # Empty when nothing was due: HEAD is then the pushed promotion
+        # commit, which carries no v* tag.
+        run: echo "tag=$(git describe --tags --exact-match --match 'v[0-9]*' HEAD 2>/dev/null || true)" >> "$GITHUB_OUTPUT"
+      - name: Dispatch the publish workflow
+        if: steps.tag.outputs.tag != ''
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TAG: ${{ steps.tag.outputs.tag }}
+        run: gh workflow run release.yml --ref main -f "tag=${TAG}"

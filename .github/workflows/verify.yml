@@ -6,10 +6,7 @@
 #  Type                Entrypoint (runs in this repo only)
 #  Triggers            pull_request
 #                      push (dev, main)
-#                      workflow_dispatch (release-plz.yml and
-#                      sync-dev-from-main.yml push PR branches with
-#                      GITHUB_TOKEN, which never triggers a pull_request run,
-#                      so they dispatch this workflow on that branch)
+#                      workflow_dispatch (manual re-run on any ref)
 #  Purpose             Regenerate the parser from grammar.js, fail on any
 #                      drift in the generated parser or the committed
 #                      node-kind snapshot, fail if a create/alter/drop rule
@@ -41,7 +38,7 @@ concurrency:
   cancel-in-progress: true
 
 env:
-  TREE_SITTER_CLI_VERSION: '0.27.0'
+  TREE_SITTER_CLI_VERSION: '0.27.1'
 
 jobs:
   pr-title:
@@ -166,11 +163,7 @@ jobs:
         # A bare `npm install` here would also run this package's own
         # "install": "node-gyp-build" lifecycle script and fail without
         # MSVC; --ignore-scripts installs the declared devDependencies
-        # (eslint, @eslint/js, prettier) without running any of them.
-        # ESLint's flat config resolves its own imports (@eslint/js) from
-        # this checkout's node_modules, so this step is required — an
-        # npx --package= invocation installs into a separate ephemeral
-        # cache the config file's own import can't see.
+        # (oxlint, oxfmt) without running any of them.
         run: |
           npm install --ignore-scripts
           # --ignore-scripts skips the CLI's binary download; fetch it so

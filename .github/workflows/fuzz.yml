@@ -17,7 +17,7 @@
 #                      schedule has no PR author to notify.
 # =============================================================================
 # policy:allow schedule-ungated reason="fuzzing explores input space over time, not code changes — an unchanged scanner can still have an undiscovered bug days later, the same reasoning that exempts audit/security sweeps"
-# policy:allow schedule-untriaged reason="this repo's CI is fully self-contained (no org reusable-workflow calls, per AGENTS.md) — the triage-failure job below opens or reuses a tracking issue directly via gh issue create instead of calling the org's triage-scheduled-failure.yml"
+# policy:allow schedule-untriaged reason="this repo's CI is fully self-contained (no org reusable-workflow calls) — the triage-failure job below opens or reuses a tracking issue directly via gh issue create instead of calling the org's triage-scheduled-failure.yml"
 
 name: Fuzz
 
