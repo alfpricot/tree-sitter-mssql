@@ -4,14 +4,14 @@ A tree-sitter grammar for Microsoft SQL Server T-SQL, with Rust and Node.js bind
 
 ## Before you start
 
-1. Branch from **`dev`**; `main` is the production branch, updated by release pull requests.
+1. Branch from **`dev`**; `main` is the production branch, updated by promotion pull requests from `dev`, with each release cut automatically from `main`.
 2. Read [ARCHITECTURE.md](ARCHITECTURE.md), [docs/scope.md](docs/scope.md), and [docs/development.md](docs/development.md).
 
 ## Local setup
 
 ```sh
 npm install --ignore-scripts
-npx --yes --package=tree-sitter-cli@0.27.0 -- tree-sitter generate
+npx --yes --package=tree-sitter-cli@0.27.1 -- tree-sitter generate
 cargo build
 ```
 
@@ -20,7 +20,7 @@ cargo build
 ## Validation before a pull request
 
 ```sh
-npx --yes --package=tree-sitter-cli@0.27.0 -- tree-sitter test
+npx --yes --package=tree-sitter-cli@0.27.1 -- tree-sitter test
 node test/generate-node-kinds.mjs
 node test/check-registries.mjs
 npm run lint

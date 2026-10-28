@@ -1,0 +1,16 @@
+# Releases are cut by gala from .github/workflows/gala-release.yml. Cargo.toml
+# is the version source of truth; package.json and tree-sitter.json are set
+# from the tag at publish time by release.yml and never committed.
+kind = "app"
+manager = "cargo"
+# release.yml publishes crates.io, npm and GitHub Packages from the tag, so
+# gala stops after tagging.
+publish = false
+# release.yml's github-release job creates the GitHub Release (with the WASM
+# build and node-kind files attached), so gala must not create a second one.
+githubRelease = false
+releaseBranches = ["main"]
+syncBranch = "dev"
+tagPrefix = "v"
+changelog = "CHANGELOG.md"
+remote = "origin"

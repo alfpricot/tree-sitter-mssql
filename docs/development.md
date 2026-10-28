@@ -5,7 +5,7 @@ How to build and test the grammar. [CONTRIBUTING.md](../CONTRIBUTING.md) lists t
 ## Building
 
 ```sh
-npx --yes --package=tree-sitter-cli@0.27.0 -- tree-sitter generate
+npx --yes --package=tree-sitter-cli@0.27.1 -- tree-sitter generate
 cargo build
 ```
 
@@ -18,20 +18,20 @@ The block comment is lexed by `src/scanner.c` rather than a regex, because T-SQL
 ## Testing
 
 ```sh
-npx --yes --package=tree-sitter-cli@0.27.0 -- tree-sitter test
+npx --yes --package=tree-sitter-cli@0.27.1 -- tree-sitter test
 cargo test
 ```
 
 On a machine without MSVC, point the CLI at another C compiler:
 
 ```sh
-CC=gcc CXX=g++ npx --yes --package=tree-sitter-cli@0.27.0 -- tree-sitter test
+CC=gcc CXX=g++ npx --yes --package=tree-sitter-cli@0.27.1 -- tree-sitter test
 ```
 
 `test/corpus/` holds the per-construct tree assertions. `test/corpus/errors.txt` deliberately pins error recovery on invalid input and is hand-written — `tree-sitter test --update` refuses to touch it. Every file under `test/fixtures/*.sql` should also parse with zero `ERROR`/`MISSING`/zero-width nodes:
 
 ```sh
-for f in test/fixtures/*.sql; do printf "%s: " "$f"; CC=gcc CXX=g++ npx --yes --package=tree-sitter-cli@0.27.0 -- tree-sitter parse "$f" 2>/dev/null | grep -c "ERROR\|MISSING"; done
+for f in test/fixtures/*.sql; do printf "%s: " "$f"; CC=gcc CXX=g++ npx --yes --package=tree-sitter-cli@0.27.1 -- tree-sitter parse "$f" 2>/dev/null | grep -c "ERROR\|MISSING"; done
 ```
 
 Regenerate `test/node-kinds.txt` after any change to a node kind or field name:
@@ -48,7 +48,7 @@ node test/check-registries.mjs
 
 ## Lint and format
 
-`eslint` and `prettier` are devDependencies, and ESLint's flat config (`eslint.config.js`) imports `@eslint/js` from this checkout's own `node_modules`, so they cannot run through a one-off `npx --package=...` call. Install them once, skipping the package's own `node-gyp-build` install script, which needs a C++ build toolchain that linting does not:
+`oxlint` and `oxfmt` are devDependencies (configured in `.oxlintrc.json` and `.oxfmtrc.json`), so they run from this checkout's own `node_modules` rather than through a one-off `npx --package=...` call. Install them once, skipping the package's own `node-gyp-build` install script, which needs a C++ build toolchain that linting does not:
 
 ```sh
 npm install --ignore-scripts
@@ -56,7 +56,7 @@ npm run lint
 npm run format:check
 ```
 
-`npm run format` applies fixes. All three run against `grammar.js`, `grammar/**/*.js`, `test/*.mjs`, and `bindings/node/*.js` (`format` and `format:check` also cover `tools/*.mjs`). `src/**` is generated and excluded.
+`npm run format` applies fixes. `lint` runs against `grammar.js`, `grammar/`, `test/`, and `bindings/node/`; `format` and `format:check` cover `grammar.js`, `grammar/**/*.js`, `test/*.mjs`, `tools/*.mjs`, and `bindings/node/*.js`. `src/**` is generated and excluded.
 
 ## Performance and fuzzing
 
