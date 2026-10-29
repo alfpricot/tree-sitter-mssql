@@ -254,8 +254,8 @@ export default {
   // by name instead of repeating its specification.
   //
   // WINDOW becoming a keyword takes the AS-less alias slot right after a
-  // relation reduces, the same collision class as `bulk`/`tablesample`
-  // (see AGENTS.md): `FROM t window` errors; `FROM t AS window` still
+  // relation reduces, the same collision class as `bulk`/`tablesample`:
+  // `FROM t window` errors; `FROM t AS window` still
   // works, and `SELECT window FROM t` (the column slot) is unaffected.
   window_clause: ($) => seq($.keyword_window, comma_list($.named_window, true)),
 
