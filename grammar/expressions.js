@@ -431,6 +431,12 @@ export default {
       // $action — not a valid _identifier on its own, modeled as one more
       // identifier spelling so it can stand in object_reference's leading part.
       $._dollar_partition,
+      // $IDENTITY and $ROWGUID: pseudo-columns naming a table's identity
+      // column and its ROWGUIDCOL column, bare or table-qualified
+      // (`t.$IDENTITY`). The same treatment as $action, so the `$` is not
+      // lexed apart from an `IDENTITY` keyword.
+      $._dollar_identity,
+      $._dollar_rowguid,
       // $(var): a SQLCMD scripting variable, substituted by the sqlcmd/SSMS
       // client before the batch reaches the server. Textual substitution, so
       // it can appear anywhere an identifier or literal can — modeled as one
@@ -451,5 +457,7 @@ export default {
   _double_quote_string: (_) => /"([^"]|"")+"/,
   _dollar_action: (_) => /\$[aA][cC][tT][iI][oO][nN]/,
   _dollar_partition: (_) => /\$[pP][aA][rR][tT][iI][tT][iI][oO][nN]/,
+  _dollar_identity: (_) => /\$[iI][dD][eE][nN][tT][iI][tT][yY]/,
+  _dollar_rowguid: (_) => /\$[rR][oO][wW][gG][uU][iI][dD]/,
   _sqlcmd_variable: (_) => /\$\([A-Za-z_][0-9A-Za-z_]*\)/,
 };

@@ -7512,6 +7512,14 @@
         },
         {
           "type": "SYMBOL",
+          "name": "_dollar_identity"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "_dollar_rowguid"
+        },
+        {
+          "type": "SYMBOL",
           "name": "_sqlcmd_variable"
         }
       ]
@@ -7547,6 +7555,14 @@
     "_dollar_partition": {
       "type": "PATTERN",
       "value": "\\$[pP][aA][rR][tT][iI][tT][iI][oO][nN]"
+    },
+    "_dollar_identity": {
+      "type": "PATTERN",
+      "value": "\\$[iI][dD][eE][nN][tT][iI][tT][yY]"
+    },
+    "_dollar_rowguid": {
+      "type": "PATTERN",
+      "value": "\\$[rR][oO][wW][gG][uU][iI][dD]"
     },
     "_sqlcmd_variable": {
       "type": "PATTERN",
