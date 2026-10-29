@@ -57,7 +57,7 @@ At publish time the project pushes to three registries: crates.io (the crate), n
 ## Build, test, release, and deploy
 
 - **Pull requests and pushes to `dev` and `main`** run `Verify` (`.github/workflows/verify.yml`): PR-title validation, secret scanning, regeneration of the parser with a drift check, the node-kind and registry checks, lint and format checks, corpus, highlight, and fixture tests, `cargo fmt`, `clippy`, and `cargo test`, the Node binding build and tests, and workflow linting.
-- **Pushes to `main`** run `Gala release` (`gala-release.yml`), which uses gala (`.gala.toml`) to compute the version from Conventional Commits, bump `Cargo.toml`, write `CHANGELOG.md`, commit and tag the release, push over a deploy key, and fast-forward `dev` to the release commit. It then dispatches `Release` (`release.yml`) with the new tag to publish to crates.io, npm, and GitHub Packages and create the GitHub Release.
+- **Pushes to `main`** run `Gala release` (`gala-release.yml`), which uses gala (`.gala.toml`) to compute the version from Conventional Commits, bump it in `Cargo.toml`, `package.json`, and `tree-sitter.json`, refresh `package-lock.json`, regenerate the parser (whose metadata embeds the `tree-sitter.json` version), write `CHANGELOG.md`, commit and tag the release, push over a deploy key, and fast-forward `dev` to the release commit. It then dispatches `Release` (`release.yml`) with the new tag to publish to crates.io, npm, and GitHub Packages and create the GitHub Release.
 - **On a schedule**, `Fuzz` runs weekly and `Cleanup stale caches` runs daily.
 - Nothing is deployed: the repository publishes libraries only.
 
