@@ -60,4 +60,15 @@ npm run format:check
 
 ## Performance and fuzzing
 
-Every `Verify` run's job summary reports the fixture set's parse throughput (bytes/ms) and the current `src/parser.c` size, so a change's effect on either is visible without a separate benchmark step. A scheduled workflow (`.github/workflows/fuzz.yml`) also fuzzes the parser and `src/scanner.c` against arbitrary input weekly, using the `cargo-fuzz` target in `fuzz/`.
+Every `Verify` run's job summary reports the fixture set's parse throughput (bytes/ms) and the current `src/parser.c` size, so a change's effect on either is visible without a separate benchmark step. The `cargo-fuzz` target in `fuzz/` fuzzes the parser and `src/scanner.c` against arbitrary input. It is run locally rather than in CI, on Linux or macOS with a nightly Rust toolchain, `clang`, and `cargo-fuzz` installed (`cargo install cargo-fuzz --locked`). Seed the corpus from the fixtures and run it from the repository root:
+
+```sh
+mkdir -p fuzz/corpus/parse
+cp test/fixtures/*.sql fuzz/corpus/parse/
+CC=clang CXX=clang++ \
+  CFLAGS=-fsanitize=address,fuzzer-no-link \
+  CXXFLAGS=-fsanitize=address,fuzzer-no-link \
+  cargo +nightly fuzz run parse -- -max_total_time=300 -timeout=10
+```
+
+`cargo-fuzz` sets the instrumentation flags for the Rust side itself; the `CC`/`CFLAGS` settings are needed so the `cc` crate also builds `src/parser.c` and `src/scanner.c` with libFuzzer coverage and AddressSanitizer. A crashing input is written to `fuzz/artifacts/parse/`.
