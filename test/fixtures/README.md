@@ -8,7 +8,7 @@ per-construct corpus tests: a construct that first appears in a fixture also get
 Run the check with:
 
 ```bash
-for f in test/fixtures/*.sql; do printf "%s: " "$f"; CC=gcc CXX=g++ ./node_modules/tree-sitter-cli/tree-sitter.exe parse "$f" | grep -c "ERROR\|MISSING"; done
+for f in test/fixtures/*.sql; do printf "%s: " "$f"; npx --yes --package=tree-sitter-cli@0.27.1 -- tree-sitter parse "$f" | grep -c "ERROR\|MISSING"; done
 ```
 
 Files are named for the T-SQL construct(s) they exercise, not for where the SQL came from. The
