@@ -191,9 +191,13 @@ export default {
   _trigger_definition: ($) =>
     seq(
       $.keyword_trigger,
-      $.object_reference,
+      field('name', $.object_reference),
       $.keyword_on,
-      choice(seq($.keyword_all, $.keyword_server), $.keyword_database, $.object_reference),
+      choice(
+        seq($.keyword_all, $.keyword_server),
+        $.keyword_database,
+        field('target', $.object_reference),
+      ),
       optional($.trigger_options),
       choice($.keyword_for, $.keyword_after, seq($.keyword_instead, $.keyword_of)),
       comma_list($.trigger_event, true),

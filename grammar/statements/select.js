@@ -72,7 +72,7 @@ export default {
 
   cte: ($) =>
     seq(
-      $.identifier,
+      field('name', $.identifier),
       optional(paren_list(field('argument', $.identifier))),
       $.keyword_as,
       // A CTE body is a query, not another `_dml_read`: that rule's leading

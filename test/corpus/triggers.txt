@@ -732,3 +732,111 @@ AS EXTERNAL NAME ClrUtil.[Martin.Clr.Triggers].Audit;
               (identifier)
               (identifier)
               (identifier))))))))
+
+================================================================================
+Module and CTE name, target, and body fields
+================================================================================
+
+CREATE TRIGGER dbo.trg ON dbo.t AFTER INSERT AS SELECT 1;
+GO
+CREATE PROCEDURE dbo.p AS SELECT 1;
+GO
+CREATE FUNCTION dbo.f() RETURNS int AS BEGIN RETURN 1 END;
+GO
+WITH c (x) AS (SELECT 1) SELECT x FROM c;
+
+--------------------------------------------------------------------------------
+
+(program
+  (batch
+    (statement
+      (create_trigger
+        (keyword_create)
+        (keyword_trigger)
+        name: (object_reference
+          schema: (identifier)
+          name: (identifier))
+        (keyword_on)
+        target: (object_reference
+          schema: (identifier)
+          name: (identifier))
+        (keyword_after)
+        (trigger_event
+          (keyword_insert))
+        body: (procedure_body
+          (keyword_as)
+          (statement
+            (query_specification
+              (select
+                (keyword_select)
+                (select_expression
+                  (term
+                    value: (literal)))))))))
+    (go_statement
+      (keyword_go)))
+  (batch
+    (statement
+      (create_procedure
+        (keyword_create)
+        (keyword_procedure)
+        name: (object_reference
+          schema: (identifier)
+          name: (identifier))
+        body: (procedure_body
+          (keyword_as)
+          (statement
+            (query_specification
+              (select
+                (keyword_select)
+                (select_expression
+                  (term
+                    value: (literal)))))))))
+    (go_statement
+      (keyword_go)))
+  (batch
+    (statement
+      (create_function
+        (keyword_create)
+        (keyword_function)
+        name: (object_reference
+          schema: (identifier)
+          name: (identifier))
+        (function_arguments)
+        (keyword_returns)
+        (keyword_int)
+        body: (function_body
+          (keyword_as)
+          (keyword_begin)
+          (statement
+            (return_statement
+              (keyword_return)
+              (literal)))
+          (keyword_end))))
+    (go_statement
+      (keyword_go)))
+  (batch
+    (statement
+      (keyword_with)
+      (cte
+        name: (identifier)
+        argument: (identifier)
+        (keyword_as)
+        (statement
+          (query_specification
+            (select
+              (keyword_select)
+              (select_expression
+                (term
+                  value: (literal)))))))
+      (query_specification
+        (select
+          (keyword_select)
+          (select_expression
+            (term
+              value: (field
+                name: (identifier)))))
+        (from
+          (keyword_from)
+          (relation
+            (object_reference
+              name: (identifier))))))))
