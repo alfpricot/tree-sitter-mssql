@@ -69,6 +69,42 @@
                     {
                       "type": "SYMBOL",
                       "name": "sqlcmd_reset"
+                    },
+                    {
+                      "type": "SYMBOL",
+                      "name": "sqlcmd_output"
+                    },
+                    {
+                      "type": "SYMBOL",
+                      "name": "sqlcmd_connect"
+                    },
+                    {
+                      "type": "SYMBOL",
+                      "name": "sqlcmd_xml"
+                    },
+                    {
+                      "type": "SYMBOL",
+                      "name": "sqlcmd_exit"
+                    },
+                    {
+                      "type": "SYMBOL",
+                      "name": "sqlcmd_quit"
+                    },
+                    {
+                      "type": "SYMBOL",
+                      "name": "sqlcmd_list"
+                    },
+                    {
+                      "type": "SYMBOL",
+                      "name": "sqlcmd_listvar"
+                    },
+                    {
+                      "type": "SYMBOL",
+                      "name": "sqlcmd_ed"
+                    },
+                    {
+                      "type": "SYMBOL",
+                      "name": "sqlcmd_shell"
                     }
                   ]
                 }
@@ -136,6 +172,10 @@
             "value": ":setvar"
           },
           {
+            "type": "SYMBOL",
+            "name": "_sqlcmd_argument"
+          },
+          {
             "type": "FIELD",
             "name": "name",
             "content": {
@@ -184,6 +224,10 @@
           "value": ":r"
         },
         {
+          "type": "SYMBOL",
+          "name": "_sqlcmd_argument"
+        },
+        {
           "type": "ALIAS",
           "content": {
             "type": "SYMBOL",
@@ -212,6 +256,10 @@
         },
         {
           "type": "SYMBOL",
+          "name": "_sqlcmd_argument"
+        },
+        {
+          "type": "SYMBOL",
           "name": "keyword_error"
         },
         {
@@ -234,13 +282,319 @@
       ]
     },
     "sqlcmd_reset": {
-      "type": "ALIAS",
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "ALIAS",
+          "content": {
+            "type": "PATTERN",
+            "value": ":[rR][eE][sS][eE][tT]"
+          },
+          "named": false,
+          "value": ":reset"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "_sqlcmd_boundary"
+        }
+      ]
+    },
+    "sqlcmd_output": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "CHOICE",
+          "members": [
+            {
+              "type": "ALIAS",
+              "content": {
+                "type": "PATTERN",
+                "value": ":[oO][uU][tT]"
+              },
+              "named": false,
+              "value": ":out"
+            },
+            {
+              "type": "ALIAS",
+              "content": {
+                "type": "PATTERN",
+                "value": ":[eE][rR][rR][oO][rR]"
+              },
+              "named": false,
+              "value": ":error"
+            }
+          ]
+        },
+        {
+          "type": "SYMBOL",
+          "name": "_sqlcmd_argument"
+        },
+        {
+          "type": "FIELD",
+          "name": "target",
+          "content": {
+            "type": "ALIAS",
+            "content": {
+              "type": "SYMBOL",
+              "name": "_sqlcmd_path"
+            },
+            "named": true,
+            "value": "identifier"
+          }
+        }
+      ]
+    },
+    "sqlcmd_connect": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "ALIAS",
+          "content": {
+            "type": "PATTERN",
+            "value": ":[cC][oO][nN][nN][eE][cC][tT]"
+          },
+          "named": false,
+          "value": ":connect"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "_sqlcmd_argument"
+        },
+        {
+          "type": "FIELD",
+          "name": "arguments",
+          "content": {
+            "type": "ALIAS",
+            "content": {
+              "type": "SYMBOL",
+              "name": "_sqlcmd_path"
+            },
+            "named": true,
+            "value": "sqlcmd_text"
+          }
+        }
+      ]
+    },
+    "sqlcmd_xml": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "ALIAS",
+          "content": {
+            "type": "PATTERN",
+            "value": ":[xX][mM][lL]"
+          },
+          "named": false,
+          "value": ":xml"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "_sqlcmd_argument"
+        },
+        {
+          "type": "FIELD",
+          "name": "state",
+          "content": {
+            "type": "CHOICE",
+            "members": [
+              {
+                "type": "SYMBOL",
+                "name": "keyword_on"
+              },
+              {
+                "type": "SYMBOL",
+                "name": "keyword_off"
+              }
+            ]
+          }
+        }
+      ]
+    },
+    "sqlcmd_exit": {
+      "type": "PREC_RIGHT",
+      "value": 0,
       "content": {
-        "type": "PATTERN",
-        "value": ":[rR][eE][sS][eE][tT]"
-      },
-      "named": false,
-      "value": ":reset"
+        "type": "SEQ",
+        "members": [
+          {
+            "type": "ALIAS",
+            "content": {
+              "type": "PATTERN",
+              "value": ":[eE][xX][iI][tT]"
+            },
+            "named": false,
+            "value": ":exit"
+          },
+          {
+            "type": "CHOICE",
+            "members": [
+              {
+                "type": "SYMBOL",
+                "name": "_sqlcmd_exit_query"
+              },
+              {
+                "type": "SEQ",
+                "members": [
+                  {
+                    "type": "SYMBOL",
+                    "name": "_sqlcmd_boundary"
+                  },
+                  {
+                    "type": "CHOICE",
+                    "members": [
+                      {
+                        "type": "SYMBOL",
+                        "name": "_sqlcmd_exit_query"
+                      },
+                      {
+                        "type": "BLANK"
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    },
+    "_sqlcmd_exit_query": {
+      "type": "CHOICE",
+      "members": [
+        {
+          "type": "FIELD",
+          "name": "query",
+          "content": {
+            "type": "SYMBOL",
+            "name": "subquery"
+          }
+        },
+        {
+          "type": "SEQ",
+          "members": [
+            {
+              "type": "STRING",
+              "value": "("
+            },
+            {
+              "type": "STRING",
+              "value": ")"
+            }
+          ]
+        }
+      ]
+    },
+    "sqlcmd_quit": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "ALIAS",
+          "content": {
+            "type": "PATTERN",
+            "value": ":[qQ][uU][iI][tT]"
+          },
+          "named": false,
+          "value": ":quit"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "_sqlcmd_boundary"
+        }
+      ]
+    },
+    "sqlcmd_list": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "ALIAS",
+          "content": {
+            "type": "PATTERN",
+            "value": ":[lL][iI][sS][tT]"
+          },
+          "named": false,
+          "value": ":list"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "_sqlcmd_boundary"
+        }
+      ]
+    },
+    "sqlcmd_listvar": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "ALIAS",
+          "content": {
+            "type": "PATTERN",
+            "value": ":[lL][iI][sS][tT][vV][aA][rR]"
+          },
+          "named": false,
+          "value": ":listvar"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "_sqlcmd_boundary"
+        }
+      ]
+    },
+    "sqlcmd_ed": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "ALIAS",
+          "content": {
+            "type": "PATTERN",
+            "value": ":[eE][dD]"
+          },
+          "named": false,
+          "value": ":ed"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "_sqlcmd_boundary"
+        }
+      ]
+    },
+    "sqlcmd_shell": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "STRING",
+          "value": ":!!"
+        },
+        {
+          "type": "CHOICE",
+          "members": [
+            {
+              "type": "SEQ",
+              "members": [
+                {
+                  "type": "SYMBOL",
+                  "name": "_sqlcmd_inline"
+                },
+                {
+                  "type": "FIELD",
+                  "name": "command",
+                  "content": {
+                    "type": "ALIAS",
+                    "content": {
+                      "type": "SYMBOL",
+                      "name": "_sqlcmd_path"
+                    },
+                    "named": true,
+                    "value": "sqlcmd_text"
+                  }
+                }
+              ]
+            },
+            {
+              "type": "SYMBOL",
+              "name": "_sqlcmd_empty"
+            }
+          ]
+        }
+      ]
     },
     "comment": {
       "type": "PATTERN",
@@ -26716,6 +27070,22 @@
     {
       "type": "SYMBOL",
       "name": "_unterminated_comment"
+    },
+    {
+      "type": "SYMBOL",
+      "name": "_sqlcmd_boundary"
+    },
+    {
+      "type": "SYMBOL",
+      "name": "_sqlcmd_argument"
+    },
+    {
+      "type": "SYMBOL",
+      "name": "_sqlcmd_inline"
+    },
+    {
+      "type": "SYMBOL",
+      "name": "_sqlcmd_empty"
     }
   ],
   "inline": [],

@@ -2829,11 +2829,39 @@
           "named": true
         },
         {
+          "type": "sqlcmd_connect",
+          "named": true
+        },
+        {
+          "type": "sqlcmd_ed",
+          "named": true
+        },
+        {
+          "type": "sqlcmd_exit",
+          "named": true
+        },
+        {
           "type": "sqlcmd_include",
           "named": true
         },
         {
+          "type": "sqlcmd_list",
+          "named": true
+        },
+        {
+          "type": "sqlcmd_listvar",
+          "named": true
+        },
+        {
           "type": "sqlcmd_on_error",
+          "named": true
+        },
+        {
+          "type": "sqlcmd_output",
+          "named": true
+        },
+        {
+          "type": "sqlcmd_quit",
           "named": true
         },
         {
@@ -2842,6 +2870,14 @@
         },
         {
           "type": "sqlcmd_setvar",
+          "named": true
+        },
+        {
+          "type": "sqlcmd_shell",
+          "named": true
+        },
+        {
+          "type": "sqlcmd_xml",
           "named": true
         },
         {
@@ -16640,6 +16676,43 @@
     }
   },
   {
+    "type": "sqlcmd_connect",
+    "named": true,
+    "fields": {
+      "arguments": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "sqlcmd_text",
+            "named": true
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "sqlcmd_ed",
+    "named": true,
+    "fields": {}
+  },
+  {
+    "type": "sqlcmd_exit",
+    "named": true,
+    "fields": {
+      "query": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "subquery",
+            "named": true
+          }
+        ]
+      }
+    }
+  },
+  {
     "type": "sqlcmd_include",
     "named": true,
     "fields": {},
@@ -16653,6 +16726,16 @@
         }
       ]
     }
+  },
+  {
+    "type": "sqlcmd_list",
+    "named": true,
+    "fields": {}
+  },
+  {
+    "type": "sqlcmd_listvar",
+    "named": true,
+    "fields": {}
   },
   {
     "type": "sqlcmd_on_error",
@@ -16685,6 +16768,27 @@
     }
   },
   {
+    "type": "sqlcmd_output",
+    "named": true,
+    "fields": {
+      "target": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "identifier",
+            "named": true
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "sqlcmd_quit",
+    "named": true,
+    "fields": {}
+  },
+  {
     "type": "sqlcmd_reset",
     "named": true,
     "fields": {}
@@ -16713,6 +16817,42 @@
           },
           {
             "type": "object_reference",
+            "named": true
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "sqlcmd_shell",
+    "named": true,
+    "fields": {
+      "command": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "sqlcmd_text",
+            "named": true
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "sqlcmd_xml",
+    "named": true,
+    "fields": {
+      "state": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "keyword_off",
+            "named": true
+          },
+          {
+            "type": "keyword_on",
             "named": true
           }
         ]
@@ -20032,11 +20172,47 @@
     "named": false
   },
   {
+    "type": ":!!",
+    "named": false
+  },
+  {
     "type": "::",
     "named": false
   },
   {
+    "type": ":connect",
+    "named": false
+  },
+  {
+    "type": ":ed",
+    "named": false
+  },
+  {
+    "type": ":error",
+    "named": false
+  },
+  {
+    "type": ":exit",
+    "named": false
+  },
+  {
+    "type": ":list",
+    "named": false
+  },
+  {
+    "type": ":listvar",
+    "named": false
+  },
+  {
     "type": ":on",
+    "named": false
+  },
+  {
+    "type": ":out",
+    "named": false
+  },
+  {
+    "type": ":quit",
     "named": false
   },
   {
@@ -20049,6 +20225,10 @@
   },
   {
     "type": ":setvar",
+    "named": false
+  },
+  {
+    "type": ":xml",
     "named": false
   },
   {
@@ -21503,6 +21683,10 @@
   },
   {
     "type": "op_other",
+    "named": true
+  },
+  {
+    "type": "sqlcmd_text",
     "named": true
   },
   {
