@@ -2837,6 +2837,10 @@
           "named": true
         },
         {
+          "type": "sqlcmd_reset",
+          "named": true
+        },
+        {
           "type": "sqlcmd_setvar",
           "named": true
         },
@@ -16681,6 +16685,11 @@
     }
   },
   {
+    "type": "sqlcmd_reset",
+    "named": true,
+    "fields": {}
+  },
+  {
     "type": "sqlcmd_setvar",
     "named": true,
     "fields": {
@@ -20032,6 +20041,10 @@
   },
   {
     "type": ":r",
+    "named": false
+  },
+  {
+    "type": ":reset",
     "named": false
   },
   {

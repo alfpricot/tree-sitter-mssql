@@ -107,6 +107,7 @@ export default grammar({
                 $.sqlcmd_setvar,
                 $.sqlcmd_include,
                 $.sqlcmd_on_error,
+                $.sqlcmd_reset,
               ),
             ),
             optional($.go_statement),
@@ -161,6 +162,11 @@ export default grammar({
         $.keyword_error,
         field('action', choice($.keyword_exit, $.keyword_ignore)),
       ),
+
+    // :reset — clears sqlcmd's statement cache. It takes no argument. It has
+    // its own token so that, by longest match, `:RESET` is not read as `:r`
+    // including a file named `ESET`.
+    sqlcmd_reset: (_) => sqlcmd_command('reset'),
 
     comment: (_) => /--.*/,
     // The block comment (`marginalia`) is an external token: see src/scanner.c.
