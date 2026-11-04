@@ -207,3 +207,71 @@ OUTER APPLY dbo.fn(t.id) f
                     (identifier))
                   (identifier))))
             (identifier)))))))
+
+================================================================================
+CROSS APPLY and OUTER APPLY over a VALUES list
+================================================================================
+
+SELECT t.id, v.x
+FROM t
+CROSS APPLY (VALUES (t.a), (t.b)) AS v(x)
+OUTER APPLY (VALUES (1, N'a')) v2(n, s);
+
+--------------------------------------------------------------------------------
+
+(program
+  (batch
+    (statement
+      (query_specification
+        (select
+          (keyword_select)
+          (select_expression
+            (term
+              (field
+                (object_reference
+                  (identifier))
+                (identifier)))
+            (term
+              (field
+                (object_reference
+                  (identifier))
+                (identifier)))))
+        (from
+          (keyword_from)
+          (relation
+            (object_reference
+              (identifier)))
+          (apply_join
+            (keyword_cross)
+            (keyword_apply)
+            (values
+              (keyword_values)
+              (list
+                (field
+                  (object_reference
+                    (identifier))
+                  (identifier)))
+              (list
+                (field
+                  (object_reference
+                    (identifier))
+                  (identifier))))
+            (keyword_as)
+            (identifier)
+            (list
+              (column
+                (identifier))))
+          (apply_join
+            (keyword_outer)
+            (keyword_apply)
+            (values
+              (keyword_values)
+              (list
+                (literal)
+                (literal)))
+            (identifier)
+            (list
+              (column
+                (identifier))
+              (column
+                (identifier)))))))))

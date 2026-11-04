@@ -698,3 +698,37 @@ CREATE TRIGGER trg_append ON dbo.t FOR INSERT WITH APPEND AS SELECT 1;
                 (select_expression
                   (term
                     (literal)))))))))))
+
+================================================================================
+CLR trigger with AS EXTERNAL NAME
+================================================================================
+
+CREATE TRIGGER trg_Audit ON dbo.t AFTER INSERT
+AS EXTERNAL NAME ClrUtil.[Martin.Clr.Triggers].Audit;
+
+--------------------------------------------------------------------------------
+
+(program
+  (batch
+    (statement
+      (create_trigger
+        (keyword_create)
+        (keyword_trigger)
+        (object_reference
+          (identifier))
+        (keyword_on)
+        (object_reference
+          (identifier)
+          (identifier))
+        (keyword_after)
+        (trigger_event
+          (keyword_insert))
+        (procedure_body
+          (keyword_as)
+          (external_name
+            (keyword_external)
+            (keyword_name)
+            (object_reference
+              (identifier)
+              (identifier)
+              (identifier))))))))

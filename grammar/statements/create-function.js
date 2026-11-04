@@ -6,6 +6,7 @@ import { comma_list, paren_list } from '../helpers.js';
 //   scalar:                  RETURNS <type>            AS BEGIN ... RETURN x END
 //   inline table-valued:     RETURNS TABLE             [AS] RETURN ( select )
 //   multi-statement TVF:     RETURNS @t TABLE ( ... )  AS BEGIN ... RETURN END
+//   CLR:                     RETURNS <type> | TABLE ( ... )  [AS] EXTERNAL NAME a.c.m
 export default {
   create_function: ($) => seq($.keyword_create, optional($._or_alter), $._function_definition),
 
@@ -17,7 +18,12 @@ export default {
       field('name', $.object_reference),
       $.function_arguments,
       $.keyword_returns,
-      choice($._type, $.keyword_table, $.table_var_declaration),
+      // `TABLE ( columns )` is a CLR table-valued function's result shape.
+      choice(
+        $._type,
+        seq($.keyword_table, optional($.column_definitions)),
+        $.table_var_declaration,
+      ),
       optional($.function_options),
       $.function_body,
     ),
@@ -61,5 +67,7 @@ export default {
       // Inline table-valued: RETURN followed directly by the query, with or
       // without parentheses.
       seq(optional($.keyword_as), $.keyword_return, $._dml_read),
+      // CLR scalar or table-valued: [AS] EXTERNAL NAME assembly.class.method.
+      seq(optional($.keyword_as), $.external_name),
     ),
 };

@@ -4,6 +4,7 @@ import column_list_rules from './grammar/column-lists.js';
 import expression_rules from './grammar/expressions.js';
 import transaction_rules from './grammar/transactions.js';
 import statement_rules from './grammar/statements/index.js';
+import { sqlcmd_command } from './grammar/helpers.js';
 
 export default grammar({
   name: 'mssql',
@@ -105,6 +106,7 @@ export default grammar({
                 seq(choice($.statement, $.block), optional(';')),
                 $.sqlcmd_setvar,
                 $.sqlcmd_include,
+                $.sqlcmd_on_error,
               ),
             ),
             optional($.go_statement),
@@ -119,11 +121,11 @@ export default grammar({
     // optional repeat count (`GO 5`) and must otherwise stand alone.
     go_statement: ($) => seq($.keyword_go, optional(alias($._natural_number, $.literal))),
 
-    // SQLCMD scripting variables — `:setvar name value` and `:r path` — are
-    // interpreted by the sqlcmd/SSMS client, never sent to the server, the
-    // same standing as GO. Unlike T-SQL keywords, sqlcmd command names are
-    // case-sensitive, so they are plain literal tokens rather than
-    // `make_keyword` regexes.
+    // SQLCMD commands — `:setvar name value`, `:r path`, `:on error exit` —
+    // are interpreted by the sqlcmd/SSMS client, never sent to the server,
+    // the same standing as GO. sqlcmd matches command names
+    // case-insensitively, so SSDT's `:SETVAR` and `:On Error` parse too (see
+    // `sqlcmd_command` in grammar/helpers.js).
     //   :setvar DatabaseName "MyDatabase"
     // The value is an object reference rather than an identifier so a
     // schema-qualified name (`:setvar TableName sys.objects`) is one value.
@@ -132,7 +134,7 @@ export default grammar({
     sqlcmd_setvar: ($) =>
       prec.right(
         seq(
-          ':setvar',
+          sqlcmd_command('setvar'),
           field('name', $.identifier),
           optional(field('value', choice($.object_reference, $.literal))),
         ),
@@ -143,8 +145,22 @@ export default grammar({
     // characters, so it is a single raw token rather than composed from
     // identifiers, aliased to `identifier` since consumers need to see that
     // something is referenced here, not decompose the path.
-    sqlcmd_include: ($) => seq(':r', alias($._sqlcmd_path, $.identifier)),
-    _sqlcmd_path: (_) => /[^\s][^\r\n]*/,
+    // A quoted path is taken whole. An unquoted path ends before a trailing
+    // `-- comment`: it is words separated by spaces, where a hyphen may sit
+    // anywhere (`Post-Deploy.sql`, `-init.sql`, `Seed - Copy.sql`) except
+    // directly before another hyphen, so `--` is left for the comment token.
+    sqlcmd_include: ($) => seq(sqlcmd_command('r'), alias($._sqlcmd_path, $.identifier)),
+    _sqlcmd_path: (_) =>
+      /"[^"\r\n]*"|([^\s-]|-[^\s-])+([ \t]+(([^\s-]|-[^\s-])+|-[ \t]+([^\s-]|-[^\s-])+))*/,
+
+    // :on error [ exit | ignore ] — what sqlcmd does when a batch fails. SSDT
+    // and sqlpackage publish scripts open with `:on error exit`.
+    sqlcmd_on_error: ($) =>
+      seq(
+        sqlcmd_command('on'),
+        $.keyword_error,
+        field('action', choice($.keyword_exit, $.keyword_ignore)),
+      ),
 
     comment: (_) => /--.*/,
     // The block comment (`marginalia`) is an external token: see src/scanner.c.
