@@ -2,7 +2,17 @@ import assert from 'node:assert/strict';
 import { execFileSync } from 'node:child_process';
 
 const tracked = new Set(execFileSync('git', ['ls-files', '-z'], { encoding: 'utf8' }).split('\0'));
-const common = ['LICENSE', 'README.md', 'src/parser.c', 'src/scanner.c', 'queries/highlights.scm'];
+const common = [
+  'LICENSE',
+  'README.md',
+  'src/parser.c',
+  'src/scanner.c',
+  'queries/highlights.scm',
+  'queries/indents.scm',
+  'queries/injections.scm',
+  'queries/locals.scm',
+  'queries/tags.scm',
+];
 
 function check(paths, required, prefix = '', generated = []) {
   const files = paths.map((path) => path.replaceAll('\\', '/'));
