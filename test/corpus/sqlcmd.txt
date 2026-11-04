@@ -142,7 +142,7 @@ SSDT publish header: :on error and mixed-case sqlcmd commands
 
 :on error exit
 :On Error ignore
-:SETVAR DatabaseName "Martin"
+:SETVAR DatabaseName "SampleDb"
 GO
 :r .\Scripts\Post-Deploy.sql -- seed data
 :R C:\My Scripts\seed-data.sql

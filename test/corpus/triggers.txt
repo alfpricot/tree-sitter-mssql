@@ -704,7 +704,7 @@ CLR trigger with AS EXTERNAL NAME
 ================================================================================
 
 CREATE TRIGGER trg_Audit ON dbo.t AFTER INSERT
-AS EXTERNAL NAME ClrUtil.[Martin.Clr.Triggers].Audit;
+AS EXTERNAL NAME ClrUtil.[Contoso.Clr.Triggers].Audit;
 
 --------------------------------------------------------------------------------
 

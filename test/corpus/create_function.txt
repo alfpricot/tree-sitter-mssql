@@ -880,11 +880,11 @@ CLR scalar and table-valued functions with EXTERNAL NAME
 CREATE FUNCTION dbo.fn_Regex (@input nvarchar(max), @pattern nvarchar(4000))
 RETURNS bit
 WITH EXECUTE AS CALLER
-AS EXTERNAL NAME ClrUtil.[Martin.Clr.Functions].IsMatch;
+AS EXTERNAL NAME ClrUtil.[Contoso.Clr.Functions].IsMatch;
 GO
 CREATE FUNCTION dbo.fn_Split (@list nvarchar(max))
 RETURNS TABLE (item nvarchar(4000), pos int)
-EXTERNAL NAME ClrUtil.[Martin.Clr.Functions].Split;
+EXTERNAL NAME ClrUtil.[Contoso.Clr.Functions].Split;
 
 --------------------------------------------------------------------------------
 
