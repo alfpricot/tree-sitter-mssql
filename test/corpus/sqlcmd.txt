@@ -247,3 +247,107 @@ SELECT 1;
           (select_expression
             (term
               (literal))))))))
+
+================================================================================
+Output redirection, connect, xml, and the commands that take no argument
+================================================================================
+
+:out results.txt
+:Error STDERR
+:connect myserver\inst -l 30 -U sa
+:XML ON
+:xml off
+:listvar
+:list
+:ed
+:quit
+SELECT 1;
+
+---
+
+(program
+  (batch
+    (sqlcmd_output
+      target: (identifier))
+    (sqlcmd_output
+      target: (identifier))
+    (sqlcmd_connect
+      arguments: (sqlcmd_text))
+    (sqlcmd_xml
+      state: (keyword_on))
+    (sqlcmd_xml
+      state: (keyword_off))
+    (sqlcmd_listvar)
+    (sqlcmd_list)
+    (sqlcmd_ed)
+    (sqlcmd_quit)
+    (statement
+      (query_specification
+        (select
+          (keyword_select)
+          (select_expression
+            (term
+              value: (literal))))))))
+
+================================================================================
+:!! runs an operating-system command, with or without a space
+================================================================================
+
+:!! dir C:\temp
+:!!echo done -- not part of the command
+SELECT 1;
+
+---
+
+(program
+  (batch
+    (sqlcmd_shell
+      command: (sqlcmd_text))
+    (sqlcmd_shell
+      command: (sqlcmd_text))
+    (comment)
+    (statement
+      (query_specification
+        (select
+          (keyword_select)
+          (select_expression
+            (term
+              value: (literal))))))))
+
+================================================================================
+:exit with no query, an empty query, and a query
+================================================================================
+
+:exit
+:exit()
+:EXIT(SELECT 1)
+:exit (SELECT 2)
+GO
+:exit
+
+---
+
+(program
+  (batch
+    (sqlcmd_exit)
+    (sqlcmd_exit)
+    (sqlcmd_exit
+      query: (subquery
+        (query_specification
+          (select
+            (keyword_select)
+            (select_expression
+              (term
+                value: (literal)))))))
+    (sqlcmd_exit
+      query: (subquery
+        (query_specification
+          (select
+            (keyword_select)
+            (select_expression
+              (term
+                value: (literal)))))))
+    (go_statement
+      (keyword_go)))
+  (batch
+    (sqlcmd_exit)))

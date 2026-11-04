@@ -54,7 +54,8 @@ mod tests {
     }
 
     /// The text of every `capture` node the query finds in `source`, in
-    /// document order.
+    /// document order. Duplicates are kept, so a query that captures one
+    /// node twice fails the test that expects it once.
     fn captures(query_source: &str, source: &str, capture: &str) -> Vec<String> {
         let language = super::LANGUAGE.into();
         let mut parser = Parser::new();
@@ -79,7 +80,6 @@ mod tests {
             }
         }
         found.sort();
-        found.dedup();
         found.into_iter().map(|(_, text)| text).collect()
     }
 
@@ -138,6 +138,9 @@ EXEC('SELECT * FROM ' + @t + ' WHERE a = ' + @a + ' AND b = 1' + @b + '' + @c + 
 EXECUTE(N'SELECT 2') AS USER = 'u';
 EXEC sp_executesql N'SELECT @p', N'@p int', @p = 1;
 SELECT 'not' + 'sql';
+EXEC('SELECT TOP ' + 10 + ' x');
+EXEC('a' - 'b');
+EXEC(10);
 ";
         assert_eq!(
             captures(super::INJECTIONS_QUERY, source, "injection.content"),
@@ -150,6 +153,8 @@ SELECT 'not' + 'sql';
                 "' ORDER BY 1'",
                 "N'SELECT 2'",
                 "N'SELECT @p'",
+                "'SELECT TOP '",
+                "' x'",
             ]
         );
     }
