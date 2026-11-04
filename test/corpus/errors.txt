@@ -919,3 +919,106 @@ SELECT a FROM t UNION SELECT b INTO #y FROM u;
   (ERROR
     (identifier)
     (keyword_from)))
+
+================================================================================
+An unterminated block comment is an error to end of input
+================================================================================
+
+SELECT 1;
+/* never closed
+SELECT 2;
+
+--------------------------------------------------------------------------------
+
+(program
+  (batch
+    (statement
+      (query_specification
+        (select
+          (keyword_select)
+          (select_expression
+            (term
+              (literal)))))))
+  (ERROR))
+
+================================================================================
+A sqlcmd command name run into its argument is not a command: :r
+================================================================================
+
+:rfile.sql
+SELECT 1;
+
+---
+
+(program
+  (ERROR)
+  (batch
+    (statement
+      (query_specification
+        (select
+          (keyword_select)
+          (select_expression
+            (term
+              value: (literal))))))))
+
+================================================================================
+A sqlcmd command name run into its argument is not a command: :setvar
+================================================================================
+
+:setvarX 1
+SELECT 1;
+
+---
+
+(program
+  (ERROR
+    (literal))
+  (batch
+    (statement
+      (query_specification
+        (select
+          (keyword_select)
+          (select_expression
+            (term
+              value: (literal))))))))
+
+================================================================================
+A sqlcmd command name run into its argument is not a command: :on error
+================================================================================
+
+:onerror exit
+SELECT 1;
+
+---
+
+(program
+  (ERROR
+    (keyword_exit))
+  (batch
+    (statement
+      (query_specification
+        (select
+          (keyword_select)
+          (select_expression
+            (term
+              value: (literal))))))))
+
+================================================================================
+A sqlcmd command's argument must be on its own line: a bare :out is an error
+================================================================================
+
+:out
+SELECT 1;
+
+---
+
+(program
+  (ERROR)
+  (batch
+    (statement
+      (query_specification
+        (select
+          (keyword_select)
+          (select_expression
+            (term
+              value: (literal))))))))

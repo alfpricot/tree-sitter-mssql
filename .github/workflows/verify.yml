@@ -10,7 +10,8 @@
 #  Purpose             Regenerate the parser from grammar.js, fail on any
 #                      drift in the generated parser or the committed
 #                      node-kind snapshot, fail if a create/alter/drop rule
-#                      is defined but not registered, lint and format-check
+#                      is defined but not registered or versions.json cites
+#                      a missing node kind or corpus case, lint and format-check
 #                      the grammar JavaScript, run the tree-sitter corpus
 #                      and highlight tests, parse every fixture and fail on
 #                      any ERROR/MISSING/zero-width node, build and test the
@@ -156,7 +157,7 @@ jobs:
           node test/generate-node-kinds.mjs
           git diff --exit-code -- test/node-kinds.txt
 
-      - name: Fail if a create/alter/drop rule is defined but not registered
+      - name: Fail if a create/alter/drop rule is unregistered or versions.json cites a missing kind or case
         run: node test/check-registries.mjs
 
       - name: Install lint/format devDependencies
@@ -185,33 +186,9 @@ jobs:
         run: node tools/release-policy.mjs versions
 
       - name: Verify publishable package contents
-        run: |
-          set -euo pipefail
-          cargo package --list --allow-dirty > cargo-package-files.txt
-          grep -Fx 'src/parser.c' cargo-package-files.txt
-          grep -Fx 'src/scanner.c' cargo-package-files.txt
-          grep -Fx 'queries/highlights.scm' cargo-package-files.txt
-          grep -Fx 'queries/indents.scm' cargo-package-files.txt
-          grep -Fx 'queries/injections.scm' cargo-package-files.txt
-          grep -Fx 'queries/locals.scm' cargo-package-files.txt
-          grep -Fx 'queries/tags.scm' cargo-package-files.txt
-          if grep -Eq '(^|/)(\.git|\.worktrees|node_modules|target)/' cargo-package-files.txt; then
-            echo '::error::The crate package contains workspace-only files'
-            exit 1
-          fi
-
-          npm pack --dry-run --json > npm-package.json
-          node -e '
-            const packageInfo = JSON.parse(require("fs").readFileSync("npm-package.json", "utf8"));
-            const pack = Array.isArray(packageInfo) ? packageInfo[0] : packageInfo["tree-sitter-mssql"];
-            const files = pack.files.map(({path}) => path);
-            for (const required of ["src/parser.c", "src/scanner.c", "queries/highlights.scm", "queries/indents.scm", "queries/injections.scm", "queries/locals.scm", "queries/tags.scm"]) {
-              if (!files.includes(required)) throw new Error(`npm package is missing ${required}`);
-            }
-            if (files.some(path => /(^|\/)(?:\.git|\.worktrees|node_modules|target)\//.test(path))) {
-              throw new Error("npm package contains workspace-only files");
-            }
-          '
+        # The same script release.yml runs before publishing, so a pull request
+        # that passes here cannot fail release verification on package contents.
+        run: node tools/package-check.mjs
 
       - name: Run corpus and highlight tests
         run: npx --yes --package=tree-sitter-cli@${{ env.TREE_SITTER_CLI_VERSION }} -- tree-sitter test

@@ -1,8 +1,8 @@
-; Dynamic SQL injection — first slice.
+; Dynamic SQL injection.
 ;
-; Covers `EXEC('...')` / `EXECUTE('...')` and `sp_executesql`'s first
-; (batch text) argument. Injection into a *concatenated* expression is out
-; of scope for this first slice.
+; Covers `EXEC('...')` / `EXECUTE('...')`, the literal pieces of a
+; concatenated `EXEC('...' + @v + '...')`, and `sp_executesql`'s first
+; (batch text) argument.
 
 ; EXEC('...'): the parenthesized-expression-list alternative of
 ; execute_statement places the literal as a direct, unfielded child right
@@ -15,6 +15,7 @@
 ; anchor either would be captured as SQL too.
 (execute_statement
   [(keyword_exec) (keyword_execute)] . (literal) @injection.content
+  (#match? @injection.content "^[nN]?'")
   (#set! injection.language "sql"))
 
 ; sp_executesql's first argument is the dynamic SQL batch text — anchored
@@ -30,4 +31,59 @@
   . (exec_argument
     value: (literal) @injection.content)
   (#match? @_proc "^[sS][pP]_[eE][xX][eE][cC][uU][tT][eE][sS][qQ][lL]$")
+  (#match? @injection.content "^[nN]?'")
+  (#set! injection.language "sql"))
+
+; EXEC('...' + @v + '...'): EXEC concatenates string literals and variables
+; with `+`, which parses as a left-nested chain of binary_expression nodes, the
+; first literal deepest. Each literal operand is injected as its own fragment;
+; a variable's value is unknown. A query cannot match to any depth, so this
+; follows the chain eight levels down: up to nine operands. In a longer chain
+; the leading operands are not injected. Each level is one of three shapes: a
+; literal on the left, a literal on the right, or a deeper `+` on the left.
+; Every level requires `+`, and the capture must be a string literal, so a
+; number or another operator inside EXEC's parentheses (which SQL Server
+; rejects) is not injected. sp_executesql needs no such pattern, since a
+; procedure argument cannot be an expression.
+(execute_statement
+  [(keyword_exec) (keyword_execute)]
+  .
+  [(binary_expression left: (literal) @injection.content operator: "+")
+   (binary_expression operator: "+" right: (literal) @injection.content)
+   (binary_expression
+     left:
+      [(binary_expression left: (literal) @injection.content operator: "+")
+       (binary_expression operator: "+" right: (literal) @injection.content)
+       (binary_expression
+         left:
+          [(binary_expression left: (literal) @injection.content operator: "+")
+           (binary_expression operator: "+" right: (literal) @injection.content)
+           (binary_expression
+             left:
+              [(binary_expression left: (literal) @injection.content operator: "+")
+               (binary_expression operator: "+" right: (literal) @injection.content)
+               (binary_expression
+                 left:
+                  [(binary_expression left: (literal) @injection.content operator: "+")
+                   (binary_expression operator: "+" right: (literal) @injection.content)
+                   (binary_expression
+                     left:
+                      [(binary_expression left: (literal) @injection.content operator: "+")
+                       (binary_expression operator: "+" right: (literal) @injection.content)
+                       (binary_expression
+                         left:
+                          [(binary_expression left: (literal) @injection.content operator: "+")
+                           (binary_expression operator: "+" right: (literal) @injection.content)
+                           (binary_expression
+                             left:
+                              [(binary_expression left: (literal) @injection.content operator: "+")
+                               (binary_expression operator: "+" right: (literal) @injection.content)]
+                             operator: "+")]
+                         operator: "+")]
+                     operator: "+")]
+                 operator: "+")]
+             operator: "+")]
+         operator: "+")]
+     operator: "+")]
+  (#match? @injection.content "^[nN]?'")
   (#set! injection.language "sql"))

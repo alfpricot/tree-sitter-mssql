@@ -11,7 +11,7 @@ cargo build
 
 The generated parser (`src/parser.c`, `src/grammar.json`, `src/node-types.json`) is committed, so consumers can build the C parser through `cc` during `cargo build` without needing the tree-sitter CLI themselves. Regenerate and commit the diff after any `grammar.js` change.
 
-The block comment is lexed by `src/scanner.c` rather than a regex, because T-SQL block comments nest and a regex cannot match balanced nesting. `src/scanner.c` must be compiled alongside `src/parser.c`.
+The block comment is lexed by `src/scanner.c` rather than a regex, because T-SQL block comments nest and a regex cannot match balanced nesting. The scanner also checks what follows a sqlcmd command name: whitespace or the end of input, and for a command that takes an argument, that the argument is on the same line. Those checks look at characters without consuming them, which a regex token cannot do. `src/scanner.c` must be compiled alongside `src/parser.c`.
 
 `generate` takes under a minute on this grammar. Run it with a time cap and read the exit code, and check that `src/parser.c`'s modification time moved before trusting a test run — a failed `generate` leaves the previous parser in place.
 

@@ -18,7 +18,7 @@ The main design choice is one grammar for every SQL Server version: it accepts t
 
 ### [src/](src)
 
-The generated parser: `parser.c`, `grammar.json`, and `node-types.json` come from `tree-sitter generate` and are committed, so consumers build the parser without the CLI. `scanner.c` is hand-written and lexes nested block comments, which a regular expression cannot match.
+The generated parser: `parser.c`, `grammar.json`, and `node-types.json` come from `tree-sitter generate` and are committed, so consumers build the parser without the CLI. `scanner.c` is hand-written. It lexes nested block comments, and it checks what follows a sqlcmd command name (whitespace, or an argument on the same line), neither of which a regular expression can express.
 
 ### [queries/](queries)
 

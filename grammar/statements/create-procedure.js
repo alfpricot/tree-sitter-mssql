@@ -25,7 +25,7 @@ export default {
       optional($._procedure_arguments),
       optional($.procedure_options),
       optional(seq($.keyword_for, $.keyword_replication)),
-      $.procedure_body,
+      field('body', $.procedure_body),
     ),
 
   // Unlike a function, a procedure also accepts the bare comma-separated
@@ -61,7 +61,11 @@ export default {
   // scripts before the ALTER that carries the real body. Triggers share
   // this rule, so a body-less trigger (which SQL Server rejects) also
   // parses clean — a knowing over-acceptance rather than a second rule.
-  procedure_body: ($) => prec.right(seq($.keyword_as, repeat($._body_item))),
+  //
+  // A CLR procedure or trigger has `AS EXTERNAL NAME assembly.class.method`
+  // in place of the statements.
+  procedure_body: ($) =>
+    prec.right(seq($.keyword_as, choice($.external_name, repeat($._body_item)))),
 
   // One statement of a module body: a statement or a nested BEGIN ... END
   // block, with an optional `;`. prec.right so a trailing `;` binds to the

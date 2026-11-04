@@ -6,6 +6,13 @@ export function make_keyword(word) {
   return new RegExp(str);
 }
 
+// A sqlcmd command name such as `:setvar`. sqlcmd matches command names
+// case-insensitively, so the token accepts any casing, and it is aliased to
+// its lowercase spelling so every casing produces the same node.
+export function sqlcmd_command(word) {
+  return alias(new RegExp(':' + make_keyword(word).source), ':' + word);
+}
+
 export function optional_parenthesis(node) {
   return prec.right(choice(node, wrapped_in_parenthesis(node)));
 }

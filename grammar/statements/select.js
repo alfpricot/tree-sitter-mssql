@@ -72,7 +72,7 @@ export default {
 
   cte: ($) =>
     seq(
-      $.identifier,
+      field('name', $.identifier),
       optional(paren_list(field('argument', $.identifier))),
       $.keyword_as,
       // A CTE body is a query, not another `_dml_read`: that rule's leading
@@ -527,8 +527,14 @@ export default {
         // No bare object_reference target: reaching object_reference from here
         // multiplies the parser's state space enough that generate does not
         // finish, and APPLY on a plain table (rather than a function or
-        // subquery) has no practical use in T-SQL.
-        choice($.subquery, seq($.invocation, optional($.openjson_schema))),
+        // subquery) has no practical use in T-SQL. A parenthesized VALUES
+        // list is the usual unpivot idiom:
+        // CROSS APPLY (VALUES (t.a), (t.b)) AS v(x).
+        choice(
+          $.subquery,
+          seq($.invocation, optional($.openjson_schema)),
+          wrapped_in_parenthesis($.values),
+        ),
         aliased_with_columns($),
       ),
     ),

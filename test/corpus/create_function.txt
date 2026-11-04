@@ -872,3 +872,92 @@ DROP FUNCTION IF EXISTS dbo.my_function;
         (object_reference
           (identifier)
           (identifier))))))
+
+================================================================================
+CLR scalar and table-valued functions with EXTERNAL NAME
+================================================================================
+
+CREATE FUNCTION dbo.fn_Regex (@input nvarchar(max), @pattern nvarchar(4000))
+RETURNS bit
+WITH EXECUTE AS CALLER
+AS EXTERNAL NAME ClrUtil.[Contoso.Clr.Functions].IsMatch;
+GO
+CREATE FUNCTION dbo.fn_Split (@list nvarchar(max))
+RETURNS TABLE (item nvarchar(4000), pos int)
+EXTERNAL NAME ClrUtil.[Contoso.Clr.Functions].Split;
+
+--------------------------------------------------------------------------------
+
+(program
+  (batch
+    (statement
+      (create_function
+        (keyword_create)
+        (keyword_function)
+        (object_reference
+          (identifier)
+          (identifier))
+        (function_arguments
+          (function_argument
+            (identifier)
+            (nvarchar
+              (keyword_nvarchar)
+              (keyword_max)))
+          (function_argument
+            (identifier)
+            (nvarchar
+              (keyword_nvarchar)
+              (literal))))
+        (keyword_returns)
+        (keyword_bit)
+        (function_options
+          (keyword_with)
+          (function_option
+            (execute_as_clause
+              (keyword_execute)
+              (keyword_as)
+              (keyword_caller))))
+        (function_body
+          (keyword_as)
+          (external_name
+            (keyword_external)
+            (keyword_name)
+            (object_reference
+              (identifier)
+              (identifier)
+              (identifier))))))
+    (go_statement
+      (keyword_go)))
+  (batch
+    (statement
+      (create_function
+        (keyword_create)
+        (keyword_function)
+        (object_reference
+          (identifier)
+          (identifier))
+        (function_arguments
+          (function_argument
+            (identifier)
+            (nvarchar
+              (keyword_nvarchar)
+              (keyword_max))))
+        (keyword_returns)
+        (keyword_table)
+        (column_definitions
+          (column_definition
+            (identifier)
+            (nvarchar
+              (keyword_nvarchar)
+              (literal)))
+          (column_definition
+            (identifier)
+            (keyword_int)))
+        (function_body
+          (external_name
+            (keyword_external)
+            (keyword_name)
+            (object_reference
+              (identifier)
+              (identifier)
+              (identifier))))))))

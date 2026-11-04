@@ -135,3 +135,239 @@ SELECT 1;
           (select_expression
             (term
               (literal))))))))
+
+================================================================================
+SSDT publish header: :on error and mixed-case sqlcmd commands
+================================================================================
+
+:on error exit
+:On Error ignore
+:SETVAR DatabaseName "SampleDb"
+GO
+:r .\Scripts\Post-Deploy.sql -- seed data
+:R C:\My Scripts\seed-data.sql
+SELECT error, exit, ignore FROM t;
+
+--------------------------------------------------------------------------------
+
+(program
+  (batch
+    (sqlcmd_on_error
+      (keyword_error)
+      (keyword_exit))
+    (sqlcmd_on_error
+      (keyword_error)
+      (keyword_ignore))
+    (sqlcmd_setvar
+      (identifier)
+      (object_reference
+        (identifier)))
+    (go_statement
+      (keyword_go)))
+  (batch
+    (sqlcmd_include
+      (identifier))
+    (comment)
+    (sqlcmd_include
+      (identifier))
+    (statement
+      (query_specification
+        (select
+          (keyword_select)
+          (select_expression
+            (term
+              (field
+                (identifier)))
+            (term
+              (field
+                (identifier)))
+            (term
+              (field
+                (identifier)))))
+        (from
+          (keyword_from)
+          (relation
+            (object_reference
+              (identifier))))))))
+
+================================================================================
+:r paths with spaced, leading, and quoted hyphens
+================================================================================
+
+:r .\Scripts\Seed - Copy.sql
+:r "C:\Deploy - Copy\post.sql" -- quoted
+:r -init.sql
+:r "C:\Out--Old\x.sql"
+SELECT 1;
+
+--------------------------------------------------------------------------------
+
+(program
+  (batch
+    (sqlcmd_include
+      (identifier))
+    (sqlcmd_include
+      (identifier))
+    (comment)
+    (sqlcmd_include
+      (identifier))
+    (sqlcmd_include
+      (identifier))
+    (statement
+      (query_specification
+        (select
+          (keyword_select)
+          (select_expression
+            (term
+              (literal))))))))
+
+================================================================================
+:reset in any casing is not an :r include
+================================================================================
+
+:reset
+:RESET
+:Reset
+:r reset.sql
+SELECT 1;
+
+--------------------------------------------------------------------------------
+
+(program
+  (batch
+    (sqlcmd_reset)
+    (sqlcmd_reset)
+    (sqlcmd_reset)
+    (sqlcmd_include
+      (identifier))
+    (statement
+      (query_specification
+        (select
+          (keyword_select)
+          (select_expression
+            (term
+              (literal))))))))
+
+================================================================================
+Output redirection, connect, xml, and the commands that take no argument
+================================================================================
+
+:out results.txt
+:Error STDERR
+:connect myserver\inst -l 30 -U sa
+:XML ON
+:xml off
+:listvar
+:list
+:ed
+:quit
+SELECT 1;
+
+---
+
+(program
+  (batch
+    (sqlcmd_output
+      target: (identifier))
+    (sqlcmd_output
+      target: (identifier))
+    (sqlcmd_connect
+      arguments: (sqlcmd_text))
+    (sqlcmd_xml
+      state: (keyword_on))
+    (sqlcmd_xml
+      state: (keyword_off))
+    (sqlcmd_listvar)
+    (sqlcmd_list)
+    (sqlcmd_ed)
+    (sqlcmd_quit)
+    (statement
+      (query_specification
+        (select
+          (keyword_select)
+          (select_expression
+            (term
+              value: (literal))))))))
+
+================================================================================
+:!! runs an operating-system command, with or without a space
+================================================================================
+
+:!! dir C:\temp
+:!!echo done -- not part of the command
+SELECT 1;
+
+---
+
+(program
+  (batch
+    (sqlcmd_shell
+      command: (sqlcmd_text))
+    (sqlcmd_shell
+      command: (sqlcmd_text))
+    (comment)
+    (statement
+      (query_specification
+        (select
+          (keyword_select)
+          (select_expression
+            (term
+              value: (literal))))))))
+
+================================================================================
+:exit with no query, an empty query, and a query
+================================================================================
+
+:exit
+:exit()
+:EXIT(SELECT 1)
+:exit (SELECT 2)
+GO
+:exit
+
+---
+
+(program
+  (batch
+    (sqlcmd_exit)
+    (sqlcmd_exit)
+    (sqlcmd_exit
+      query: (subquery
+        (query_specification
+          (select
+            (keyword_select)
+            (select_expression
+              (term
+                value: (literal)))))))
+    (sqlcmd_exit
+      query: (subquery
+        (query_specification
+          (select
+            (keyword_select)
+            (select_expression
+              (term
+                value: (literal)))))))
+    (go_statement
+      (keyword_go)))
+  (batch
+    (sqlcmd_exit)))
+
+================================================================================
+A bare :!! has an empty command and does not read the next line
+================================================================================
+
+:!!
+SELECT 1;
+
+---
+
+(program
+  (batch
+    (sqlcmd_shell)
+    (statement
+      (query_specification
+        (select
+          (keyword_select)
+          (select_expression
+            (term
+              (literal))))))))

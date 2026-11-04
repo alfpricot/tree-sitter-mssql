@@ -20,4 +20,4 @@ Both bindings expose every query file — `HIGHLIGHTS_QUERY`, `INDENTS_QUERY`, `
 
 ## Packaging
 
-The npm package ships prebuilt native addons for `linux-x64` and `win32-x64`; on any other platform `node-gyp-build` falls back to compiling the committed generated parser. `src/scanner.c` must be compiled alongside `src/parser.c` — vendoring one without the other produces a link error or a parser that cannot lex a block comment.
+The npm package ships prebuilt native addons for `linux-x64` and `win32-x64`; on any other platform `node-gyp-build` falls back to compiling the committed generated parser. `src/scanner.c` must be compiled alongside `src/parser.c` — vendoring one without the other produces a link error, or a parser that can lex neither a block comment nor any sqlcmd command (`:setvar`, `:r`, `:on error` and the rest).

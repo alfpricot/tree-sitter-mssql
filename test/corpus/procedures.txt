@@ -949,3 +949,49 @@ CREATE PROCEDURE p WITH EXECUTE AS SELF AS SELECT 1;
                 (select_expression
                   (term
                     (literal)))))))))))
+
+================================================================================
+CLR procedure with AS EXTERNAL NAME
+================================================================================
+
+CREATE PROCEDURE dbo.usp_Clr @a int, @b nvarchar(50) OUTPUT
+WITH EXECUTE AS CALLER
+AS EXTERNAL NAME ClrUtil.[Contoso.Clr.Procs].DoWork;
+
+--------------------------------------------------------------------------------
+
+(program
+  (batch
+    (statement
+      (create_procedure
+        (keyword_create)
+        (keyword_procedure)
+        (object_reference
+          (identifier)
+          (identifier))
+        (function_arguments
+          (function_argument
+            (identifier)
+            (keyword_int))
+          (function_argument
+            (identifier)
+            (nvarchar
+              (keyword_nvarchar)
+              (literal))
+            (keyword_output)))
+        (procedure_options
+          (keyword_with)
+          (procedure_option
+            (execute_as_clause
+              (keyword_execute)
+              (keyword_as)
+              (keyword_caller))))
+        (procedure_body
+          (keyword_as)
+          (external_name
+            (keyword_external)
+            (keyword_name)
+            (object_reference
+              (identifier)
+              (identifier)
+              (identifier))))))))
