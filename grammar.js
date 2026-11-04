@@ -145,11 +145,13 @@ export default grammar({
     // characters, so it is a single raw token rather than composed from
     // identifiers, aliased to `identifier` since consumers need to see that
     // something is referenced here, not decompose the path.
-    // The path ends before a trailing `-- comment`: a run of non-space
-    // characters, joined by spaces or single hyphens, so `--` is left for the
-    // comment token.
+    // A quoted path is taken whole. An unquoted path ends before a trailing
+    // `-- comment`: it is words separated by spaces, where a hyphen may sit
+    // anywhere (`Post-Deploy.sql`, `-init.sql`, `Seed - Copy.sql`) except
+    // directly before another hyphen, so `--` is left for the comment token.
     sqlcmd_include: ($) => seq(sqlcmd_command('r'), alias($._sqlcmd_path, $.identifier)),
-    _sqlcmd_path: (_) => /[^\s-]+(([ \t]+)?-[^\s-]+|[ \t]+[^\s-]+)*/,
+    _sqlcmd_path: (_) =>
+      /"[^"\r\n]*"|([^\s-]|-[^\s-])+([ \t]+(([^\s-]|-[^\s-])+|-[ \t]+([^\s-]|-[^\s-])+))*/,
 
     // :on error [ exit | ignore ] — what sqlcmd does when a batch fails. SSDT
     // and sqlpackage publish scripts open with `:on error exit`.

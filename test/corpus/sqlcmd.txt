@@ -189,3 +189,34 @@ SELECT error, exit, ignore FROM t;
           (relation
             (object_reference
               (identifier))))))))
+
+================================================================================
+:r paths with spaced, leading, and quoted hyphens
+================================================================================
+
+:r .\Scripts\Seed - Copy.sql
+:r "C:\Deploy - Copy\post.sql" -- quoted
+:r -init.sql
+:r "C:\Out--Old\x.sql"
+SELECT 1;
+
+--------------------------------------------------------------------------------
+
+(program
+  (batch
+    (sqlcmd_include
+      (identifier))
+    (sqlcmd_include
+      (identifier))
+    (comment)
+    (sqlcmd_include
+      (identifier))
+    (sqlcmd_include
+      (identifier))
+    (statement
+      (query_specification
+        (select
+          (keyword_select)
+          (select_expression
+            (term
+              (literal))))))))
