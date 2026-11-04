@@ -12,7 +12,9 @@ export default grammar({
 
   // The block comment is lexed by src/scanner.c rather than a regex because
   // T-SQL block comments nest, and a regex cannot match balanced nesting.
-  externals: ($) => [$.marginalia],
+  // The scanner returns `_unterminated_comment` for a `/*` that never closes;
+  // no rule accepts it, so the rest of the input becomes one ERROR node.
+  externals: ($) => [$.marginalia, $._unterminated_comment],
 
   // Every entry arbitrates a real fork the parser must carry a few tokens
   // before it can settle; tree-sitter reports any that stop being needed
@@ -56,13 +58,17 @@ export default grammar({
 
   precedences: (_) => [
     [
-      'binary_is',
+      'postfix_modifier',
       'unary_not',
       'unary_sign',
       'binary_times',
       'binary_plus',
       'binary_in',
       'binary_relation',
+      // IS [NOT] NULL and IS [NOT] DISTINCT FROM are comparison predicates, so
+      // they take whole arithmetic operands: `a + b IS NULL` is
+      // `(a + b) IS NULL`.
+      'binary_is',
       'pattern_matching',
       'between',
       'logical_not',

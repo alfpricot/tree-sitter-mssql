@@ -301,7 +301,7 @@ export default {
         [$.op_other, 'binary_plus'],
         [$.keyword_is, 'binary_is'],
         [$.is_not, 'binary_is'],
-        [$.keyword_collate, 'binary_is'],
+        [$.keyword_collate, 'postfix_modifier'],
         [$.keyword_like, 'pattern_matching'],
         [$.not_like, 'pattern_matching'],
         // binary_is precedence disambiguates `(is not distinct from)` from an
@@ -312,7 +312,7 @@ export default {
         // existing analogue (a postfix modifier over an expression). Left
         // associative, so it chains: `d AT TIME ZONE 'UTC' AT TIME ZONE
         // 'Eastern Standard Time'`.
-        [$.at_time_zone, 'binary_is'],
+        [$.at_time_zone, 'postfix_modifier'],
       ].map(([operator, precedence]) =>
         prec.left(
           precedence,

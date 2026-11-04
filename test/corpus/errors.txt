@@ -919,3 +919,24 @@ SELECT a FROM t UNION SELECT b INTO #y FROM u;
   (ERROR
     (identifier)
     (keyword_from)))
+
+================================================================================
+An unterminated block comment is an error to end of input
+================================================================================
+
+SELECT 1;
+/* never closed
+SELECT 2;
+
+--------------------------------------------------------------------------------
+
+(program
+  (batch
+    (statement
+      (query_specification
+        (select
+          (keyword_select)
+          (select_expression
+            (term
+              (literal)))))))
+  (ERROR))

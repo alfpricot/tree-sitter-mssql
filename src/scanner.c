@@ -8,6 +8,7 @@
 
 enum TokenType {
   MARGINALIA,
+  UNTERMINATED_COMMENT,
 };
 
 void *tree_sitter_mssql_external_scanner_create(void) { return NULL; }
@@ -47,8 +48,14 @@ bool tree_sitter_mssql_external_scanner_scan(void *payload, TSLexer *lexer, cons
   unsigned depth = 1;
   while (depth > 0) {
     if (lexer->eof(lexer)) {
-      // An unterminated comment runs to end of input, as SQL Server treats it.
-      break;
+      // SQL Server rejects an unterminated comment (Msg 113, "Missing end
+      // comment mark"). Consume the rest of the input once as a token no rule
+      // accepts, so it becomes a single ERROR node: refusing the token instead
+      // would re-lex the comment body as statements and rescan to end of input
+      // from every later `/*`.
+      lexer->mark_end(lexer);
+      lexer->result_symbol = UNTERMINATED_COMMENT;
+      return true;
     }
     if (lexer->lookahead == '/') {
       lexer->advance(lexer, false);
