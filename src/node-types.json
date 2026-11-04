@@ -807,6 +807,16 @@
     "type": "alter_function",
     "named": true,
     "fields": {
+      "body": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "function_body",
+            "named": true
+          }
+        ]
+      },
       "name": {
         "multiple": false,
         "required": true,
@@ -860,10 +870,6 @@
         },
         {
           "type": "function_arguments",
-          "named": true
-        },
-        {
-          "type": "function_body",
           "named": true
         },
         {
@@ -1335,6 +1341,16 @@
     "type": "alter_procedure",
     "named": true,
     "fields": {
+      "body": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "procedure_body",
+            "named": true
+          }
+        ]
+      },
       "name": {
         "multiple": false,
         "required": true,
@@ -1382,10 +1398,6 @@
         },
         {
           "type": "keyword_replication",
-          "named": true
-        },
-        {
-          "type": "procedure_body",
           "named": true
         },
         {
@@ -2227,6 +2239,26 @@
             "named": true
           }
         ]
+      },
+      "name": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "object_reference",
+            "named": true
+          }
+        ]
+      },
+      "target": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "object_reference",
+            "named": true
+          }
+        ]
       }
     },
     "children": {
@@ -2287,10 +2319,6 @@
         },
         {
           "type": "keyword_with",
-          "named": true
-        },
-        {
-          "type": "object_reference",
           "named": true
         },
         {
@@ -5995,6 +6023,16 @@
     "type": "create_function",
     "named": true,
     "fields": {
+      "body": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "function_body",
+            "named": true
+          }
+        ]
+      },
       "name": {
         "multiple": false,
         "required": true,
@@ -6048,10 +6086,6 @@
         },
         {
           "type": "function_arguments",
-          "named": true
-        },
-        {
-          "type": "function_body",
           "named": true
         },
         {
@@ -6786,6 +6820,16 @@
     "type": "create_procedure",
     "named": true,
     "fields": {
+      "body": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "procedure_body",
+            "named": true
+          }
+        ]
+      },
       "name": {
         "multiple": false,
         "required": true,
@@ -6841,10 +6885,6 @@
         },
         {
           "type": "keyword_replication",
-          "named": true
-        },
-        {
-          "type": "procedure_body",
           "named": true
         },
         {
@@ -7365,6 +7405,26 @@
             "named": true
           }
         ]
+      },
+      "name": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "object_reference",
+            "named": true
+          }
+        ]
+      },
+      "target": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "object_reference",
+            "named": true
+          }
+        ]
       }
     },
     "children": {
@@ -7433,10 +7493,6 @@
         },
         {
           "type": "keyword_with",
-          "named": true
-        },
-        {
-          "type": "object_reference",
           "named": true
         },
         {
@@ -7993,16 +8049,22 @@
             "named": true
           }
         ]
+      },
+      "name": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "identifier",
+            "named": true
+          }
+        ]
       }
     },
     "children": {
       "multiple": true,
       "required": true,
       "types": [
-        {
-          "type": "identifier",
-          "named": true
-        },
         {
           "type": "keyword_as",
           "named": true

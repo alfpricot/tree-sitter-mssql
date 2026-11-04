@@ -25,7 +25,7 @@ export default {
       optional($._procedure_arguments),
       optional($.procedure_options),
       optional(seq($.keyword_for, $.keyword_replication)),
-      $.procedure_body,
+      field('body', $.procedure_body),
     ),
 
   // Unlike a function, a procedure also accepts the bare comma-separated

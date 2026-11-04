@@ -25,7 +25,7 @@ export default {
         $.table_var_declaration,
       ),
       optional($.function_options),
-      $.function_body,
+      field('body', $.function_body),
     ),
 
   // @name [AS] type [= default] [OUT | OUTPUT] [READONLY]

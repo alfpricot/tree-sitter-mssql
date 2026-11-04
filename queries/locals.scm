@@ -1,9 +1,8 @@
-; Local variable and scope resolution — first slice.
+; Local variable and scope resolution.
 ;
-; Covers the two most common definition sites a consumer needs to resolve a
-; qualified column reference (`t.col`) against: a FROM relation's alias, and
-; a CTE name. APPLY, PIVOT and MERGE's two-relation scope are not yet
-; covered.
+; Covers the definition sites a consumer needs to resolve a qualified column
+; reference (`t.col`) against: a FROM relation's alias, an APPLY, PIVOT or
+; UNPIVOT alias, a MERGE target or source alias, and a CTE name.
 ;
 ; `statement` is the scope of a lone query. Its `ORDER BY` sits beside
 ; `query_specification`, not inside it, so the table alias has to be
@@ -22,11 +21,25 @@
 (relation
   alias: (identifier) @local.definition)
 
-; Anchored to the first child: a CTE's optional column list
-; (`WITH c (a, b) AS (...)`) is also a run of `identifier` children of the
-; same `cte` node, and only the first one is the CTE's own name.
+; CROSS/OUTER APPLY's alias, and the alias after a PIVOT or UNPIVOT clause.
+(apply_join
+  alias: (identifier) @local.definition)
+
+(pivot_clause
+  alias: (identifier) @local.definition)
+
+(unpivot_clause
+  alias: (identifier) @local.definition)
+
+; MERGE t AS tgt USING src AS s: both aliases are `alias` fields of the
+; `merge` node, and the WHEN clauses reference either one.
+(merge
+  alias: (identifier) @local.definition)
+
+; A CTE's own name is its `name` field; its optional column list
+; (`WITH c (a, b) AS (...)`) is the separate `argument` field.
 (cte
-  . (identifier) @local.definition)
+  name: (identifier) @local.definition)
 
 (field
   (object_reference
