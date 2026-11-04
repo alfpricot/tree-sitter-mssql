@@ -351,3 +351,23 @@ GO
       (keyword_go)))
   (batch
     (sqlcmd_exit)))
+
+================================================================================
+A bare :!! has an empty command and does not read the next line
+================================================================================
+
+:!!
+SELECT 1;
+
+---
+
+(program
+  (batch
+    (sqlcmd_shell)
+    (statement
+      (query_specification
+        (select
+          (keyword_select)
+          (select_expression
+            (term
+              (literal))))))))

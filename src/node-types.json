@@ -16829,7 +16829,7 @@
     "fields": {
       "command": {
         "multiple": false,
-        "required": true,
+        "required": false,
         "types": [
           {
             "type": "sqlcmd_text",

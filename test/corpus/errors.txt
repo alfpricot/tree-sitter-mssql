@@ -1002,3 +1002,23 @@ SELECT 1;
           (select_expression
             (term
               value: (literal))))))))
+
+================================================================================
+A sqlcmd command's argument must be on its own line: a bare :out is an error
+================================================================================
+
+:out
+SELECT 1;
+
+---
+
+(program
+  (ERROR)
+  (batch
+    (statement
+      (query_specification
+        (select
+          (keyword_select)
+          (select_expression
+            (term
+              value: (literal))))))))

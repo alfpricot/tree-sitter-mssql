@@ -16,9 +16,18 @@ export default grammar({
   // The scanner returns `_unterminated_comment` for a `/*` that never closes;
   // no rule accepts it, so the rest of the input becomes one ERROR node.
   // `_sqlcmd_boundary` is a zero-width check that a sqlcmd command name is
-  // followed by whitespace or the end of input, which a regular expression
-  // cannot express without consuming the character.
-  externals: ($) => [$.marginalia, $._unterminated_comment, $._sqlcmd_boundary],
+  // followed by whitespace or the end of input; `_sqlcmd_argument` and
+  // `_sqlcmd_inline` check that a command's argument is on the same line, and
+  // `_sqlcmd_empty` marks a `:!!` with nothing after it on its line. A
+  // regular expression cannot express either without consuming characters.
+  externals: ($) => [
+    $.marginalia,
+    $._unterminated_comment,
+    $._sqlcmd_boundary,
+    $._sqlcmd_argument,
+    $._sqlcmd_inline,
+    $._sqlcmd_empty,
+  ],
 
   // Every entry arbitrates a real fork the parser must carry a few tokens
   // before it can settle; tree-sitter reports any that stop being needed
@@ -142,7 +151,10 @@ export default grammar({
     //
     // sqlcmd requires whitespace or the end of the line after a command name,
     // so `:rfile.sql` and `:setvarX 1` are not commands. `_sqlcmd_boundary`
-    // (an external, zero-width token) enforces that; `:!!` is the one command
+    // (an external, zero-width token) enforces that. A command that takes an
+    // argument uses `_sqlcmd_argument` instead, which also requires the
+    // argument on the same line: sqlcmd reads one line at a time, so a bare
+    // `:out` must not take the next line as its file. `:!!` is the one command
     // sqlcmd lets run straight into its argument, and `:exit` may run straight
     // into its parenthesized query.
     //
@@ -159,7 +171,7 @@ export default grammar({
       prec.right(
         seq(
           sqlcmd_command('setvar'),
-          $._sqlcmd_boundary,
+          $._sqlcmd_argument,
           field('name', $.identifier),
           optional(field('value', choice($.object_reference, $.literal))),
         ),
@@ -175,7 +187,7 @@ export default grammar({
     // anywhere (`Post-Deploy.sql`, `-init.sql`, `Seed - Copy.sql`) except
     // directly before another hyphen, so `--` is left for the comment token.
     sqlcmd_include: ($) =>
-      seq(sqlcmd_command('r'), $._sqlcmd_boundary, alias($._sqlcmd_path, $.identifier)),
+      seq(sqlcmd_command('r'), $._sqlcmd_argument, alias($._sqlcmd_path, $.identifier)),
     _sqlcmd_path: (_) =>
       /"[^"\r\n]*"|([^\s-]|-[^\s-])+([ \t]+(([^\s-]|-[^\s-])+|-[ \t]+([^\s-]|-[^\s-])+))*/,
 
@@ -184,7 +196,7 @@ export default grammar({
     sqlcmd_on_error: ($) =>
       seq(
         sqlcmd_command('on'),
-        $._sqlcmd_boundary,
+        $._sqlcmd_argument,
         $.keyword_error,
         field('action', choice($.keyword_exit, $.keyword_ignore)),
       ),
@@ -199,7 +211,7 @@ export default grammar({
     sqlcmd_output: ($) =>
       seq(
         choice(sqlcmd_command('out'), sqlcmd_command('error')),
-        $._sqlcmd_boundary,
+        $._sqlcmd_argument,
         field('target', alias($._sqlcmd_path, $.identifier)),
       ),
 
@@ -208,7 +220,7 @@ export default grammar({
     sqlcmd_connect: ($) =>
       seq(
         sqlcmd_command('connect'),
-        $._sqlcmd_boundary,
+        $._sqlcmd_argument,
         field('arguments', alias($._sqlcmd_path, $.sqlcmd_text)),
       ),
 
@@ -216,7 +228,7 @@ export default grammar({
     sqlcmd_xml: ($) =>
       seq(
         sqlcmd_command('xml'),
-        $._sqlcmd_boundary,
+        $._sqlcmd_argument,
         field('state', choice($.keyword_on, $.keyword_off)),
       ),
 
@@ -242,8 +254,16 @@ export default grammar({
 
     // :!! command — runs an operating-system command. sqlcmd lets the command
     // follow `:!!` with no space, and it ends before a `-- comment` like an
-    // :r path does.
-    sqlcmd_shell: ($) => seq(':!!', field('command', alias($._sqlcmd_path, $.sqlcmd_text))),
+    // :r path does. The command may be empty; it is never read from the next
+    // line.
+    sqlcmd_shell: ($) =>
+      seq(
+        ':!!',
+        choice(
+          seq($._sqlcmd_inline, field('command', alias($._sqlcmd_path, $.sqlcmd_text))),
+          $._sqlcmd_empty,
+        ),
+      ),
 
     comment: (_) => /--.*/,
     // The block comment (`marginalia`) is an external token: see src/scanner.c.

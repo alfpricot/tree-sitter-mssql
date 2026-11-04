@@ -173,7 +173,7 @@
           },
           {
             "type": "SYMBOL",
-            "name": "_sqlcmd_boundary"
+            "name": "_sqlcmd_argument"
           },
           {
             "type": "FIELD",
@@ -225,7 +225,7 @@
         },
         {
           "type": "SYMBOL",
-          "name": "_sqlcmd_boundary"
+          "name": "_sqlcmd_argument"
         },
         {
           "type": "ALIAS",
@@ -256,7 +256,7 @@
         },
         {
           "type": "SYMBOL",
-          "name": "_sqlcmd_boundary"
+          "name": "_sqlcmd_argument"
         },
         {
           "type": "SYMBOL",
@@ -327,7 +327,7 @@
         },
         {
           "type": "SYMBOL",
-          "name": "_sqlcmd_boundary"
+          "name": "_sqlcmd_argument"
         },
         {
           "type": "FIELD",
@@ -358,7 +358,7 @@
         },
         {
           "type": "SYMBOL",
-          "name": "_sqlcmd_boundary"
+          "name": "_sqlcmd_argument"
         },
         {
           "type": "FIELD",
@@ -389,7 +389,7 @@
         },
         {
           "type": "SYMBOL",
-          "name": "_sqlcmd_boundary"
+          "name": "_sqlcmd_argument"
         },
         {
           "type": "FIELD",
@@ -564,17 +564,35 @@
           "value": ":!!"
         },
         {
-          "type": "FIELD",
-          "name": "command",
-          "content": {
-            "type": "ALIAS",
-            "content": {
-              "type": "SYMBOL",
-              "name": "_sqlcmd_path"
+          "type": "CHOICE",
+          "members": [
+            {
+              "type": "SEQ",
+              "members": [
+                {
+                  "type": "SYMBOL",
+                  "name": "_sqlcmd_inline"
+                },
+                {
+                  "type": "FIELD",
+                  "name": "command",
+                  "content": {
+                    "type": "ALIAS",
+                    "content": {
+                      "type": "SYMBOL",
+                      "name": "_sqlcmd_path"
+                    },
+                    "named": true,
+                    "value": "sqlcmd_text"
+                  }
+                }
+              ]
             },
-            "named": true,
-            "value": "sqlcmd_text"
-          }
+            {
+              "type": "SYMBOL",
+              "name": "_sqlcmd_empty"
+            }
+          ]
         }
       ]
     },
@@ -27056,6 +27074,18 @@
     {
       "type": "SYMBOL",
       "name": "_sqlcmd_boundary"
+    },
+    {
+      "type": "SYMBOL",
+      "name": "_sqlcmd_argument"
+    },
+    {
+      "type": "SYMBOL",
+      "name": "_sqlcmd_inline"
+    },
+    {
+      "type": "SYMBOL",
+      "name": "_sqlcmd_empty"
     }
   ],
   "inline": [],
