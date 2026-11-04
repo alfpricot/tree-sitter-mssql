@@ -12,7 +12,9 @@ export default grammar({
 
   // The block comment is lexed by src/scanner.c rather than a regex because
   // T-SQL block comments nest, and a regex cannot match balanced nesting.
-  externals: ($) => [$.marginalia],
+  // The scanner returns `_unterminated_comment` for a `/*` that never closes;
+  // no rule accepts it, so the rest of the input becomes one ERROR node.
+  externals: ($) => [$.marginalia, $._unterminated_comment],
 
   // Every entry arbitrates a real fork the parser must carry a few tokens
   // before it can settle; tree-sitter reports any that stop being needed

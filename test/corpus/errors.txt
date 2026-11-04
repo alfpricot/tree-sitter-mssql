@@ -921,7 +921,7 @@ SELECT a FROM t UNION SELECT b INTO #y FROM u;
     (keyword_from)))
 
 ================================================================================
-An unterminated block comment is an error
+An unterminated block comment is an error to end of input
 ================================================================================
 
 SELECT 1;
@@ -938,13 +938,5 @@ SELECT 2;
           (keyword_select)
           (select_expression
             (term
-              (literal))))))
-    (ERROR
-      (identifier))
-    (statement
-      (query_specification
-        (select
-          (keyword_select)
-          (select_expression
-            (term
-              (literal))))))))
+              (literal)))))))
+  (ERROR))

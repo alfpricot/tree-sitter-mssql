@@ -26529,6 +26529,10 @@
     {
       "type": "SYMBOL",
       "name": "marginalia"
+    },
+    {
+      "type": "SYMBOL",
+      "name": "_unterminated_comment"
     }
   ],
   "inline": [],
