@@ -6714,7 +6714,7 @@
         },
         {
           "type": "PREC_LEFT",
-          "value": "binary_is",
+          "value": "postfix_modifier",
           "content": {
             "type": "SEQ",
             "members": [
@@ -6879,7 +6879,7 @@
         },
         {
           "type": "PREC_LEFT",
-          "value": "binary_is",
+          "value": "postfix_modifier",
           "content": {
             "type": "SEQ",
             "members": [
@@ -26473,7 +26473,7 @@
     [
       {
         "type": "STRING",
-        "value": "binary_is"
+        "value": "postfix_modifier"
       },
       {
         "type": "STRING",
@@ -26498,6 +26498,10 @@
       {
         "type": "STRING",
         "value": "binary_relation"
+      },
+      {
+        "type": "STRING",
+        "value": "binary_is"
       },
       {
         "type": "STRING",

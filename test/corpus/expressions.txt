@@ -169,6 +169,85 @@ WHERE id IS NOT NULL
                 (identifier)))))))))
 
 ================================================================================
+IS predicates take whole arithmetic operands
+================================================================================
+
+SELECT a + b IS NULL,
+  a IS DISTINCT FROM b + 1,
+  a * 2 IS NOT NULL,
+  NOT a - 1 IS NOT DISTINCT FROM c,
+  x COLLATE Latin1_General_CI_AS IS NULL;
+
+--------------------------------------------------------------------------------
+
+(program
+  (batch
+    (statement
+      (query_specification
+        (select
+          (keyword_select)
+          (select_expression
+            (term
+              (binary_expression
+                (binary_expression
+                  (field
+                    (identifier))
+                  (field
+                    (identifier)))
+                (keyword_is)
+                (literal
+                  (keyword_null))))
+            (term
+              (binary_expression
+                (field
+                  (identifier))
+                (distinct_from
+                  (keyword_is)
+                  (keyword_distinct)
+                  (keyword_from))
+                (binary_expression
+                  (field
+                    (identifier))
+                  (literal))))
+            (term
+              (binary_expression
+                (binary_expression
+                  (field
+                    (identifier))
+                  (literal))
+                (is_not
+                  (keyword_is)
+                  (keyword_not))
+                (literal
+                  (keyword_null))))
+            (term
+              (unary_expression
+                (keyword_not)
+                (binary_expression
+                  (binary_expression
+                    (field
+                      (identifier))
+                    (literal))
+                  (not_distinct_from
+                    (keyword_is)
+                    (keyword_not)
+                    (keyword_distinct)
+                    (keyword_from))
+                  (field
+                    (identifier)))))
+            (term
+              (binary_expression
+                (binary_expression
+                  (field
+                    (identifier))
+                  (keyword_collate)
+                  (field
+                    (identifier)))
+                (keyword_is)
+                (literal
+                  (keyword_null))))))))))
+
+================================================================================
 Comparison operators
 ================================================================================
 

@@ -47,8 +47,10 @@ bool tree_sitter_mssql_external_scanner_scan(void *payload, TSLexer *lexer, cons
   unsigned depth = 1;
   while (depth > 0) {
     if (lexer->eof(lexer)) {
-      // An unterminated comment runs to end of input, as SQL Server treats it.
-      break;
+      // SQL Server rejects an unterminated comment (Msg 113, "Missing end
+      // comment mark"), so refuse the token and let the parse report an error
+      // rather than silently treating the rest of the file as a comment.
+      return false;
     }
     if (lexer->lookahead == '/') {
       lexer->advance(lexer, false);

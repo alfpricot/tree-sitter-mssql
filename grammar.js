@@ -56,13 +56,17 @@ export default grammar({
 
   precedences: (_) => [
     [
-      'binary_is',
+      'postfix_modifier',
       'unary_not',
       'unary_sign',
       'binary_times',
       'binary_plus',
       'binary_in',
       'binary_relation',
+      // IS [NOT] NULL and IS [NOT] DISTINCT FROM are comparison predicates, so
+      // they take whole arithmetic operands: `a + b IS NULL` is
+      // `(a + b) IS NULL`.
+      'binary_is',
       'pattern_matching',
       'between',
       'logical_not',
