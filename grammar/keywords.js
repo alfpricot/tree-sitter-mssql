@@ -225,6 +225,10 @@ export default {
   keyword_forcescan: (_) => make_keyword('forcescan'),
   keyword_forceseek: (_) => make_keyword('forceseek'),
   keyword_holdlock: (_) => make_keyword('holdlock'),
+  // sqlcmd's :on error [ exit | ignore ]
+  keyword_error: (_) => make_keyword('error'),
+  keyword_exit: (_) => make_keyword('exit'),
+  keyword_ignore: (_) => make_keyword('ignore'),
   keyword_ignore_constraints: (_) => make_keyword('ignore_constraints'),
   keyword_ignore_triggers: (_) => make_keyword('ignore_triggers'),
   keyword_keepdefaults: (_) => make_keyword('keepdefaults'),
@@ -347,6 +351,8 @@ export default {
   keyword_collection: (_) => make_keyword('collection'),
   // CREATE EXTERNAL { DATA SOURCE | FILE FORMAT | TABLE }
   keyword_external: (_) => make_keyword('external'),
+  // CLR module body: AS EXTERNAL NAME assembly.class.method
+  keyword_name: (_) => make_keyword('name'),
   keyword_data: (_) => make_keyword('data'),
   keyword_file: (_) => make_keyword('file'),
   keyword_format: (_) => make_keyword('format'),

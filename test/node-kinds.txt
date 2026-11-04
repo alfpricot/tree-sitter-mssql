@@ -148,6 +148,7 @@ execute_as_clause
 execute_as_statement
 execute_statement{procedure,return_status}
 exists
+external_name{method}
 fetch_cursor_statement
 field{name}
 float{precision}
@@ -281,11 +282,13 @@ keyword_enable
 keyword_encrypted
 keyword_encryption
 keyword_end
+keyword_error
 keyword_event
 keyword_except
 keyword_exec
 keyword_execute
 keyword_exists
+keyword_exit
 keyword_external
 keyword_fetch
 keyword_file
@@ -318,6 +321,7 @@ keyword_hierarchyid
 keyword_holdlock
 keyword_identity
 keyword_if
+keyword_ignore
 keyword_image
 keyword_in
 keyword_include
@@ -363,6 +367,7 @@ keyword_model
 keyword_modify
 keyword_money
 keyword_move
+keyword_name
 keyword_nchar
 keyword_next
 keyword_no
@@ -605,6 +610,7 @@ set_operation{operation}
 set_statement
 setuser_statement
 sqlcmd_include
+sqlcmd_on_error{action}
 sqlcmd_setvar{name,value}
 statement
 subquery

@@ -61,6 +61,10 @@
                     {
                       "type": "SYMBOL",
                       "name": "sqlcmd_include"
+                    },
+                    {
+                      "type": "SYMBOL",
+                      "name": "sqlcmd_on_error"
                     }
                   ]
                 }
@@ -119,7 +123,12 @@
         "type": "SEQ",
         "members": [
           {
-            "type": "STRING",
+            "type": "ALIAS",
+            "content": {
+              "type": "PATTERN",
+              "value": ":[sS][eE][tT][vV][aA][rR]"
+            },
+            "named": false,
             "value": ":setvar"
           },
           {
@@ -162,7 +171,12 @@
       "type": "SEQ",
       "members": [
         {
-          "type": "STRING",
+          "type": "ALIAS",
+          "content": {
+            "type": "PATTERN",
+            "value": ":[rR]"
+          },
+          "named": false,
           "value": ":r"
         },
         {
@@ -178,7 +192,42 @@
     },
     "_sqlcmd_path": {
       "type": "PATTERN",
-      "value": "[^\\s][^\\r\\n]*"
+      "value": "[^\\s-]+(([ \\t]+)?-[^\\s-]+|[ \\t]+[^\\s-]+)*"
+    },
+    "sqlcmd_on_error": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "ALIAS",
+          "content": {
+            "type": "PATTERN",
+            "value": ":[oO][nN]"
+          },
+          "named": false,
+          "value": ":on"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "keyword_error"
+        },
+        {
+          "type": "FIELD",
+          "name": "action",
+          "content": {
+            "type": "CHOICE",
+            "members": [
+              {
+                "type": "SYMBOL",
+                "name": "keyword_exit"
+              },
+              {
+                "type": "SYMBOL",
+                "name": "keyword_ignore"
+              }
+            ]
+          }
+        }
+      ]
     },
     "comment": {
       "type": "PATTERN",
@@ -896,6 +945,18 @@
       "type": "PATTERN",
       "value": "[hH][oO][lL][dD][lL][oO][cC][kK]"
     },
+    "keyword_error": {
+      "type": "PATTERN",
+      "value": "[eE][rR][rR][oO][rR]"
+    },
+    "keyword_exit": {
+      "type": "PATTERN",
+      "value": "[eE][xX][iI][tT]"
+    },
+    "keyword_ignore": {
+      "type": "PATTERN",
+      "value": "[iI][gG][nN][oO][rR][eE]"
+    },
     "keyword_ignore_constraints": {
       "type": "PATTERN",
       "value": "[iI][gG][nN][oO][rR][eE][__][cC][oO][nN][sS][tT][rR][aA][iI][nN][tT][sS]"
@@ -1315,6 +1376,10 @@
     "keyword_external": {
       "type": "PATTERN",
       "value": "[eE][xX][tT][eE][rR][nN][aA][lL]"
+    },
+    "keyword_name": {
+      "type": "PATTERN",
+      "value": "[nN][aA][mM][eE]"
     },
     "keyword_data": {
       "type": "PATTERN",
@@ -11929,8 +11994,25 @@
               "name": "_type"
             },
             {
-              "type": "SYMBOL",
-              "name": "keyword_table"
+              "type": "SEQ",
+              "members": [
+                {
+                  "type": "SYMBOL",
+                  "name": "keyword_table"
+                },
+                {
+                  "type": "CHOICE",
+                  "members": [
+                    {
+                      "type": "SYMBOL",
+                      "name": "column_definitions"
+                    },
+                    {
+                      "type": "BLANK"
+                    }
+                  ]
+                }
+              ]
             },
             {
               "type": "SYMBOL",
@@ -12263,6 +12345,27 @@
               "name": "_dml_read"
             }
           ]
+        },
+        {
+          "type": "SEQ",
+          "members": [
+            {
+              "type": "CHOICE",
+              "members": [
+                {
+                  "type": "SYMBOL",
+                  "name": "keyword_as"
+                },
+                {
+                  "type": "BLANK"
+                }
+              ]
+            },
+            {
+              "type": "SYMBOL",
+              "name": "external_name"
+            }
+          ]
         }
       ]
     },
@@ -12514,11 +12617,20 @@
             "name": "keyword_as"
           },
           {
-            "type": "REPEAT",
-            "content": {
-              "type": "SYMBOL",
-              "name": "_body_item"
-            }
+            "type": "CHOICE",
+            "members": [
+              {
+                "type": "SYMBOL",
+                "name": "external_name"
+              },
+              {
+                "type": "REPEAT",
+                "content": {
+                  "type": "SYMBOL",
+                  "name": "_body_item"
+                }
+              }
+            ]
           }
         ]
       }
@@ -15195,6 +15307,27 @@
           }
         ]
       }
+    },
+    "external_name": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "SYMBOL",
+          "name": "keyword_external"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "keyword_name"
+        },
+        {
+          "type": "FIELD",
+          "name": "method",
+          "content": {
+            "type": "SYMBOL",
+            "name": "object_reference"
+          }
+        }
+      ]
     },
     "execute_as_clause": {
       "type": "SEQ",
@@ -23348,6 +23481,23 @@
                         "type": "BLANK"
                       }
                     ]
+                  }
+                ]
+              },
+              {
+                "type": "SEQ",
+                "members": [
+                  {
+                    "type": "STRING",
+                    "value": "("
+                  },
+                  {
+                    "type": "SYMBOL",
+                    "name": "values"
+                  },
+                  {
+                    "type": "STRING",
+                    "value": ")"
                   }
                 ]
               }
