@@ -956,7 +956,7 @@ CLR procedure with AS EXTERNAL NAME
 
 CREATE PROCEDURE dbo.usp_Clr @a int, @b nvarchar(50) OUTPUT
 WITH EXECUTE AS CALLER
-AS EXTERNAL NAME ClrUtil.[Martin.Clr.Procs].DoWork;
+AS EXTERNAL NAME ClrUtil.[Contoso.Clr.Procs].DoWork;
 
 --------------------------------------------------------------------------------
 
