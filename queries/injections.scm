@@ -1,8 +1,8 @@
-; Dynamic SQL injection — first slice.
+; Dynamic SQL injection.
 ;
-; Covers `EXEC('...')` / `EXECUTE('...')` and `sp_executesql`'s first
-; (batch text) argument. Injection into a *concatenated* expression is out
-; of scope for this first slice.
+; Covers `EXEC('...')` / `EXECUTE('...')`, the literal pieces of a
+; concatenated `EXEC('...' + @v + '...')`, and `sp_executesql`'s first
+; (batch text) argument.
 
 ; EXEC('...'): the parenthesized-expression-list alternative of
 ; execute_statement places the literal as a direct, unfielded child right
@@ -30,4 +30,40 @@
   . (exec_argument
     value: (literal) @injection.content)
   (#match? @_proc "^[sS][pP]_[eE][xX][eE][cC][uU][tT][eE][sS][qQ][lL]$")
+  (#set! injection.language "sql"))
+
+; EXEC('...' + @v + '...'): EXEC concatenates string literals and variables
+; with `+`, which parses as a left-nested chain of binary_expression nodes, the
+; first literal deepest. Each literal operand is injected as its own fragment;
+; a variable's value is unknown. A query cannot match to any depth, so this
+; follows the chain eight levels down: up to nine operands. In a longer chain
+; the leading operands are not injected. sp_executesql needs no such pattern,
+; since a procedure argument cannot be an expression.
+(execute_statement
+  [(keyword_exec) (keyword_execute)]
+  .
+  (binary_expression
+    [left: (literal) @injection.content
+     right: (literal) @injection.content
+     left: (binary_expression
+             [left: (literal) @injection.content
+              right: (literal) @injection.content
+              left: (binary_expression
+                      [left: (literal) @injection.content
+                       right: (literal) @injection.content
+                       left: (binary_expression
+                               [left: (literal) @injection.content
+                                right: (literal) @injection.content
+                                left: (binary_expression
+                                        [left: (literal) @injection.content
+                                         right: (literal) @injection.content
+                                         left: (binary_expression
+                                                 [left: (literal) @injection.content
+                                                  right: (literal) @injection.content
+                                                  left: (binary_expression
+                                                          [left: (literal) @injection.content
+                                                           right: (literal) @injection.content
+                                                           left: (binary_expression
+                                                                   [left: (literal) @injection.content
+                                                                    right: (literal) @injection.content])])])])])])])])
   (#set! injection.language "sql"))

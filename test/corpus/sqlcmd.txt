@@ -220,3 +220,30 @@ SELECT 1;
           (select_expression
             (term
               (literal))))))))
+
+================================================================================
+:reset in any casing is not an :r include
+================================================================================
+
+:reset
+:RESET
+:Reset
+:r reset.sql
+SELECT 1;
+
+--------------------------------------------------------------------------------
+
+(program
+  (batch
+    (sqlcmd_reset)
+    (sqlcmd_reset)
+    (sqlcmd_reset)
+    (sqlcmd_include
+      (identifier))
+    (statement
+      (query_specification
+        (select
+          (keyword_select)
+          (select_expression
+            (term
+              (literal))))))))

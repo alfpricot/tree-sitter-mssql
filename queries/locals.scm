@@ -1,8 +1,9 @@
 ; Local variable and scope resolution.
 ;
 ; Covers the definition sites a consumer needs to resolve a qualified column
-; reference (`t.col`) against: a FROM relation's alias, an APPLY, PIVOT or
-; UNPIVOT alias, a MERGE target or source alias, and a CTE name.
+; reference (`t.col`) against: a FROM relation's alias (an OPENJSON-with-schema
+; alias included), an APPLY, PIVOT or UNPIVOT alias, a MERGE target or source
+; alias, and a CTE name.
 ;
 ; `statement` is the scope of a lone query. Its `ORDER BY` sits beside
 ; `query_specification`, not inside it, so the table alias has to be
@@ -19,6 +20,18 @@
   (query_specification) @local.scope)
 
 (relation
+  alias: (identifier) @local.definition)
+
+; OPENJSON(...) WITH (a INT) AS j: the schema sits between the OPENJSON call
+; and its alias, outside `relation`, so the alias is a field of the
+; enclosing FROM, JOIN or CROSS JOIN node instead.
+(from
+  alias: (identifier) @local.definition)
+
+(join
+  alias: (identifier) @local.definition)
+
+(cross_join
   alias: (identifier) @local.definition)
 
 ; CROSS/OUTER APPLY's alias, and the alias after a PIVOT or UNPIVOT clause.

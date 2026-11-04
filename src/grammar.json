@@ -65,6 +65,10 @@
                     {
                       "type": "SYMBOL",
                       "name": "sqlcmd_on_error"
+                    },
+                    {
+                      "type": "SYMBOL",
+                      "name": "sqlcmd_reset"
                     }
                   ]
                 }
@@ -228,6 +232,15 @@
           }
         }
       ]
+    },
+    "sqlcmd_reset": {
+      "type": "ALIAS",
+      "content": {
+        "type": "PATTERN",
+        "value": ":[rR][eE][sS][eE][tT]"
+      },
+      "named": false,
+      "value": ":reset"
     },
     "comment": {
       "type": "PATTERN",

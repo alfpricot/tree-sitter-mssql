@@ -611,6 +611,7 @@ set_statement
 setuser_statement
 sqlcmd_include
 sqlcmd_on_error{action}
+sqlcmd_reset
 sqlcmd_setvar{name,value}
 statement
 subquery
