@@ -5,6 +5,19 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## 1.0.0 (2026-11-04)
+
+### Breaking Changes
+
+* **grammar:** bind IS predicates below arithmetic, reject open comments (#77)
+
+### Features
+
+* **grammar:** parse more sqlcmd commands and require a space after each (#81)
+* **queries:** inject concatenated EXEC strings and parse :reset (#80)
+* **grammar:** add name, target, and body fields to modules and CTEs (#79)
+* **grammar:** parse APPLY over VALUES, CLR modules, and :on error (#78)
+
 ## 0.2.3 (2026-10-29)
 
 ### Bug Fixes
